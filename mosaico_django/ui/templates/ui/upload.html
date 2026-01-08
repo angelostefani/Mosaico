@@ -1,0 +1,176 @@
+{% extends 'ui/base.html' %}
+
+{% block content %}
+<div class="mb-4">
+  <h1 class="h2 fw-semibold mb-1">Upload documento</h1>
+  <p class="text-muted mb-0">Carica rapidamente nuovi file nel sistema e tieni traccia degli ultimi caricamenti per la tua collection.</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        {% if jwt_warning %}
+        <div class="alert alert-warning small" role="alert">
+          {{ jwt_warning }}
+        </div>
+        {% endif %}
+        <h2 class="h5 mb-4">Dettagli caricamento</h2>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Seleziona file</label>
+          <div class="input-group">
+            <input type="file" class="form-control" id="fileInput">
+            <button class="btn btn-primary" id="uploadBtn">
+              <i class="bi bi-cloud-arrow-up me-1"></i>
+              Carica
+            </button>
+          </div>
+          <small class="text-muted">Sono supportati documenti testuali e PDF. Dimensione massima secondo configurazione del backend.</small>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" for="collectionInput">Collection</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-folder2"></i></span>
+              <input type="text" class="form-control" id="collectionInput" placeholder=" (default) " pattern="[^_]*" title="Il carattere underscore (_) non è consentito.">
+            </div>
+            <div id="collectionWarning" class="form-text text-danger d-none">Il carattere underscore (_) non è consentito nel nome della collection.</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" for="usernameDisplay">Utente</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" class="form-control" id="usernameDisplay" value="{{ request.user.username }}" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3">
+          <a id="toChatLink" class="btn btn-outline-primary btn-sm" href="/chat/">
+            <i class="bi bi-arrow-repeat me-1"></i> Vai alla chat con questa collection
+          </a>
+        </div>
+      </div>
+      <div class="card-footer bg-light">
+        <div id="uploadStatus"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// JWT recuperato dalla sessione Django
+const JWT_TOKEN = "{{ request.session.jwt_token|default:'' }}";
+const FALLBACK_TOKEN = "{{ fake_token }}";
+const API_TOKEN = JWT_TOKEN || FALLBACK_TOKEN;
+// Username corrente (se autenticato)
+const USERNAME = "{{ request.user.username|default:'' }}";
+// Base URL dell'API (stesso host, porta differente se necessario)
+const API_BASE = window.location.origin.replace(':9001', ':9000');
+
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
+const uploadStatus = document.getElementById('uploadStatus');
+const collectionInput = document.getElementById('collectionInput');
+const STORAGE_KEY_COLLECTION = 'collection.current';
+const toChatLink = document.getElementById('toChatLink');
+const collectionWarning = document.getElementById('collectionWarning');
+
+function toggleCollectionWarning(hasUnderscore) {
+  if (!collectionWarning) return;
+  collectionWarning.classList.toggle('d-none', !hasUnderscore);
+}
+
+function updateCrossLink() {
+  if (!toChatLink) return;
+  const c = (collectionInput?.value || '').trim();
+  toChatLink.href = c ? `/chat/?collection=${encodeURIComponent(c)}` : '/chat/';
+}
+
+uploadBtn.addEventListener('click', async () => {
+  if (!fileInput.files.length) return;
+  uploadBtn.disabled = true;
+  uploadStatus.innerHTML = '';
+
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+  const collection = (collectionInput?.value || '').trim();
+  if (collection) {
+    formData.append('collection', collection);
+  }
+  if (USERNAME) {
+    formData.append('username', USERNAME);
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${API_TOKEN}`
+      },
+      body: formData
+    });
+    const data = await response.json();
+    if (response.ok) {
+      const msgExtra = data.upload_id ? ` (Upload ID: ${data.upload_id})` : '';
+      uploadStatus.innerHTML = `<div class="alert alert-success">${data.message}${msgExtra}</div>`;
+      fileInput.value = '';
+    } else if (response.status === 401 || response.status === 403) {
+      uploadStatus.innerHTML = '<div class="alert alert-danger">Sessione non autorizzata. Effettua nuovamente l\'accesso.</div>';
+    } else {
+      uploadStatus.innerHTML = `<div class="alert alert-danger">${data.detail || data.message}</div>`;
+    }
+  } catch (error) {
+    console.error(error);
+    uploadStatus.innerHTML = `<div class="alert alert-danger">Errore di rete</div>`;
+  } finally {
+    uploadBtn.disabled = false;
+  }
+});
+
+// All'avvio della pagina: se la collection e' valorizzata, carica il riepilogo
+document.addEventListener('DOMContentLoaded', () => {
+  const qs = new URLSearchParams(window.location.search);
+  const qsCollection = (qs.get('collection') || '').trim();
+  if (qsCollection) {
+    collectionInput.value = qsCollection;
+    try { localStorage.setItem(STORAGE_KEY_COLLECTION, qsCollection); } catch {}
+  } else {
+    try {
+      const saved = (localStorage.getItem(STORAGE_KEY_COLLECTION) || '').trim();
+      if (saved) collectionInput.value = saved;
+    } catch {}
+  }
+  const initial = (collectionInput?.value || '').trim();
+  updateCrossLink();
+  toggleCollectionWarning(initial.includes('_'));
+  if (!uploadStatus.innerHTML) {
+    uploadStatus.innerHTML = '<div class="text-muted small">Pronto per un nuovo caricamento.</div>';
+  }
+});
+
+// Salva la collection mentre l'utente digita
+collectionInput?.addEventListener('input', () => {
+  const value = (collectionInput?.value || '').trim();
+  const containsUnderscore = value.includes('_');
+  toggleCollectionWarning(containsUnderscore);
+  try {
+    if (value && !containsUnderscore) localStorage.setItem(STORAGE_KEY_COLLECTION, value);
+    else localStorage.removeItem(STORAGE_KEY_COLLECTION);
+  } catch {}
+  updateCrossLink();
+});
+
+// Sincronizza cambi da altre pagine/schede
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY_COLLECTION) {
+    const newVal = (e.newValue || '').trim();
+    collectionInput.value = newVal;
+    toggleCollectionWarning(newVal.includes('_'));
+    updateCrossLink();
+  }
+});
+</script>
+{% endblock %}

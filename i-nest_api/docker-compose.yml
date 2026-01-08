@@ -1,0 +1,43 @@
+services:
+  api:
+    build: .
+    container_name: i-nest_api
+    ports:
+      - "9000:9000"
+    environment:
+      # Imposta i target verso i container esterni
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - OLLAMA_URL=http://ollama:11434/api/generate
+      - UPLOAD_DIR=/app/uploads
+      - SKIP_AUTH=true
+      - EMBEDDING_MODEL=all-MiniLM-L6-v2
+      - DB_ENGINE=postgres
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=${PG_DB}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+      - ./frontend:/app/frontend:ro
+    networks:
+      - qdrant_external
+      - ollama_external
+      - postgres_external
+      - default
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "9000", "--workers", "2"]
+
+networks:
+  # Attacca a reti esterne create dagli altri compose
+  qdrant_external:
+    external: true
+    name: qdrant_project_default
+  ollama_external:
+    external: true
+    name: ollama_project_default
+  postgres_external:
+    external: true
+    name: postgres_project_default

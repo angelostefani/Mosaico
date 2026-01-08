@@ -1,0 +1,16 @@
+codex
+Ho predisposto il frontend per distinguere gli upload “reali” usando upload_id e per mostrarlo nel messaggio di
+successo.
+
+- Upload UI: se l’API restituisce upload_id, lo mostra nel messaggio di successo e il riepilogo “Ultimi caricamenti”
+raggruppa per upload_id (prioritario su filename/source). File: ui/templates/ui/upload.html.
+- Totali: usa data.count (se presente) e indica “(mostrati N di M)” quando l’API pagina/limita i risultati.
+
+Per completare serve un piccolo adeguamento nel backend FastAPI:
+
+- Endpoint /upload: genera un upload_id e mettilo nel payload di ogni chunk indicizzato; restituisci anche upload_id
+nella risposta.
+    - Esempio (schema): upload_id = str(uuid.uuid4()) e poi per ogni punto: payload={'username': ..., 'collection': ...,
+'upload_id': upload_id, ...}; risposta: {"message": "Indicizzazione completata", "upload_id": upload_id}.
+- Endpoint /collection: include upload_id dentro items[].payload.upload_id e, se possibile, count totale dei punti della
+query. Il frontend li userà automaticamente.

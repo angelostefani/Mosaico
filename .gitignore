@@ -1,0 +1,60 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.benchmarks/
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+
+# Packaging
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+.vs/
+
+# Django/Flask app data
+db.sqlite3
+*.sqlite3
+staticfiles/
+media/
+logs/
+uploads/
+debug/
+
+# Frontend
+node_modules/
+.turbo/
+.parcel-cache/
+coverage/
+dist-ssr/
+
+# Docker / Compose extras
+docker-compose.override.yml

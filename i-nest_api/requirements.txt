@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+pytest
+pdfplumber
+python-docx
+openpyxl
+sentence-transformers
+qdrant-client
+requests
+ollama
+python-dotenv
+pytest-cov
+SQLAlchemy>=2.0
+psycopg[binary]

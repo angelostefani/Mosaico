@@ -1,0 +1,81 @@
+RAG Retrocompatibility Improvement Plan
+=======================================
+
+Scope
+-----
+Enhance retrieval-augmented generation quality without altering existing Qdrant collections, vector dimensionality, or mandatory payload schema. All changes are additive or internal to application logic.
+
+1. Embedding Model Lifecycle (`app.py`)
+---------------------------------------
+1.1 Convert `get_embedding_model` into a cached singleton:
+    - Store the instantiated `SentenceTransformer` in a module-level variable.
+    - Guard instantiation with threading lock to support concurrent requests.
+    - Preserve the current fallback embedder to avoid breaking environments lacking sentence-transformers.
+    - Log a warning when the fallback is used, controlled by `ENABLE_RAG_DEBUG`.
+
+1.2 Configuration hygiene:
+    - Validate that the embedding dimension from the loaded model matches the dimension in Qdrant collections when debug logging is enabled; emit a warning if a mismatch is detected, but do not raise exceptions.
+
+2. Text Chunking Enhancements (`app.py:198`)
+-------------------------------------------
+2.1 Pre-normalize input text before chunking:
+    - Collapse repeated whitespace (space, tab) into single spaces.
+    - Replace control characters with spaces.
+    - Trim leading/trailing whitespace from the final chunk list.
+
+2.2 Introduce optional chunk overlap:
+    - Read new env var `CHUNK_OVERLAP` (default `0`).
+    - Apply simple sliding-window overlap without changing existing default behavior (zero overlap).
+    - Ensure overlap never produces empty or duplicate trailing chunks.
+
+3. Payload Enrichment (`process_document`)
+-----------------------------------------
+3.1 Extend per-point payload with optional metadata:
+    - `doc_title`: infer from first non-empty line or retain `None`.
+    - `char_start` / `char_end`: track offsets for traceability.
+    - `page_number`: when source is PDF and page index is available.
+    - These fields must be optional so existing points remain valid.
+
+3.2 Introduce helper function `build_payload_metadata` to keep the payload assembly reusable and unit-testable.
+
+4. Prompt Robustness (`ask`)
+---------------------------
+4.1 Introduce structured prompt template:
+    - Preface with system-style instructions: answer using provided context, admit lack of information otherwise, cite chunk index if possible.
+    - Maintain current streaming call to Ollama to avoid API changes.
+
+4.2 Add guard clauses:
+    - If `rag_context` is empty or equals `"Nessun contesto rilevante."`, fall back to a short apology response; this avoids passing empty context to the model.
+
+5. Retrieval Filtering (`chat`)
+------------------------------
+5.1 Score thresholding:
+    - Add env var `QDRANT_SCORE_THRESHOLD` (default `0.0`).
+    - Filter search results by score when available; if scores missing, keep existing behavior.
+
+5.2 Enhanced diagnostics:
+    - When `ENABLE_RAG_DEBUG` is true, log retrieved scores, chunk identifiers, and payload metadata to aid evaluation.
+
+5.3 Graceful degradation:
+    - If no results exceed the threshold, respond with the standard “Nessun contesto rilevante.” message before calling `ask`.
+
+6. Observability & Config (`app.py`)
+-----------------------------------
+6.1 Add `ENABLE_RAG_DEBUG` env toggle (default false) near other settings.
+6.2 Wrap new debug statements with `if ENABLE_RAG_DEBUG: logger.debug(...)`.
+6.3 Update `/healthz` response to include the new RAG-related env flags for transparency.
+
+7. Documentation & Validation
+-----------------------------
+7.1 Provide README notes describing new environment variables and their defaults.
+7.2 Outline a manual regression checklist:
+    - Upload a document and confirm existing documents remain searchable.
+    - Verify responses when context is absent vs. present.
+    - Check logs with `ENABLE_RAG_DEBUG=true` to ensure debug info is emitted.
+
+Deliverables Summary
+--------------------
+* Updated `app.py` implementing sections 1-6.
+* README adjustments documenting `CHUNK_OVERLAP`, `QDRANT_SCORE_THRESHOLD`, `ENABLE_RAG_DEBUG`.
+* No migrations or Qdrant schema changes required.
+

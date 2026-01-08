@@ -1,0 +1,33 @@
+services:
+  frontend:
+    build: .
+    container_name: mosaico
+    ports:
+      - "9001:9001"
+    environment:
+      - DJANGO_DEBUG=false
+      - ALLOWED_HOSTS=*
+      - API_BASE=http://localhost:9000
+      - CSRF_TRUSTED_ORIGINS=http://localhost:9001,http://127.0.0.1:9001,http://localhost:9000,http://127.0.0.1:9000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+    restart: unless-stopped
+
+  frontend-dev:
+    build: .
+    container_name: mosaico_dev
+    profiles: ["dev"]
+    ports:
+      - "9001:9001"
+    environment:
+      - DJANGO_DEBUG=true
+      - ALLOWED_HOSTS=*
+      - API_BASE=http://localhost:9000
+      - CSRF_TRUSTED_ORIGINS=http://localhost:9001,http://127.0.0.1:9001,http://localhost:9000,http://127.0.0.1:9000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/app
+    restart: unless-stopped

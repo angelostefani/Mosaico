@@ -1,0 +1,49 @@
+{% extends 'ui/base.html' %}
+{% load form_tags %}
+
+{% block page_title %}Registrazione • I-NEST{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h2 class="h3 mb-3 text-center">Crea un nuovo account</h2>
+        <p class="text-muted text-center mb-4">Compila i campi per iniziare a usare la piattaforma.</p>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+              {% if field.errors %}
+                {{ field|add_class:"form-control is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control" }}
+              {% endif %}
+              {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+          <button class="btn btn-success w-100" type="submit">Registrati</button>
+        </form>
+      </div>
+      <div class="card-footer text-center bg-light">
+        <small class="text-muted">Hai gia' un account?
+          <a href="{% url 'login' %}" class="fw-semibold">Accedi qui</a>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

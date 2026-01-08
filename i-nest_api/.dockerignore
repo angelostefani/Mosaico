@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.benchmarks/
+
+# Venvs
+.venv/
+venv/
+
+# VCS
+.git/
+.gitignore
+
+# Editor/IDE
+.vs/
+.vscode/
+
+# Runtime artifacts
+uploads/
+*.log
+*.cover
+.coverage*
+
+# OS/Cloud
+.DS_Store
+Thumbs.db
+
+# Others
+errors.txt
+commands.txt
+Appunti.md

@@ -1,0 +1,30 @@
+I-NEST API - Panoramica tecnica del flusso RAG
+
+Funzionalita principali
+- Ingestione documentale via endpoint FastAPI con persistenza dei metadati in SQLite.
+- Pre-processing centralizzato: normalizzazione, chunking dinamico con overlap e tracciamento delle posizioni originali.
+- Embedding dense (SentenceTransformer configurabile, fallback deterministico) indicizzati in Qdrant con distanza cosine. Supporto multi-tenant tramite namespace username/collection.
+- Retrieval multi-vettoriale con query espanse e reranking ibrido (cosine + similarity + keyword overlap), opzionalmente seguito da Maximal Marginal Relevance.
+- Costruzione del contesto: stitching di chunk contigui, deduplica, budget di caratteri controllato, citazioni automatiche.
+- Generazione della risposta orchestrata via Ollama con prompt rinforzato (citazioni obbligatorie, fallback quando il contesto e debole).
+- Endpoint amministrativi: health check composito, elenco e cancellazione collection, storico upload.
+- Autenticazione opzionale JWT tramite servizio Django oppure bypass in ambiente di sviluppo.
+
+Sequenza operativa
+1. Upload: il client invia un file; l API lo salva nella directory uploads, registra i metadati nel database (stato processing) e avvia la pipeline.
+2. Estrazione testo: la funzione extract_text usa pdfplumber o python-docx per ricavare il contenuto grezzo e i metadati di pagina. Il testo viene normalizzato eliminando caratteri di controllo e compressione degli spazi.
+3. Chunking: chunk_text applica una sliding window che cerca separatori naturali (punteggiatura/spazi), produce offset normalizzati e grezzi e unisce eventuali chunk finali troppo corti.
+4. Embedding: get_embedding_model carica SentenceTransformer in modo thread-safe. Ogni chunk viene vettorizzato (con normalizzazione opzionale) e salvato in Qdrant come PointStruct con payload completo (doc_title, filename, range, page numero, ecc.). Lo stato dell upload e aggiornato a completed o failed.
+5. Query: l endpoint chat riceve la domanda, calcola l embedding principale, genera fino a CHAT_EXPANSION_LIMIT termini espansi (keyword-based) e produce vettori aggiuntivi. Esegue search in Qdrant per la query primaria e per le espansioni (CHAT_CANDIDATES, CHAT_EXPANSION_CANDIDATES) e unisce i risultati deduplicando per id/payload.
+6. Post-processing retrieval: applica una soglia di punteggio (QDRANT_SCORE_THRESHOLD), reranking ibrido con MMR opzionale e deduplica testuale tramite SequenceMatcher. Se abilitato, stitch_chunks aggrega chunk contigui rispettando il CHAT_CONTEXT_CHAR_BUDGET.
+7. Prompting del modello: compone il contesto (citazioni [p.X][c.Y], metadati documento/file), applica un prompt rigido in italiano e invoca Ollama in streaming con temperature bassa e repeat penalty. Le chiamate bloccanti sono offloadate in threadpool e la response HTTP viene chiusa esplicitamente.
+8. Response: il testo generato viene restituito al client; se non e disponibile contesto sufficiente la risposta comunica l impossibilita di rispondere. I log opzionali (ENABLE_RAG_DEBUG) registrano metriche e campioni di retrieval.
+
+Note architetturali
+- Concurrency: FastAPI async con offloading in threadpool per embedding, search e chiamate LLM per non bloccare l event loop.
+- Configurazione tramite file .env; l endpoint healthz espone stato e configurazione runtime.
+- Dockerfile minimale (python:3.12-slim) e docker-compose che collega Qdrant e Ollama tramite reti esterne.
+- Suite di test pytest che copre chunking, estrazione, upload e chat con backend fittizi.
+
+Sintesi
+I-NEST API realizza una pipeline RAG modulare per ingestione documentale, indicizzazione vettoriale in Qdrant, retrieval multi-embedding e generazione controllata da prompt. E orientata a scenari enterprise grazie al supporto multi-tenant, ai controlli di stato e alla possibilita di estendere ogni livello (modelli, reranker, policy di contesto).

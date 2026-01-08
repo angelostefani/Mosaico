@@ -1,0 +1,38 @@
+Modificare l'endpoint GET /collections andando ad aggiungere il parametro di input "username" come opzionale (non obbligatorio).
+Se username è valorizzato, la risposta è formata dalle collection afferenti allo username.
+Se username non è valorizzato, la risposta è quella che si ottiene adesso (comportamento attuale).
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Voglio che la sessione di chat corrente dell'utente venga presa in considerazione come parte del contensto da utilizzare per fornire la risposta.
+Pensavo quindi di modificare l'endpoint POST /chat andando ad aggiungere un parametro di input "conversation_history" (lista di turni {role, content} o semplice stringa concatenata) 
+come opzionale (non obbligatorio).
+Cosa ne pensi?
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Voglio aggiungere un endpoint che mi restituisca la lista delle LLM disponibili sulla installazione di OLLAMA configurata nel file .env
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Modificare l'endpoint GET /chat andando ad aggiungere il parametro di input "model" come opzionale (non obbligatorio).
+Se "model" è valorizzato, nella interazione con OLLAMA deve essere utilizzato questo al posto del valore di "OLLAMA_MODEL" come letto dal file di configurazione ".env".
+Se "model" non è valorizzato, il comportamento deve restare quello attuale.
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Vorrei aggiungere un meccanismo di log. Verifica la situazione attuale.
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Crea un file .md e scrivi la documentazione di progetto, descrivendo le funzionalità.
+Crea una cartella per contenere i files di documentazione.
+
+A volte, durante l'upload di un file, il sistema restituisce "Errore di rete". Da cosa può dipendere?
+
+Vorrei salvare la cronologia delle conversazioni. Dammi il piano di implementazione, ma attendi il mio ok prima di procedere con le implementazioni.
+Vorrei che l'utente possa recuperare e continuare le ultime dieci conversazioni. Dammi il piano di implementazione, ma attendi il mio ok prima di procedere con le implementazioni.
+
+Vorrei consentire l'upload e la conseguente acquisizione di files in formato excel.
+Dammi il piano di implementazione, ma attendi il mio ok prima di procedere con le implementazioni.
+
+Ho avviato tramite docker una istanza di postgresql in ascolto su porta 5433.
+Voglio fare una migrazione database, da sqlite a postgresql.
+Accedi ai sorgenti e al database attuale, acquisisci le informazioni che ti servono, e poi dammi il piano di implementazione e migrazione dati dettagliato, attendi il mio ok per procedere con le implementazioni.
+
+Mi piacerebbe che la migrazione da sqlite a postgresql (istanza docker attiva su porta 5433) possa avvenire lanciando un file python, in modo tale da poter lanciare quando voglio io la migrazione anche su altri ambienti dove è installato il sistema.

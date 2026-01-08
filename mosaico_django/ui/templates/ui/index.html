@@ -1,0 +1,71 @@
+{% extends 'ui/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero card shadow-sm border-0 overflow-hidden">
+  <div class="hero-gradient p-5 text-white">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <h1 class="display-5 fw-semibold mb-3">Benvenuto in MOSAICO</h1>
+        <p class="lead mb-4">Gestisci i documenti, interagisci con l'intelligenza artificiale e consulta le collection in modo rapido da un'unica interfaccia.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-light btn-lg text-primary fw-semibold" href="{% url 'upload' %}">
+            <i class="bi bi-cloud-arrow-up me-2"></i>Carica documento
+          </a>
+          <a class="btn btn-outline-light btn-lg" href="{% url 'chat' %}">
+            <i class="bi bi-chat-dots me-2"></i>Apri chat IA
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5 text-center text-lg-end">
+        <img
+          src="{% static 'img/INEST_payoff.png' %}"
+          alt="Payoff strategico I-NEST"
+          class="img-fluid hero-payoff"
+          loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mt-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="icon-circle bg-primary-subtle text-primary mb-3">
+            <i class="bi bi-list-columns"></i>
+          </div>
+          <h5 class="card-title">Storico Uploads</h5>
+          <p class="card-text text-muted">Consulta rapidamente gli ultimi documenti caricati, filtra per collection e monitora lo stato degli upload.</p>
+          <a class="stretched-link text-primary fw-semibold" href="{% url 'list_uploads' %}">Vai alla vista Uploads</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="icon-circle bg-success-subtle text-success mb-3">
+            <i class="bi bi-cloud-upload"></i>
+          </div>
+          <h5 class="card-title">Upload guidato</h5>
+          <p class="card-text text-muted">Carica i file, tieni traccia degli ultimi caricamenti e accedi rapidamente all'elenco.</p>
+          <a class="stretched-link text-primary fw-semibold" href="{% url 'upload' %}">Apri la pagina di upload</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="icon-circle bg-info-subtle text-info mb-3">
+            <i class="bi bi-robot"></i>
+          </div>
+          <h5 class="card-title">Chat potenziata</h5>
+          <p class="card-text text-muted">Poni domande e ricevi risposte contestualizzate, con badge dinamici che ti ricordano la collection attiva.</p>
+          <a class="stretched-link text-primary fw-semibold" href="{% url 'chat' %}">Entra nella chat</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

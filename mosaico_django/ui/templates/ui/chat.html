@@ -1,0 +1,653 @@
+{% extends 'ui/base.html' %}
+
+{% block content %}
+<div class="mb-4">
+  <h1 class="h2 fw-semibold mb-1">Chat con l'assistente</h1>
+  <p class="text-muted mb-0">Poni domande sulla tua knowledge base e ottieni risposte contestuali in tempo reale.</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 class="h5 mb-0">Sessione corrente</h2>
+          <span id="collectionBadge" class="badge bg-info-subtle text-info-emphasis d-none"></span>
+        </div>
+        <div id="chatWindow" class="chat-window flex-grow-1 mb-3"></div>
+        <div class="input-group">
+          <input type="text" class="form-control" id="questionInput" placeholder="Scrivi la tua domanda...">
+          <button class="btn btn-success" id="askBtn">
+            <span id="askSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+            Invia
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Contesto della richiesta</h2>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="collectionInput">Collection</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-folder2"></i></span>
+            <select class="form-select" id="collectionInput" disabled>
+              <option value="">Caricamento collections...</option>
+            </select>
+          </div>
+          <div class="form-text">Utilizza la stessa collection usata per l'upload dei documenti.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="usernameDisplay">Utente</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input type="text" class="form-control" id="usernameDisplay" value="{{ request.user.username }}" readonly>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="modelSelect">Modello Ollama</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-cpu"></i></span>
+            <select class="form-select" id="modelSelect" disabled>
+              <option value="">Caricamento modelli...</option>
+            </select>
+          </div>
+          <div class="form-text">Se vuoto, verrà usato il modello predefinito dell'API.</div>
+        </div>
+        <a id="toUploadLink" class="btn btn-outline-primary w-100" href="/upload/">
+          <i class="bi bi-cloud-arrow-up me-1"></i> Vai alla pagina di upload
+        </a>
+      </div>
+    </div>
+    <div class="card shadow-sm border-0 mt-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h2 class="h5 mb-0">Conversazioni recenti</h2>
+          <button class="btn btn-sm btn-outline-secondary" id="newConversationBtn" type="button">
+            <i class="bi bi-plus-circle me-1"></i> Nuova
+          </button>
+        </div>
+        <div id="conversationStatus" class="text-muted small mb-2">Caricamento conversazioni...</div>
+        <div class="list-group small" id="conversationList" style="max-height: 260px; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// JWT recuperato dalla sessione Django
+const JWT_TOKEN = "{{ request.session.jwt_token|default:'' }}";
+// Username corrente (se autenticato)
+const USERNAME = "{{ request.user.username|default:'' }}";
+// Base URL dell'API
+const API_BASE = window.location.origin.replace(':9001', ':9000');
+
+const askBtn = document.getElementById('askBtn');
+const askSpinner = document.getElementById('askSpinner');
+const questionInput = document.getElementById('questionInput');
+const chatWindow = document.getElementById('chatWindow');
+const collectionInput = document.getElementById('collectionInput');
+const modelSelect = document.getElementById('modelSelect');
+const collectionBadge = document.getElementById('collectionBadge');
+const conversationList = document.getElementById('conversationList');
+const conversationStatus = document.getElementById('conversationStatus');
+const newConversationBtn = document.getElementById('newConversationBtn');
+const STORAGE_KEY_COLLECTION = 'collection.current';
+const STORAGE_KEY_CHAT = 'chat.currentSession';
+const STORAGE_KEY_MODEL = 'chat.ollamaModel';
+const STORAGE_KEY_CONVERSATION = 'chat.activeConversationId';
+const MAX_TURNS_HISTORY = 10;
+const toUploadLink = document.getElementById('toUploadLink');
+const CURRENT_CHAT_USER = USERNAME || '';
+let activeConversationId = null;
+
+function readStoredChatState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CHAT);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return { user: null, entries: parsed, conversationId: null };
+    }
+    if (parsed && Array.isArray(parsed.entries)) {
+      return { user: parsed.user || '', entries: parsed.entries, conversationId: parsed.conversationId || null };
+    }
+    return null;
+  } catch {
+    localStorage.removeItem(STORAGE_KEY_CHAT);
+    return null;
+  }
+}
+
+function loadChatHistory() {
+  const state = readStoredChatState();
+  if (!state) return [];
+  if (state.user && state.user !== CURRENT_CHAT_USER) {
+    try { localStorage.removeItem(STORAGE_KEY_CHAT); } catch {}
+    return [];
+  }
+  activeConversationId = state.conversationId || null;
+  return state.entries.filter(entry => entry && (entry.who === 'user' || entry.who === 'bot') && typeof entry.text === 'string');
+}
+
+function persistChatHistory(entries, conversationId = null) {
+  try {
+    const state = {
+      user: CURRENT_CHAT_USER,
+      entries: entries.slice(-200),
+      conversationId: conversationId || null
+    };
+    localStorage.setItem(STORAGE_KEY_CHAT, JSON.stringify(state));
+  } catch {
+    // Ignore quota errors, history just won't persist
+  }
+}
+
+function restoreChatHistory() {
+  const history = loadChatHistory();
+  history.forEach(({ who, text }) => appendMessage(who, text, false));
+}
+
+function buildConversationHistory(maxTurns = MAX_TURNS_HISTORY) {
+  const history = loadChatHistory();
+  const trimmed = maxTurns > 0 ? history.slice(-maxTurns) : history;
+  return trimmed.map(entry => ({
+    role: entry.who === 'user' ? 'user' : 'assistant',
+    content: entry.text
+  }));
+}
+
+function updateCollectionBadge() {
+  const c = (collectionInput?.value || '').trim();
+  if (c) {
+    collectionBadge.textContent = `Collection: ${c}`;
+    collectionBadge.classList.remove('d-none');
+  } else {
+    collectionBadge.classList.add('d-none');
+  }
+}
+
+function updateCrossLink() {
+  if (!toUploadLink) return;
+  const c = (collectionInput?.value || '').trim();
+  toUploadLink.href = c ? `/upload/?collection=${encodeURIComponent(c)}` : '/upload/';
+}
+
+function setConversationStatus(message, isError = false) {
+  if (!conversationStatus) return;
+  conversationStatus.textContent = message || '';
+  conversationStatus.classList.toggle('text-danger', Boolean(isError));
+  conversationStatus.classList.toggle('text-muted', !isError);
+}
+
+function persistActiveConversation(id) {
+  activeConversationId = id || null;
+  try {
+    if (activeConversationId) {
+      localStorage.setItem(STORAGE_KEY_CONVERSATION, activeConversationId);
+    } else {
+      localStorage.removeItem(STORAGE_KEY_CONVERSATION);
+    }
+  } catch {}
+  highlightActiveConversation();
+}
+
+function restoreActiveConversation() {
+  try {
+    const saved = (localStorage.getItem(STORAGE_KEY_CONVERSATION) || '').trim();
+    if (saved) {
+      activeConversationId = saved;
+    }
+  } catch {}
+}
+
+function clearChatUI(preserveCollection = true) {
+  chatWindow.innerHTML = '';
+  persistChatHistory([], null);
+  persistActiveConversation(null);
+  if (!preserveCollection && collectionInput) {
+    collectionInput.value = '';
+  }
+}
+
+function highlightActiveConversation() {
+  if (!conversationList) return;
+  Array.from(conversationList.querySelectorAll('.list-group-item')).forEach(item => {
+    const isActive = activeConversationId && item.dataset.id === activeConversationId;
+    item.classList.toggle('active', Boolean(isActive));
+  });
+}
+
+function buildConversationCard(conversation) {
+  const item = document.createElement('button');
+  item.type = 'button';
+  item.className = 'list-group-item list-group-item-action';
+  item.dataset.id = conversation.id;
+  item.innerHTML = `
+    <div class="d-flex w-100 justify-content-between">
+      <h6 class="mb-1">${conversation.title || 'Conversazione'}</h6>
+      <small class="text-muted">${conversation.updated_at || ''}</small>
+    </div>
+    <div class="d-flex w-100 justify-content-between">
+      <p class="mb-1 text-muted">${conversation.preview || 'Apri per continuare'}</p>
+      ${conversation.collection ? `<span class="badge text-bg-light">${conversation.collection}</span>` : ''}
+    </div>
+  `;
+  if (activeConversationId && conversation.id === activeConversationId) {
+    item.classList.add('active');
+  }
+  item.addEventListener('click', () => {
+    loadConversation(conversation.id);
+  });
+  return item;
+}
+
+function renderConversations(list) {
+  if (!conversationList) return;
+  conversationList.innerHTML = '';
+  if (!list.length) {
+    conversationList.innerHTML = '<div class="text-muted small px-2 py-1">Nessuna conversazione disponibile</div>';
+    return;
+  }
+  list.forEach(conv => {
+    conversationList.appendChild(buildConversationCard(conv));
+  });
+  highlightActiveConversation();
+}
+
+function normalizeConversationItem(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const id = raw.id || raw.conversation_id || raw.conversationId || raw.uuid;
+  if (!id) return null;
+  const preview = raw.preview || raw.last_message || raw.lastMessage || raw.summary || '';
+  const updated = raw.updated_at || raw.updatedAt || raw.last_updated || raw.timestamp || '';
+  const collection = raw.collection || '';
+  const title = raw.title || raw.name || `Chat #${String(id).slice(-6)}`;
+  return { id: String(id), preview, updated_at: updated, collection, title };
+}
+
+function normalizeMessages(raw) {
+  if (!raw) return [];
+  const source = Array.isArray(raw) ? raw : (raw.messages || raw.conversation?.messages || []);
+  return source.map(msg => {
+    const role = msg.role || msg.who || msg.sender || 'assistant';
+    const content = msg.content || msg.message || msg.text || '';
+    return {
+      who: role === 'user' ? 'user' : 'bot',
+      text: String(content || '')
+    };
+  }).filter(m => m.text);
+}
+
+async function fetchConversations(showLoading = true) {
+  if (!USERNAME) {
+    setConversationStatus('Nessun utente in sessione, conversazioni non disponibili.');
+    return;
+  }
+  if (showLoading) setConversationStatus('Caricamento conversazioni...');
+  try {
+    const url = new URL(`${API_BASE}/conversations`);
+    url.searchParams.set('username', USERNAME);
+    url.searchParams.set('limit', '10');
+    const res = await fetch(url.toString(), {
+      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const itemsRaw = data?.conversations || data?.items || [];
+    const normalized = itemsRaw.map(normalizeConversationItem).filter(Boolean);
+    renderConversations(normalized);
+    setConversationStatus(normalized.length ? 'Seleziona per riprendere' : 'Nessuna conversazione disponibile');
+    // Se abbiamo un ID salvato ma non è più in elenco, lo resettiamo
+    if (activeConversationId && !normalized.some(c => c.id === activeConversationId)) {
+      persistActiveConversation(null);
+    }
+  } catch (err) {
+    console.error('Errore caricamento conversazioni', err);
+    setConversationStatus('Errore nel caricamento conversazioni', true);
+  }
+}
+
+async function loadConversation(conversationId) {
+  if (!conversationId) return;
+  setConversationStatus('Caricamento conversazione...');
+  try {
+    const url = new URL(`${API_BASE}/conversations/${conversationId}`);
+    if (USERNAME) url.searchParams.set('username', USERNAME);
+    const res = await fetch(url.toString(), {
+      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const convCollection = data.collection || data.conversation?.collection || '';
+    const messages = normalizeMessages(data);
+    chatWindow.innerHTML = '';
+    messages.forEach(msg => appendMessage(msg.who, msg.text, false));
+    persistChatHistory(messages, conversationId);
+    persistActiveConversation(conversationId);
+    if (convCollection && collectionInput) {
+      const normalized = USERNAME ? stripUsernamePrefix(convCollection) : convCollection;
+      collectionInput.value = normalized;
+      updateCollectionBadge();
+      updateCrossLink();
+    }
+    highlightActiveConversation();
+    setConversationStatus('Conversazione caricata');
+  } catch (err) {
+    console.error('Errore caricamento conversazione', err);
+    setConversationStatus('Impossibile caricare la conversazione', true);
+  }
+}
+
+askBtn.addEventListener('click', async () => {
+  const question = questionInput.value.trim();
+  if (!question) return;
+  const conversationHistory = buildConversationHistory();
+  appendMessage('user', question);
+  askBtn.disabled = true;
+  askSpinner.classList.remove('d-none');
+  chatWindow.classList.add('chat-window-loading');
+
+  const formData = new FormData();
+  formData.append('question', question);
+  const selectedCollection = (collectionInput?.value || '').trim();
+  const selectedOption = collectionInput?.selectedOptions?.[0];
+  const collectionForApi = USERNAME
+    ? selectedCollection // backend aggiunge prefisso username se necessario
+    : (selectedOption?.dataset.original ?? selectedCollection ?? '');
+  // Inviamo sempre il parametro collection: stringa vuota se l'utente non ha selezionato una collection
+  formData.append('collection', collectionForApi);
+  if (USERNAME) {
+    formData.append('username', USERNAME);
+  }
+  const selectedModel = (modelSelect?.value || '').trim();
+  if (selectedModel) {
+    formData.append('model', selectedModel);
+  }
+  if (activeConversationId) {
+    formData.append('conversation_id', activeConversationId);
+  }
+  if (conversationHistory.length) {
+    formData.append('conversation_history', JSON.stringify(conversationHistory));
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/chat`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (res.ok) {
+      appendMessage('bot', data.message);
+      const newConversationId = data.conversation_id || data.conversationId || data?.conversation?.id;
+      if (newConversationId) {
+        persistActiveConversation(newConversationId);
+        persistChatHistory(loadChatHistory(), newConversationId);
+        await fetchConversations(false);
+      }
+    } else {
+      appendMessage('bot', data.detail || 'Errore nella richiesta');
+    }
+  } catch (err) {
+    console.error(err);
+    appendMessage('bot', 'Errore di rete');
+  } finally {
+    askSpinner.classList.add('d-none');
+    askBtn.disabled = false;
+    chatWindow.classList.remove('chat-window-loading');
+    questionInput.value = '';
+  }
+});
+
+// All'apertura pagina: precompila da query string ?collection=
+document.addEventListener('DOMContentLoaded', () => {
+  const qs = new URLSearchParams(window.location.search);
+  const qsCollection = (qs.get('collection') || '').trim();
+  restoreActiveConversation();
+  if (qsCollection) {
+    collectionInput.value = qsCollection;
+    try { localStorage.setItem(STORAGE_KEY_COLLECTION, qsCollection); } catch {}
+  } else {
+    try {
+      const saved = (localStorage.getItem(STORAGE_KEY_COLLECTION) || '').trim();
+      if (saved) collectionInput.value = saved;
+    } catch {}
+  }
+  updateCollectionBadge();
+  updateCrossLink();
+  restoreChatHistory();
+  fetchCollections();
+  fetchModels();
+  restoreSavedModel();
+  fetchConversations();
+});
+
+// Aggiorna il badge quando cambia la collection
+collectionInput?.addEventListener('change', () => {
+  updateCollectionBadge();
+  const value = (collectionInput?.value || '').trim();
+  try {
+    if (value) localStorage.setItem(STORAGE_KEY_COLLECTION, value);
+    else localStorage.removeItem(STORAGE_KEY_COLLECTION);
+  } catch {}
+  updateCrossLink();
+});
+
+function persistSelectedModel(modelName) {
+  try {
+    if (modelName) localStorage.setItem(STORAGE_KEY_MODEL, modelName);
+    else localStorage.removeItem(STORAGE_KEY_MODEL);
+  } catch {}
+}
+
+function restoreSavedModel() {
+  try {
+    const saved = (localStorage.getItem(STORAGE_KEY_MODEL) || '').trim();
+    if (!saved || !modelSelect) return;
+    // If options are already loaded, select immediately; otherwise, wait for load
+    const attemptSelect = () => {
+      const option = Array.from(modelSelect.options).find(opt => opt.value === saved);
+      if (option) modelSelect.value = saved;
+    };
+    attemptSelect();
+    modelSelect.addEventListener('loadedmodels', attemptSelect, { once: true });
+  } catch {}
+}
+
+function normalizeCollections(raw) {
+  if (!Array.isArray(raw)) return [];
+  const names = raw.map(item => {
+    if (typeof item === 'string') return item.trim();
+    if (item && typeof item === 'object') {
+      const candidate = item.collection || item.name || item.id || item.title || '';
+      return String(candidate || '').trim();
+    }
+    return '';
+  }).filter(Boolean);
+  return Array.from(new Set(names));
+}
+
+function stripUsernamePrefix(name) {
+  if (!name || !USERNAME) return name;
+  const prefix = `${USERNAME}_`;
+  if (name === USERNAME) return '';
+  if (name.startsWith(prefix)) return name.slice(prefix.length);
+  return name;
+}
+
+function buildCollectionOption(name) {
+  const label = stripUsernamePrefix(name);
+
+  const option = document.createElement('option');
+  option.dataset.original = name;
+  option.value = USERNAME ? label : name;
+  option.textContent = USERNAME ? (label || '(default)') : name;
+  return option;
+}
+
+
+async function fetchCollections() {
+  if (!collectionInput) return;
+  collectionInput.disabled = true;
+  collectionInput.innerHTML = '<option value="">Caricamento collections...</option>';
+  const currentValue = (collectionInput?.value || '').trim();
+  const savedRaw = currentValue || (localStorage.getItem(STORAGE_KEY_COLLECTION) || '').trim();
+  const savedStripped = USERNAME ? stripUsernamePrefix(savedRaw) : savedRaw;
+
+  try {
+    const url = new URL(`${API_BASE}/collections`);
+    if (USERNAME) url.searchParams.set('username', USERNAME);
+    const res = await fetch(url.toString(), {
+      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const collections = normalizeCollections(data?.collections || data);
+    if (!collections.length) throw new Error('Nessuna collection disponibile');
+
+    collectionInput.innerHTML = '<option value="">-- Seleziona una collection --</option>';
+    collections.forEach(name => {
+      collectionInput.appendChild(buildCollectionOption(name));
+    });
+   // if (savedRaw && !collections.includes(savedRaw)) {
+   //   const opt = buildCollectionOption(savedRaw);
+   //   opt.textContent = `${opt.textContent} (non presente in elenco)`;
+   //   collectionInput.appendChild(opt);
+   // }
+    // Prova a selezionare per valore oppure per original
+    const trySelect = (val) => {
+      if (!val) return false;
+      const option = Array.from(collectionInput.options).find(
+        opt => opt.value === val || opt.dataset.original === val
+      );
+      if (option) {
+        collectionInput.value = option.value;
+        return true;
+      }
+      return false;
+    };
+    if (!trySelect(savedStripped)) {
+      trySelect(savedRaw);
+    }
+  } catch (err) {
+    console.error('Errore nel caricamento collections', err);
+    collectionInput.innerHTML = '<option value="">Nessuna collection disponibile</option>';
+  } finally {
+    collectionInput.disabled = false;
+    updateCollectionBadge();
+    updateCrossLink();
+  }
+}
+
+function normalizeModelNames(raw) {
+  if (!Array.isArray(raw)) return [];
+  const names = raw.map(item => {
+    if (typeof item === 'string') return item.trim();
+    if (item && typeof item === 'object') {
+      const candidate = item.name || item.model || item.id || item.tag || item.title || '';
+      return String(candidate || '').trim();
+    }
+    return '';
+  }).filter(Boolean);
+  return Array.from(new Set(names));
+}
+
+async function fetchModels() {
+  if (!modelSelect) return;
+  modelSelect.disabled = true;
+  modelSelect.innerHTML = '<option value="">Caricamento modelli...</option>';
+
+  try {
+    const res = await fetch(`${API_BASE}/ollama/models`, {
+      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    const models = normalizeModelNames(data?.models);
+    if (!models.length) throw new Error('Nessun modello disponibile');
+    modelSelect.innerHTML = '<option value="">Seleziona un modello (opzionale)</option>';
+    models.forEach(modelName => {
+      const opt = document.createElement('option');
+      opt.value = modelName;
+      opt.textContent = modelName;
+      modelSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error('Errore nel caricamento modelli', err);
+    modelSelect.innerHTML = '<option value="">Nessun modello caricato</option>';
+  } finally {
+    modelSelect.disabled = false;
+    // Custom event to signal options ready
+    const evt = new Event('loadedmodels');
+    modelSelect.dispatchEvent(evt);
+  }
+}
+
+modelSelect?.addEventListener('change', () => {
+  const value = (modelSelect?.value || '').trim();
+  persistSelectedModel(value);
+});
+
+newConversationBtn?.addEventListener('click', () => {
+  clearChatUI(true);
+  setConversationStatus('Nuova conversazione avviata');
+  fetchConversations(false);
+});
+
+// Sincronizza cambi da altre pagine/schede
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY_COLLECTION) {
+    const newVal = (e.newValue || '').trim();
+    collectionInput.value = newVal;
+    updateCollectionBadge();
+    updateCrossLink();
+  }
+  if (e.key === STORAGE_KEY_CHAT) {
+    chatWindow.innerHTML = '';
+    restoreChatHistory();
+  }
+  if (e.key === STORAGE_KEY_MODEL) {
+    const newVal = (e.newValue || '').trim();
+    if (modelSelect) {
+      modelSelect.value = newVal;
+    }
+  }
+  if (e.key === STORAGE_KEY_CONVERSATION) {
+    const newId = (e.newValue || '').trim();
+    persistActiveConversation(newId || null);
+  }
+});
+
+function appendMessage(who, text, shouldPersist = true) {
+  const bubble = document.createElement('div');
+  bubble.className = who === 'user' ? 'chat-bubble chat-bubble-user' : 'chat-bubble chat-bubble-bot';
+
+  const label = document.createElement('span');
+  label.className = 'chat-label';
+  label.textContent = who === 'user' ? 'Tu' : 'Bot';
+
+  const paragraph = document.createElement('p');
+  paragraph.className = 'mb-0';
+  paragraph.textContent = text;
+
+  bubble.appendChild(label);
+  bubble.appendChild(paragraph);
+  chatWindow.appendChild(bubble);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  if (shouldPersist) {
+    const history = loadChatHistory();
+    history.push({ who, text });
+    persistChatHistory(history, activeConversationId);
+  }
+}
+</script>
+{% endblock %}
