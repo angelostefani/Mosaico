@@ -764,6 +764,31 @@ def init_qdrant_client() -> QdrantClient:
         raise HTTPException(status_code=503, detail=f"Impossibile connettersi a Qdrant: {e}")
 
 
+def _qdrant_search(client: QdrantClient, **kwargs):
+    """
+    Esegue una ricerca compatibile con diverse versioni del client Qdrant.
+
+    - Preferisce `client.search` (client <=1.x).
+    - Se non disponibile, usa `client.query_points` (client >=2.x) e restituisce i punti.
+    """
+    if hasattr(client, "search"):
+        return client.search(**kwargs)
+
+    if hasattr(client, "query_points"):
+        converted = dict(kwargs)
+        # query_points usa `query` (o `vector`) al posto di `query_vector`
+        if "query_vector" in converted and "query" not in converted and "vector" not in converted:
+            converted["query"] = converted.pop("query_vector")
+        # parametri di ricerca rinominati
+        if "search_params" in converted and "params" not in converted:
+            converted["params"] = converted.pop("search_params")
+
+        resp = client.query_points(**converted)
+        return getattr(resp, "points", resp)
+
+    raise AttributeError("Qdrant client non espone search/query_points")
+
+
 def get_embedding_model() -> SentenceTransformer:
     """
     Restituisce il modello di embedding. Se sentence-transformers non è
@@ -1555,7 +1580,8 @@ async def chat(
 
     try:
         primary_results = await run_in_threadpool(
-            client.search,
+            _qdrant_search,
+            client,
             collection_name=coll,
             query_vector=q_emb,
             limit=CHAT_CANDIDATES,
@@ -1577,7 +1603,8 @@ async def chat(
         for vec, term in zip(expansion_vectors, expansion_terms):
             try:
                 retrieved = await run_in_threadpool(
-                    client.search,
+                    _qdrant_search,
+                    client,
                     collection_name=coll,
                     query_vector=vec,
                     limit=per_query_limit,
