@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+pytest
+pdfplumber
+python-docx
+openpyxl
+sentence-transformers
+qdrant-client
+requests
+python-dotenv
+httpx[http2]
+SQLAlchemy>=2.0

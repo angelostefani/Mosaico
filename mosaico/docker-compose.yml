@@ -1,0 +1,20 @@
+services:
+  frontend:
+    build: .
+    container_name: mosaico
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    env_file:
+      - .env
+    environment:
+      - DJANGO_DEBUG=false
+      - ALLOWED_HOSTS=localhost,127.0.0.1,192.168.153.248,192.168.118.218
+      # Punta all'API che gira sul server Ubuntu sulla porta 9000
+      - API_BASE=http://192.168.153.248:9000
+      - CSRF_TRUSTED_ORIGINS=http://localhost:9001,http://127.0.0.1:9001,http://192.168.153.248:9001,http://192.168.118.218:9001
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./logs:/app/logs
