@@ -1,0 +1,93 @@
+# ==========================
+# 🐍 Python
+# ==========================
+
+# Byte-compiled / cache / log files
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Virtual environments
+env/
+venv/
+.env/
+.venv/
+
+# ==========================
+# 📦 Distribution / packaging
+# ==========================
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ==========================
+# 🧪 Unit test / coverage reports
+# ==========================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.hypothesis/
+.pytest_cache/
+
+# ==========================
+# 🧰 Django / Flask (non usati ma comuni)
+# ==========================
+instance/
+.webassets-cache
+
+# ==========================
+# 🧠 Type checker / static analysis
+# ==========================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+typings/
+
+# ==========================
+# 📝 Jupyter Notebooks
+# ==========================
+.ipynb_checkpoints
+
+# ==========================
+# 🧑‍💻 IDE / Editor
+# ==========================
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# ==========================
+# ⚙️ Environment variables / config files
+# ==========================
+.env
+.env.*
+*.env
+
+# ==========================
+# 🧭 OS files
+# ==========================
+.DS_Store
+Thumbs.db
+db.sqlite3
+
+# ==========================
+# 🐳 Docker / CI (facoltativo)
+# ==========================
+docker-compose.override.yml

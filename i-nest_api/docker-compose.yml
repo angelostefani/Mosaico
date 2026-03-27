@@ -1,0 +1,40 @@
+services:
+  api:
+    build: .
+    container_name: i-nest_api
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
+    ports:
+      - "9000:9000"
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - OLLAMA_URL=http://host.docker.internal:11434/api/generate
+      - UPLOAD_DIR=/app/uploads
+      - SKIP_AUTH=true
+      - EMBEDDING_MODEL=all-MiniLM-L6-v2
+      - DB_ENGINE=postgres
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=${PG_DB}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+      - ./frontend:/app/frontend:ro
+    networks:
+      - qdrant_external
+      - postgres_external
+      - default
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "9000", "--workers", "2"]
+
+networks:
+  qdrant_external:
+    external: true
+    name: qdrant_project_default
+  postgres_external:
+    external: true
+    name: postgres_project_default  

@@ -1,0 +1,9 @@
+python-dotenv
+requests
+django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+whitenoise
+gunicorn
+psycopg[binary]

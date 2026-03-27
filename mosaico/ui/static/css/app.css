@@ -1,0 +1,136 @@
+:root {
+  --brand-primary: #0056d6;
+  --brand-secondary: #19a0a0;
+  --hero-gradient-start: #1a4fd4;
+  --hero-gradient-end: #19a0a0;
+  --bg-soft: #f5f7fb;
+}
+
+body.bg-body {
+  background: var(--bg-soft);
+  min-height: 100vh;
+}
+
+.navbar .brand-accent {
+  color: #c5fffd;
+}
+
+.navbar .navbar-payoff {
+  max-height: 32px;
+  width: auto;
+}
+
+.messages .alert {
+  border-radius: 0.6rem;
+}
+
+.hero {
+  border-radius: 1rem;
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, var(--hero-gradient-start), var(--hero-gradient-end));
+  min-height: 220px;
+}
+
+.hero-payoff {
+  max-width: 360px;
+}
+
+.icon-circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.card {
+  border-radius: 1rem;
+}
+
+.card .card-footer {
+  border-top: 0;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.btn-outline-light:hover {
+  color: var(--brand-primary);
+}
+
+.chat-window {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  min-height: 260px;
+  max-height: 420px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.chat-window-loading {
+  box-shadow: inset 0 0 0 2px rgba(25, 160, 160, 0.35);
+}
+
+.chat-bubble {
+  display: inline-block;
+  max-width: 85%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.9rem;
+  margin-bottom: 0.35rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  background: #f0f4ff;
+  color: #111;
+}
+
+.chat-bubble-user {
+  margin-left: auto;
+  background: #e6f0ff;
+  color: #0a3ea2;
+}
+
+.chat-bubble-bot {
+  margin-right: auto;
+  background: #f2fbff;
+  color: #0c4a4a;
+}
+
+.chat-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(17, 24, 39, 0.55);
+  margin-bottom: 0.25rem;
+}
+
+.table thead th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.table tbody td {
+  vertical-align: middle;
+}
+
+.list-group-flush .list-group-item {
+  border-left: 0;
+  border-right: 0;
+}
+
+.list-group-flush .list-group-item:first-child {
+  border-top: 0;
+}
+
+.list-group-flush .list-group-item:last-child {
+  border-bottom: 0;
+}
+
+footer {
+  margin-top: auto;
+}

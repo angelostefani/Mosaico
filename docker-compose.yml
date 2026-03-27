@@ -1,0 +1,137 @@
+services:
+
+  # ─── Infrastruttura ──────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    environment:
+      QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  # Avviare solo con: docker compose --profile local up
+  # Se si usa un server Ollama esterno, lasciare questo profilo disattivo
+  # e impostare OLLAMA_URL nel .env con l'IP del server remoto.
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    profiles: [local]
+    restart: unless-stopped
+    environment:
+      OLLAMA_HOST: 0.0.0.0
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    command: ["serve"]
+
+  # ─── Applicazioni ────────────────────────────────────────────────────────────
+
+  api:
+    build: ./i-nest_api
+    container_name: i-nest_api
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - OLLAMA_URL=${OLLAMA_URL}
+      - OLLAMA_MODEL=${OLLAMA_MODEL}
+      - UPLOAD_DIR=/app/uploads
+      - SKIP_AUTH=${SKIP_AUTH}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - CHUNK_SIZE=${CHUNK_SIZE}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP}
+      - QDRANT_SCORE_THRESHOLD=${QDRANT_SCORE_THRESHOLD}
+      - ENABLE_RAG_DEBUG=${ENABLE_RAG_DEBUG}
+      - ENABLE_RERANK=${ENABLE_RERANK}
+      - CHAT_RESULT_LIMIT=${CHAT_RESULT_LIMIT}
+      - CHAT_CANDIDATES=${CHAT_CANDIDATES}
+      - CHAT_CONTEXT_CHAR_BUDGET=${CHAT_CONTEXT_CHAR_BUDGET}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - DB_ENGINE=postgres
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=${PG_DB}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - DJANGO_VERIFY_URL=http://frontend:9001/api/token/verify/
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FILE=/app/logs/app.log
+      - LOG_MAX_BYTES=${LOG_MAX_BYTES:-5242880}
+      - LOG_BACKUP_COUNT=${LOG_BACKUP_COUNT:-5}
+    volumes:
+      - ./i-nest_api/uploads:/app/uploads
+      - ./i-nest_api/logs:/app/logs
+      - ./i-nest_api/frontend:/app/frontend:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "9000", "--workers", "2"]
+
+  frontend:
+    build: ./mosaico
+    container_name: mosaico
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - API_BASE=http://api:9000
+      - API_PUBLIC_BASE=http://localhost:9000
+      - FAKE_TOKEN=${FAKE_TOKEN}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_DIR=${LOG_DIR}
+      - LOG_FILE=${LOG_FILE}
+      - LOG_MAX_BYTES=${LOG_MAX_BYTES}
+      - LOG_BACKUP_COUNT=${LOG_BACKUP_COUNT}
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_DB=${PG_DB}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+    volumes:
+      - ./mosaico/logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+volumes:
+  postgres_data:
+    driver: local
+  qdrant_storage:
+  ollama_data:

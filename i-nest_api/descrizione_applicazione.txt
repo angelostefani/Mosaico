@@ -1,0 +1,20 @@
+Applicazione I-NEST API
+
+Che cosa fa
+L'applicazione permette di caricare documenti (come PDF, Word o file di testo) e di fare domande sui loro contenuti. Per rispondere, combina l'intelligenza artificiale con un motore di ricerca interno, cosi da trovare nei documenti i passaggi utili e riassumerli in una risposta.
+
+Come funziona passo dopo passo
+1. Caricamento: l'utente invia un file all'API. Il file viene salvato in una cartella dedicata e registrato in un piccolo database per tenere traccia degli upload.
+2. Estrazione del testo: il sistema legge il documento e ne ricava il testo pulito, eliminando caratteri strani e normalizzando gli spazi.
+3. Suddivisione in parti: il testo viene spezzato in paragrafi di dimensioni controllate (chiamati "chunk"), ognuno con le informazioni sulla posizione originale nel file.
+4. Creazione degli indici: per ogni chunk viene calcolato un "numero di impronte" (embedding) che rappresenta il contenuto. Questi vettori vengono salvati in Qdrant, un archivio ottimizzato per le ricerche veloci.
+5. Chat: quando arriva una domanda, l'app cerca in Qdrant i chunk piu simili alla richiesta, anche usando piccole varianti della domanda per ampliare la ricerca. I risultati migliori vengono ripuliti da duplicati, uniti se appartengono allo stesso paragrafo e messi in ordine.
+6. Costruzione della risposta: l'app passa la domanda e i brani trovati a un modello linguistico (tramite Ollama). Il modello genera un testo in italiano citando le parti dei documenti che ha usato.
+7. Restituzione all'utente: la risposta viene inviata al client insieme a eventuali messaggi di errore se mancano informazioni sufficienti.
+
+Elementi di supporto
+- File statici (come la pagina web di test) sono serviti da una cartella dedicata.
+- E disponibile un endpoint "healthz" che controlla lo stato di Qdrant, del modello linguistico e dello spazio disco.
+- La sicurezza puo essere gestita tramite token JWT verificati da un servizio Django o disattivata in fase di sviluppo.
+
+In breve: l'app trasforma i tuoi documenti in una base di conoscenza interrogabile tramite chat, cercando automaticamente le parti rilevanti e facendosi aiutare dall'IA per scrivere risposte chiare e citate.

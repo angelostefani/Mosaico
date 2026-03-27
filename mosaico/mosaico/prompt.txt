@@ -1,0 +1,77 @@
+Analizza i seguenti requisiti, e indicami il piano dettagliato di implementazione. Attendi il mio OK prima di procedere con le implementazioni.
+Requisiti:
+Implementare una nuova pagina di chat (quella già esistente non deve essere modificata), con accesso senza autenticazione.
+Il layout della pagina deve essere semplice, specifico per questa pagina.
+La pagina può essere raggiunta tramite una url dove vengono passati come input in querystring "username" e "collection".
+Dalla pagina sarà possibile interagire con la chat tramite API_BASE=http://localhost:9000 utilizzando (senza possibilità di modifica) "username" e "collection" ricevuti.
+
+
+http://localhost:9001/public-chat/?username=<utente>&collection=<collection>
+
+http://localhost:9001/public-chat/?username=tyler&collection=collection01
+
+
+Modificare la pagina "public_chat.html" per apportare dei miglioramenti. Nella parte alta della pagina dovrà essere presente il banner allegato come immagine.
+Analizza i requisiti indicati, e forniscimi il piano di implementazione.
+Attendi il mio OK prima di procedere con le implementazioni.
+
+Aggiungere la funzionalità di cambio password.
+Analizza i requisiti indicati, e forniscimi il piano di implementazione.
+Attendi il mio OK prima di procedere con le implementazioni.
+
+Quando dalla pagina di chat "http://localhost:9001/chat/" mi sposto su un'altra pagina, 
+poi quando torno nella pagina di chat la "Sessione corrente" della chat è vuota.
+Vorrei che il contenuto della chat restasse valorizzato anche quando l'utente si sposta tra le pagine della applicazione e poi torna nella chat.
+Analizza i requisiti indicati, e forniscimi il piano di implementazione.
+Attendi il mio OK prima di procedere con le implementazioni.
+
+Dopo una sessione di chat faccio logout.
+Mi autentico con un altro utente, accedo alla chat e trovo la sessione di chat fatta con l'utente precedente.
+Vorrei che al logout la sessione di chat venisse cancellata e che non venisse trovata da un eventuale nuovo utente che si autentica.
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Devo aggiungere l'immagine "INEST_payoff.png" alla pagina principale.
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+Vorrei aggiungere l'immagine "INEST_payoff.png" opportunamente ridimensionata, nella barra dei menù.
+
+Voglio che la chat corrente venga presa in considerazione come parte del contensto da utilizzare per fornire la risposta.
+Secondo te il testo della chat corrente può essere fornito come input sfruttando in qualche modo il campo "question" del servizio API "/chat", oppute occorre modificare 
+l'API e aggiungere un nuovo campo di input?
+Descrivimi il piano di implementazione, attendi il mio Ok prima di procedere con le implementazioni.
+
+Ho apportato la seguente modifica alla API:
+Aggiunta conversation_history opzionale al POST /chat: normalizzato input (JSON di turni role/content o stringa libera) che viene inserito nel prompt passato al modello, mantenendo il comportamento precedente se assente.
+Descrivimi il piano di implementazione delle modifiche front-end, attendi il mio Ok prima di procedere con le implementazioni.
+
+Nelle FASTAPI (vedi parametro "API_BASE" nel file di configurazione ".env") ho aggiunto l'Endpoint GET "/ollama/models" che elenca i modelli disponibili su Ollama.
+Nelle FASTAPI (vedi parametro "API_BASE" nel file di configurazione ".env") ho modificato l'Endpoint POST "/chat" aggiungendo il parametro non obbligatorio "model", che consente di specificare il model ollama da utilizzare.
+Voglio che nella pagina di Frontend "chat" sia possibile scegliere il model ollama da utilizzare nella chat (tramite combo box, dropdown, etc.).
+Descrivimi il piano di implementazione delle modifiche front-end, se hai bisogno di dettagli accedi ai files del progetto, ma attendi il mio Ok prima di procedere con le implementazioni.
+
+Nel dropdown "Modello Ollama", oltre alla selezione di default con dicitura "selezionaun modello (opzionale)" 
+compaiono due opzioni con dicitura "[object Object]". Sembra quindi che ci sia qualche problema nel caricamento della corretta denominazione dei modelli ollama,
+che di fatto al momento sono due (quindi il numero è corretto).
+Se seleziono una delle opzioni "[object Object]" e provo a inviare la chat, ottengo un errore "Errore chiamata Ollama: 404 Client Error: Not Found for url: http://localhost:11434/api/generate"
+
+Nelle FASTAPI (vedi parametro "API_BASE" nel file di configurazione ".env") ho modificato l'Endpoint GET "/collections",
+aggiungendo il parametro non obbligatorio "username", che consente di specificare lo username di cui si vuole ricevere in output l'elenco delle collections.
+Modificare le pagine "chat" e "upload" in modo tale da rendere il campo di input "Collection" una dropdown.
+Descrivimi il piano di implementazione delle modifiche front-end, se hai bisogno di dettagli accedi ai files del progetto, ma attendi il mio Ok prima di procedere con le implementazioni.
+
+Nella pagina "chat", la dropdown "Collection" deve mostrare le collection andando a togliere al nome delle collection la parte di prefisso data da "username" ed eventuale "_".
+Ad esempio, per lo username "dimostrazione" ho le collection "dimostrazione_film" (che deve comparire nella dropdown come "film), 
+"dimostrazione_mindfulness" (che deve comparire nella dropdown come "mindfulness") e "dimostrazione", che deve comparire nella dropdown come scelta di default, cioè stringa vuota.
+Descrivimi il piano di implementazione delle modifiche front-end, se hai bisogno di dettagli accedi ai files del progetto, ma attendi il mio Ok prima di procedere con le implementazioni.
+
+Quando l'utente seleziona l'opzione "Seleziona una collection (opzionale)" vorrei che venisse chiamato l'endpoint FASTAPI POST "/chat" con parametro "collection" valorizzato come stringa vuota.
+Anche quando la dropdown mostra "nessuna collection disponibile" vorrei che venisse chiamato l'endpoint FASTAPI POST "/chat" con parametro "collection" valorizzato come stringa vuota.
+
+Nella pagina "chat", la dropdown "Collection" deve mostrare la scelta (default) come ultima opzione tra quelle disponibili.
+Analizza i files sorgenti del progetto, in particolare "chat.html", per capire quali modifiche apportare.
+Descrivimi il piano di implementazione delle modifiche front-end, se hai bisogno di dettagli accedi ai files del progetto, ma attendi il mio Ok prima di procedere con le implementazioni.
+
+Nella pagina "chat", la dropdown "Collection" è comparsa la voce "film (non presente in elenco)" Come è possibile? 
+
+Ho modificato le API REST FASTAPI per consentire che l'utente possa recuperare e continuare le ultime conversazioni.
+Controlla le FASTAPI, e modifica la pagina di chat per consentire all'utente di recuperare e continuare le ultime conversazioni.
+Descrivimi il piano di implementazione delle modifiche front-end, se hai bisogno di dettagli accedi ai files del progetto, ma attendi il mio Ok prima di procedere con le implementazioni.
