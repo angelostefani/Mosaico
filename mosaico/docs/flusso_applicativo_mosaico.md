@@ -5,7 +5,7 @@
 Ecosistema modulare per ricerca e chat RAG su documenti aziendali. Comprende:
 
 - **Frontend Django** (mosaico, porta 9001): UI per login/registrazione, upload, chat privata/pubblica, storico caricamenti e configurazione collection.
-- **API FastAPI** (i-nest_api, porta 9000): pipeline ingest → embedding → Qdrant → risposta LLM, persistenza metadati e gestione conversazioni.
+- **API FastAPI** (ai_api, porta 9000): pipeline ingest → embedding → Qdrant → risposta LLM, persistenza metadati e gestione conversazioni.
 - **Qdrant** (porta 6333): database vettoriale per i chunk indicizzati.
 - **Ollama** (porta 11434): serving LLM locale (modello di default configurabile, es. `gemma3:1b`).
 - **SQLite** (default) o **Postgres** (porta host 5433 → container 5432, opzionale): metadati upload e cronologia conversazioni.
@@ -20,7 +20,7 @@ Django Frontend (:9001)
   │  REST con Authorization: Bearer <jwt>
   │  API_BASE (default http://192.168.118.218:9000)
   ▼
-FastAPI (i-nest_api) (:9000)
+FastAPI (ai_api) (:9000)
   ├──► Qdrant (:6333)   — insert/search vettori
   ├──► Ollama (:11434)  — generazione risposta
   └──► SQLite/Postgres  — metadati upload, conversazioni
@@ -89,13 +89,13 @@ Script `migrate_sqlite_to_postgres.py` legge `uploads.sqlite3` e scrive su Postg
 
 I progetti sono indipendenti e vengono avviati singolarmente con Docker Compose.
 
-**Ordine avvio consigliato**: Ollama → Qdrant → API (i-nest_api) → Postgres (se usato) → Frontend (mosaico)
+**Ordine avvio consigliato**: Ollama → Qdrant → API (ai_api) → Postgres (se usato) → Frontend (mosaico)
 
 | Progetto | Compose | Porta | Note |
 |---|---|---|---|
 | Ollama | `ollama_project/docker-compose.yml` | 11434 | Volume `ollama_data` |
 | Qdrant | `qdrant_project/docker-compose.yml` | 6333 | Volume `qdrant_storage` |
-| API | `i-nest_api/docker-compose.yml` | 9000 | `QDRANT_HOST=qdrant`, `OLLAMA_URL=...` |
+| API | `ai_api/docker-compose.yml` | 9000 | `QDRANT_HOST=qdrant`, `OLLAMA_URL=...` |
 | Frontend | `mosaico/docker-compose.yml` | 9001 | `API_BASE=http://192.168.153.248:9000` |
 | Postgres | `postgres_project/docker-compose.yml` | 5433→5432 | Volume `postgres_data` |
 
@@ -108,7 +108,7 @@ Il `docker-compose.yml` del frontend monta `./db.sqlite3` e `./logs` come volumi
 | Componente | Responsabilità |
 |---|---|
 | **Django frontend** | UI, sessione, gestione JWT, sincronizzazione collection tramite `localStorage`, alert/errori, chiamate REST con header `Authorization` |
-| **FastAPI (i-nest_api)** | Endpoint `/upload`, `/chat`, `/uploads`, `/collection(s)`, `/conversations*`, `/healthz`, `/ollama/models`; orchestrazione RAG e persistenza |
+| **FastAPI (ai_api)** | Endpoint `/upload`, `/chat`, `/uploads`, `/collection(s)`, `/conversations*`, `/healthz`, `/ollama/models`; orchestrazione RAG e persistenza |
 | **Qdrant** | Storage vettoriale chunk con payload (`user`, `collection`, `titolo`, `pagina`, `upload_id`) |
 | **Ollama** | Generazione testo da contesto RAG; modello configurabile |
 | **SQLite/Postgres** | Tracciamento upload, conversazioni, messaggi |
@@ -125,6 +125,6 @@ Il `docker-compose.yml` del frontend monta `./db.sqlite3` e `./logs` come volumi
 ## Riferimenti sorgente
 
 - Frontend e UX: `mosaico/docs/mosaico_documentazione.md`
-- API e pipeline RAG: `i-nest_api/docs/documentazione_progetto.md`
+- API e pipeline RAG: `ai_api/docs/documentazione_progetto.md`
 - Infrastruttura container: `ollama_project/docker-compose.yml`, `qdrant_project/docker-compose.yml`, `postgres_project/docker-compose.yml`
 - Variabili d'ambiente: `mosaico/.env.example`

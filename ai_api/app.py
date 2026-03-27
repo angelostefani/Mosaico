@@ -145,7 +145,7 @@ def setup_logging() -> logging.Logger:
 
 
 setup_logging()
-logger = logging.getLogger("i-nest")
+logger = logging.getLogger("ai_api")
 
 
 def current_request_id() -> str:

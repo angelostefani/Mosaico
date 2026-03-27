@@ -1,7 +1,7 @@
 services:
   api:
     build: .
-    container_name: i-nest_api
+    container_name: ai_api
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway" 

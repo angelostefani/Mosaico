@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="./mosaico_api/README.md">API</a> •
+  <a href="./ai_api/README.md">API</a> •
   <a href="./mosaico/README.md">Frontend</a> •
   <a href="./qdrant_project/README.md">Qdrant</a> •
   <a href="./ollama_project/README.md">Ollama</a>
@@ -33,7 +33,7 @@ La repository separa chiaramente i componenti applicativi dai servizi di infrast
 
 | Modulo | Ruolo | Porta predefinita |
 | --- | --- | --- |
-| [`mosaico_api/`](./mosaico_api/README.md) | API FastAPI per upload, indicizzazione, chat RAG, JWT e multi-tenant | `9000` |
+| [`ai_api/`](./ai_api/README.md) | API FastAPI per upload, indicizzazione, chat RAG, JWT e multi-tenant | `9000` |
 | [`mosaico/`](./mosaico/README.md) | Frontend Django per autenticazione, upload, chat e gestione collection | `9001` |
 | [`qdrant_project/`](./qdrant_project/README.md) | Stack Docker minimale per Qdrant | `6333` |
 | [`ollama_project/`](./ollama_project/README.md) | Stack Docker per Ollama e modelli locali | `11434` |
@@ -84,7 +84,7 @@ docker compose up -d
 
 ### 3. Avvia backend e frontend
 
-Per il backend consulta [`mosaico_api/README.md`](./mosaico_api/README.md): contiene setup Python, variabili `.env`, endpoint e note operative.
+Per il backend consulta [`ai_api/README.md`](./ai_api/README.md): contiene setup Python, variabili `.env`, endpoint e note operative.
 
 Per il frontend consulta [`mosaico/README.md`](./mosaico/README.md): contiene setup Django, login/JWT, UI e avvio con Docker o ambiente locale.
 
@@ -108,11 +108,11 @@ Per il frontend consulta [`mosaico/README.md`](./mosaico/README.md): contiene se
 
 ## Documentazione
 
-- [`mosaico_api/README.md`](./mosaico_api/README.md) per API, configurazione, database, endpoint e testing.
+- [`ai_api/README.md`](./ai_api/README.md) per API, configurazione, database, endpoint e testing.
 - [`mosaico/README.md`](./mosaico/README.md) per frontend, autenticazione e interfaccia.
 - [`qdrant_project/README.md`](./qdrant_project/README.md) per il servizio vettoriale.
 - [`ollama_project/README.md`](./ollama_project/README.md) per il serving dei modelli locali.
 
 ## Stato del progetto
 
-La documentazione root e stata riallineata ai nomi reali presenti in repository: `mosaico_api/` e `mosaico/`.
+Il modulo API e stato rinominato da `mosaico_api/` a `ai_api/`. Tutta la documentazione e i link sono stati aggiornati di conseguenza.

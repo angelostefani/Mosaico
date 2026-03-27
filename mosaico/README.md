@@ -1,13 +1,13 @@
-# I-NEST API & Front-End Mosaico
+# AI API & Front-End Mosaico
 
-Progetto: frontend Django con autenticazione JWT e interfaccia per upload documenti, chat RAG e gestione collection, che si interfaccia con le API REST FastAPI (i-nest_api).
+Progetto: frontend Django con autenticazione JWT e interfaccia per upload documenti, chat RAG e gestione collection, che si interfaccia con le API REST FastAPI (ai_api).
 
 ## Architettura
 
 | Componente | Host/porta default | Note |
 |---|---|---|
 | **Frontend Django** (questo repo) | `:9001` | Sessione utente, JWT, UI |
-| **API REST FastAPI** (i-nest_api) | `:9000` | Pipeline RAG, Qdrant, Ollama |
+| **API REST FastAPI** (ai_api) | `:9000` | Pipeline RAG, Qdrant, Ollama |
 | **Qdrant** | `:6333` | Database vettoriale |
 | **Ollama** | `:11434` | LLM serving |
 

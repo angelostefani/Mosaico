@@ -54,8 +54,8 @@ services:
   # ─── Applicazioni ────────────────────────────────────────────────────────────
 
   api:
-    build: ./i-nest_api
-    container_name: i-nest_api
+    build: ./ai_api
+    container_name: ai_api
     restart: unless-stopped
     ports:
       - "9000:9000"
@@ -88,9 +88,9 @@ services:
       - LOG_MAX_BYTES=${LOG_MAX_BYTES:-5242880}
       - LOG_BACKUP_COUNT=${LOG_BACKUP_COUNT:-5}
     volumes:
-      - ./i-nest_api/uploads:/app/uploads
-      - ./i-nest_api/logs:/app/logs
-      - ./i-nest_api/frontend:/app/frontend:ro
+      - ./ai_api/uploads:/app/uploads
+      - ./ai_api/logs:/app/logs
+      - ./ai_api/frontend:/app/frontend:ro
     depends_on:
       postgres:
         condition: service_healthy
