@@ -16,11 +16,27 @@ Browser → Django Frontend (:9001) → FastAPI AI API (:9000)
 ## Running the Stack
 
 ```bash
-# Start everything (standard)
+make up      # Ollama esterno (OLLAMA_URL dal .env)
+make local   # Ollama locale Docker + pull automatico del modello
+make down    # Ferma tutto
+make logs    # Log in tempo reale
+```
+
+Equivalenti senza `make`:
+```bash
+# Ollama esterno
 docker compose up -d --build
 
-# Include local Ollama container
-docker compose --profile local up -d --build
+# Ollama locale (sovrascrive OLLAMA_URL inline)
+OLLAMA_URL=http://ollama:11434/api/generate docker compose --profile local up -d --build
+```
+
+Con `--profile local` il servizio `ollama-pull` scarica automaticamente `OLLAMA_MODEL` al primo avvio; i successivi sono no-op grazie al volume `ollama_data`.
+
+Per cambiare modello: aggiornare `OLLAMA_MODEL` in `.env`, poi:
+```bash
+docker compose exec ollama ollama pull <nuovo-modello>
+make local
 ```
 
 Individual services also have their own `docker-compose.yml` files under `ai_api/`, `mosaico/`, `qdrant_project/`, `ollama_project/`, `postgres_project/`.
@@ -87,10 +103,13 @@ Key variables:
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/upload` | Ingest document |
-| POST | `/chat` | RAG chat |
+| POST | `/upload` | Ingest document (supports `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.json`) |
+| POST | `/chat` | RAG chat (full response) |
+| POST | `/chat/stream` | RAG chat — streaming SSE (`data: {"chunk":"..."}` … `data: {"done":true,"conversation_id":"..."}`) |
 | GET | `/uploads` | Upload history |
 | GET | `/conversations` | Conversation list |
+| GET | `/conversations/{id}` | Conversation detail |
+| DELETE | `/conversations/{id}` | Delete conversation |
 | GET/PUT/DELETE | `/collection/config` | Collection settings |
 | GET | `/healthz` | Full system health check |
 | GET | `/docs` | Swagger UI |

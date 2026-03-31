@@ -2,7 +2,7 @@
 ![Coverage](https://10.196.1.1/ics-projects/ai/i-nest_api/badges/main/coverage.svg)
 
 # Document QA & Chat API
-**Versione 1.3 - 16/03/2026**
+**Versione 1.4 - 31/03/2026**
 
 API per l'upload di documenti, indicizzazione in Qdrant e interazione conversazionale basata su RAG (Retrieval-Augmented Generation), con autenticazione JWT e gestione multi-tenant.
 
@@ -29,14 +29,15 @@ API per l'upload di documenti, indicizzazione in Qdrant e interazione conversazi
 ---
 
 ## Caratteristiche
-- **Upload** di file `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`
+- **Upload** di file `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.json`
 - **Estrazione** testo e chunking (dimensione configurabile)
 - **Embeddings** con `sentence-transformers` (`all-MiniLM-L6-v2`)
 - **Indicizzazione** in Qdrant
-- **Chat RAG** via Ollama locale
+- **Chat RAG** via Ollama locale — risposta completa (`POST /chat`) o **streaming SSE** (`POST /chat/stream`)
 - **Autenticazione** JWT delegata a Django (toggle `SKIP_AUTH`)
 - **Multi-tenant**: namespace per `username` e `collection`
 - **Cronologia chat**: salvataggio conversazioni e ripresa tramite `conversation_id`
+- **Gestione conversazioni**: elenco, lettura messaggi e **cancellazione** (`DELETE /conversations/{id}`)
 - **Storico upload** persistito nel database, consultabile via API
 - **Elenco** e **cancellazione** di collection
 - **Database duale**: SQLite (default, sviluppo) o PostgreSQL (produzione), selezionabile via `DB_ENGINE`
@@ -261,7 +262,7 @@ Carica e indicizza un documento.
 - Form data:
   - `file` (obbligatorio)
   - `username`, `collection` (opzionali)
-  - Formati ammessi: `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`
+  - Formati ammessi: `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.json`
   - Limite dimensione: `MAX_UPLOAD_SIZE_BYTES` (default 20 MB)
 
 **Risposta**:
@@ -322,6 +323,22 @@ Interroga l'IA sul contenuto dei documenti indicizzati.
 }
 ```
 
+### POST /chat/stream
+Identico a `POST /chat` ma restituisce la risposta come **Server-Sent Events** (SSE): i token appaiono progressivamente nel browser senza attendere la risposta completa.
+
+- Headers: `Authorization: Bearer <token>`, `Accept: text/event-stream`
+- Form data: stessi campi di `POST /chat`
+
+**Stream di eventi**:
+```
+data: {"chunk": "La "}
+data: {"chunk": "risposta "}
+data: {"chunk": "arriva..."}
+data: {"done": true, "conversation_id": "b5742e9c-..."}
+```
+
+---
+
 ### GET /conversations
 Restituisce le ultime conversazioni di un utente, ordinate per `updated_at` discendente.
 - Headers: `Authorization: Bearer <token>`
@@ -365,6 +382,20 @@ Restituisce i messaggi di una conversazione in ordine cronologico.
   "collection": "documents"
 }
 ```
+
+### DELETE /conversations/{conversation_id}
+Elimina una conversazione e tutti i suoi messaggi.
+- Headers: `Authorization: Bearer <token>`
+- Query params: `username` (opzionale)
+
+**Risposta**:
+```json
+{ "deleted": "b5742e9c-..." }
+```
+
+Se la conversazione non esiste o non appartiene all'utente, restituisce `404`.
+
+---
 
 ### GET /collection
 Elenca gli elementi di una collection con payload e id.

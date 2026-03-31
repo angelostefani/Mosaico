@@ -50,6 +50,28 @@ services:
     ports:
       - "11434:11434"
     command: ["serve"]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 60s
+
+  # Scarica automaticamente il modello configurato in OLLAMA_MODEL al primo avvio.
+  # Il volume condiviso garantisce la persistenza: i pull successivi sono no-op.
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama_pull
+    profiles: [local]
+    restart: "no"
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["ollama", "pull", "${OLLAMA_MODEL:-gemma3:1b}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
 
   # ─── Applicazioni ────────────────────────────────────────────────────────────
 
@@ -64,6 +86,7 @@ services:
       - QDRANT_PORT=6333
       - OLLAMA_URL=${OLLAMA_URL}
       - OLLAMA_MODEL=${OLLAMA_MODEL}
+      - OLLAMA_TIMEOUT=${OLLAMA_TIMEOUT:-180}
       - UPLOAD_DIR=/app/uploads
       - SKIP_AUTH=${SKIP_AUTH}
       - EMBEDDING_MODEL=${EMBEDDING_MODEL}

@@ -39,6 +39,16 @@ La repository separa chiaramente i componenti applicativi dai servizi di infrast
 | [`ollama_project/`](./ollama_project/README.md) | Stack Docker per Ollama e modelli locali | `11434` |
 | [`postgres_project/`](./postgres_project/docker-compose.yml) | Stack Docker per PostgreSQL opzionale | `5433 -> 5432` |
 
+## Funzionalita principali
+
+- **Chat RAG con streaming** — le risposte appaiono token per token tramite SSE, eliminando l'attesa
+- **Upload multipli** — seleziona piu file contemporaneamente con barra di progresso per ciascuno
+- **Formati supportati** — `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.json`
+- **Gestione conversazioni** — elimina o esporta in Markdown qualsiasi conversazione dalla sidebar
+- **Auto-pull modello Ollama** — con Ollama locale, il modello configurato viene scaricato automaticamente al primo avvio
+- **Multi-tenant** — isolamento per `username` e `collection` tramite namespace Qdrant
+- **Database duale** — SQLite in sviluppo, PostgreSQL in produzione
+
 ## Architettura
 
 ```text
@@ -69,25 +79,20 @@ Il `docker-compose.yml` nella root avvia tutti i servizi insieme: PostgreSQL, Qd
 ```bash
 # Copia e configura le variabili d'ambiente
 cp .env.example .env   # poi edita .env con i tuoi valori
-
-# Avvia tutti i servizi (Ollama su server esterno, già configurato in .env)
-docker compose up -d --build
 ```
 
-Se vuoi avviare anche **Ollama in locale** (richiede GPU o CPU dedicata):
+| Scenario | Windows (PowerShell) | Linux / macOS | Ollama usato |
+|---|---|---|---|
+| Ollama su server esterno | `.\start.ps1 up` | `make up` | `OLLAMA_URL` dal `.env` |
+| Ollama locale Docker | `.\start.ps1 local` | `make local` | container `ollama` interno |
 
-```bash
-docker compose --profile local up -d --build
+Con **Ollama locale** il modello configurato in `OLLAMA_MODEL` viene scaricato automaticamente al primo avvio tramite il servizio `ollama-pull`. I riavvii successivi non riscaricano il modello grazie al volume `ollama_data`.
 
-# Al primo avvio, scarica il modello LLM
-docker compose exec ollama ollama pull gemma3:1b
-```
-
-Al termine tutti i servizi sono raggiungibili agli [endpoint principali](#endpoint-principali).
+Per fermare tutti i container: `.\start.ps1 down` (Windows) / `make down` (Linux/macOS)
 
 ### Avvio per moduli (alternativa)
 
-Se preferisci avviare i componenti separatamente o vuoi più controllo:
+Se preferisci avviare i componenti separatamente o vuoi piu controllo:
 
 ```bash
 cd qdrant_project && docker compose up -d
@@ -95,7 +100,7 @@ cd qdrant_project && docker compose up -d
 
 ```bash
 cd ollama_project && docker compose up -d
-docker compose exec ollama ollama pull gemma3:1b
+docker compose exec ollama ollama pull gemma3:1b   # scarica il modello manualmente
 ```
 
 ```bash
@@ -115,6 +120,20 @@ Per backend e frontend consulta [`ai_api/README.md`](./ai_api/README.md) e [`mos
 | Ollama | `http://localhost:11434` |
 | PostgreSQL | `localhost:5433` |
 
+## Endpoint API notevoli
+
+| Metodo | Path | Descrizione |
+| --- | --- | --- |
+| `POST` | `/upload` | Carica e indicizza un documento |
+| `POST` | `/chat` | Chat RAG (risposta completa JSON) |
+| `POST` | `/chat/stream` | Chat RAG con streaming SSE (token progressivi) |
+| `GET` | `/uploads` | Cronologia upload |
+| `GET` | `/conversations` | Elenco conversazioni |
+| `DELETE` | `/conversations/{id}` | Elimina una conversazione |
+| `GET/PUT/DELETE` | `/collection/config` | Configurazione collection |
+| `GET` | `/healthz` | Health check completo |
+| `GET` | `/docs` | Swagger UI |
+
 ## Perche questa struttura
 
 - Isola UI, API e infrastruttura in moduli separati.
@@ -132,3 +151,5 @@ Per backend e frontend consulta [`ai_api/README.md`](./ai_api/README.md) e [`mos
 ## Stato del progetto
 
 Il modulo API e stato rinominato da `mosaico_api/` a `ai_api/`. Tutta la documentazione e i link sono stati aggiornati di conseguenza.
+
+Funzionalita aggiunte nella revisione corrente: streaming SSE su `/chat/stream`, upload multipli con progress per-file, eliminazione ed esportazione conversazioni, supporto file `.json`, pull automatico del modello Ollama al primo avvio, script `start.ps1` per Windows.
