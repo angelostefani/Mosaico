@@ -208,6 +208,24 @@ def list_uploads(request):
     return render(request, 'ui/uploads.html', context)
 
 @login_required
+def delete_conversation(request, conversation_id):
+    if request.method != 'DELETE':
+        return JsonResponse({'detail': 'Metodo non consentito.'}, status=405)
+    api_token = request.session.get('jwt_token') or FAKE_TOKEN
+    headers = {'Authorization': f'Bearer {api_token}'}
+    params = {'username': request.user.username}
+    try:
+        r = requests.delete(
+            f'{API_BASE}/conversations/{conversation_id}',
+            params=params,
+            headers=headers,
+            timeout=10,
+        )
+        return JsonResponse(r.json(), status=r.status_code)
+    except requests.RequestException:
+        return JsonResponse({'detail': 'Errore di connessione al backend.'}, status=503)
+
+@login_required
 def collection_config(request):
     context = {
         'api_base': API_PUBLIC_BASE,

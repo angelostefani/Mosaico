@@ -19,7 +19,7 @@
         <div class="mb-3">
           <label class="form-label fw-semibold">Seleziona file</label>
           <div class="input-group">
-            <input type="file" class="form-control" id="fileInput">
+            <input type="file" class="form-control" id="fileInput" multiple>
             <button class="btn btn-primary" id="uploadBtn">
               <i class="bi bi-cloud-arrow-up me-1"></i>
               Carica
@@ -229,41 +229,65 @@ uploadBtn.addEventListener('click', async () => {
   uploadBtn.disabled = true;
   uploadStatus.innerHTML = '';
 
-  const formData = new FormData();
-  formData.append('file', fileInput.files[0]);
-  if (collection) {
-    formData.append('collection', collection);
-  }
-  if (USERNAME) {
-    formData.append('username', USERNAME);
+  const files = Array.from(fileInput.files);
+
+  // Crea una riga di stato per ogni file
+  files.forEach((file, idx) => {
+    uploadStatus.insertAdjacentHTML('beforeend', `
+      <div id="upload-row-${idx}" class="d-flex align-items-center gap-2 mb-1 small">
+        <span class="text-truncate flex-grow-1" style="max-width:60%">${file.name}</span>
+        <span id="upload-status-${idx}" class="badge bg-secondary">In attesa...</span>
+      </div>
+    `);
+  });
+
+  let allOk = true;
+  for (let idx = 0; idx < files.length; idx++) {
+    const file = files[idx];
+    const statusBadge = document.getElementById(`upload-status-${idx}`);
+    statusBadge.className = 'badge bg-warning text-dark';
+    statusBadge.textContent = 'In caricamento...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    if (collection) formData.append('collection', collection);
+    if (USERNAME) formData.append('username', USERNAME);
+
+    try {
+      const response = await fetch(UPLOAD_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_TOKEN}`,
+          'X-CSRFToken': getCsrfToken(),
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+      });
+      const data = await response.json();
+      if (response.ok) {
+        statusBadge.className = 'badge bg-success';
+        statusBadge.textContent = 'Completato';
+      } else if (response.status === 401 || response.status === 403) {
+        statusBadge.className = 'badge bg-danger';
+        statusBadge.textContent = 'Non autorizzato';
+        allOk = false;
+      } else {
+        statusBadge.className = 'badge bg-danger';
+        statusBadge.textContent = data.detail || data.message || 'Errore';
+        allOk = false;
+      }
+    } catch (error) {
+      console.error(error);
+      statusBadge.className = 'badge bg-danger';
+      statusBadge.textContent = 'Errore di rete';
+      allOk = false;
+    }
   }
 
-  try {
-    const response = await fetch(UPLOAD_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${API_TOKEN}`,
-        'X-CSRFToken': getCsrfToken(),
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: formData
-    });
-    const data = await response.json();
-    if (response.ok) {
-      const msgExtra = data.upload_id ? ` (Upload ID: ${data.upload_id})` : '';
-      uploadStatus.innerHTML = `<div class="alert alert-success">${data.message}${msgExtra}</div>`;
-      fileInput.value = '';
-    } else if (response.status === 401 || response.status === 403) {
-      uploadStatus.innerHTML = '<div class="alert alert-danger">Sessione non autorizzata. Effettua nuovamente l\'accesso.</div>';
-    } else {
-      uploadStatus.innerHTML = `<div class="alert alert-danger">${data.detail || data.message}</div>`;
-    }
-  } catch (error) {
-    console.error(error);
-    uploadStatus.innerHTML = `<div class="alert alert-danger">Errore di rete</div>`;
-  } finally {
-    uploadBtn.disabled = false;
+  if (allOk) {
+    fileInput.value = '';
   }
+  uploadBtn.disabled = false;
 });
 
 // All'avvio della pagina: se la collection e' valorizzata, carica il riepilogo

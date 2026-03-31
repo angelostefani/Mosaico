@@ -57,36 +57,52 @@ API FastAPI (:9000)
 
 ## Quick Start
 
-### 1. Prerequisiti
+### Prerequisiti
 
 - Docker e Docker Compose
 - Python 3.11+ se vuoi eseguire API o frontend fuori da container
 
-### 2. Avvia i servizi di base
+### Avvio completo con un solo comando (consigliato)
+
+Il `docker-compose.yml` nella root avvia tutti i servizi insieme: PostgreSQL, Qdrant, API e Frontend.
 
 ```bash
-cd qdrant_project
-docker compose up -d
+# Copia e configura le variabili d'ambiente
+cp .env.example .env   # poi edita .env con i tuoi valori
+
+# Avvia tutti i servizi (Ollama su server esterno, già configurato in .env)
+docker compose up -d --build
+```
+
+Se vuoi avviare anche **Ollama in locale** (richiede GPU o CPU dedicata):
+
+```bash
+docker compose --profile local up -d --build
+
+# Al primo avvio, scarica il modello LLM
+docker compose exec ollama ollama pull gemma3:1b
+```
+
+Al termine tutti i servizi sono raggiungibili agli [endpoint principali](#endpoint-principali).
+
+### Avvio per moduli (alternativa)
+
+Se preferisci avviare i componenti separatamente o vuoi più controllo:
+
+```bash
+cd qdrant_project && docker compose up -d
 ```
 
 ```bash
-cd ollama_project
-docker compose up -d
+cd ollama_project && docker compose up -d
 docker compose exec ollama ollama pull gemma3:1b
 ```
 
 ```bash
-cd postgres_project
-docker compose up -d
+cd postgres_project && docker compose up -d
 ```
 
-> PostgreSQL e opzionale: il backend supporta anche SQLite per lo sviluppo locale.
-
-### 3. Avvia backend e frontend
-
-Per il backend consulta [`ai_api/README.md`](./ai_api/README.md): contiene setup Python, variabili `.env`, endpoint e note operative.
-
-Per il frontend consulta [`mosaico/README.md`](./mosaico/README.md): contiene setup Django, login/JWT, UI e avvio con Docker o ambiente locale.
+Per backend e frontend consulta [`ai_api/README.md`](./ai_api/README.md) e [`mosaico/README.md`](./mosaico/README.md).
 
 ## Endpoint principali
 

@@ -14,4 +14,5 @@ urlpatterns = [
     path('public-chat/', views.public_chat, name='public_chat'),
     path('password/change/', views.change_password, name='change_password'),
     path('uploads/', views.list_uploads, name='list_uploads'),
+    path('conversations/<str:conversation_id>/delete/', views.delete_conversation, name='delete_conversation'),
 ]

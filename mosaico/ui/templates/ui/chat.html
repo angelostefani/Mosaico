@@ -12,7 +12,12 @@
       <div class="card-body d-flex flex-column">
         <div class="d-flex align-items-center justify-content-between mb-3">
           <h2 class="h5 mb-0">Sessione corrente</h2>
-          <span id="collectionBadge" class="badge bg-info-subtle text-info-emphasis d-none"></span>
+          <div class="d-flex align-items-center gap-2">
+            <span id="collectionBadge" class="badge bg-info-subtle text-info-emphasis d-none"></span>
+            <button class="btn btn-outline-secondary btn-sm" id="exportChatBtn" title="Esporta conversazione" type="button">
+              <i class="bi bi-download me-1"></i>Esporta
+            </button>
+          </div>
         </div>
         <div id="chatWindow" class="chat-window flex-grow-1 mb-3"></div>
         <div class="input-group">
@@ -224,27 +229,62 @@ function highlightActiveConversation() {
 }
 
 function buildConversationCard(conversation) {
-  const item = document.createElement('button');
-  item.type = 'button';
-  item.className = 'list-group-item list-group-item-action';
-  item.dataset.id = conversation.id;
-  item.innerHTML = `
-    <div class="d-flex w-100 justify-content-between">
-      <h6 class="mb-1">${conversation.title || 'Conversazione'}</h6>
-      <small class="text-muted">${conversation.updated_at || ''}</small>
-    </div>
-    <div class="d-flex w-100 justify-content-between">
-      <p class="mb-1 text-muted">${conversation.preview || 'Apri per continuare'}</p>
-      ${conversation.collection ? `<span class="badge text-bg-light">${conversation.collection}</span>` : ''}
-    </div>
-  `;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'list-group-item list-group-item-action d-flex align-items-start gap-2 p-2';
+  wrapper.dataset.id = conversation.id;
   if (activeConversationId && conversation.id === activeConversationId) {
-    item.classList.add('active');
+    wrapper.classList.add('active');
   }
-  item.addEventListener('click', () => {
-    loadConversation(conversation.id);
+
+  const body = document.createElement('div');
+  body.className = 'flex-grow-1 overflow-hidden';
+  body.style.cursor = 'pointer';
+  body.innerHTML = `
+    <div class="d-flex w-100 justify-content-between">
+      <h6 class="mb-1 text-truncate">${conversation.title || 'Conversazione'}</h6>
+      <small class="text-muted text-nowrap ms-1">${conversation.updated_at || ''}</small>
+    </div>
+    <p class="mb-0 text-muted small text-truncate">${conversation.preview || 'Apri per continuare'}</p>
+  `;
+  body.addEventListener('click', () => loadConversation(conversation.id));
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'btn btn-link btn-sm text-danger p-0 flex-shrink-0';
+  deleteBtn.title = 'Elimina conversazione';
+  deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+  deleteBtn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if (!confirm('Eliminare questa conversazione?')) return;
+    try {
+      const res = await fetch(`/conversations/${conversation.id}/delete/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCsrfToken() }
+      });
+      if (res.ok || res.status === 404) {
+        wrapper.remove();
+        if (activeConversationId === conversation.id) {
+          clearChatUI(true);
+          persistActiveConversation(null);
+        }
+      } else {
+        alert('Errore durante l\'eliminazione.');
+      }
+    } catch {
+      alert('Errore di rete durante l\'eliminazione.');
+    }
   });
-  return item;
+
+  wrapper.appendChild(body);
+  wrapper.appendChild(deleteBtn);
+  return wrapper;
+}
+
+function getCsrfToken(name = 'csrftoken') {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return '';
 }
 
 function renderConversations(list) {
@@ -377,22 +417,71 @@ askBtn.addEventListener('click', async () => {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/chat`, {
+    const res = await fetch(`${API_BASE}/chat/stream`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${JWT_TOKEN}` },
       body: formData
     });
-    const data = await res.json();
-    if (res.ok) {
-      appendMessage('bot', data.message);
-      const newConversationId = data.conversation_id || data.conversationId || data?.conversation?.id;
-      if (newConversationId) {
-        persistActiveConversation(newConversationId);
-        persistChatHistory(loadChatHistory(), newConversationId);
-        await fetchConversations(false);
+
+    if (!res.ok) {
+      let detail = 'Errore nella richiesta';
+      try { detail = (await res.json()).detail || detail; } catch {}
+      appendMessage('bot', detail);
+      return;
+    }
+
+    // Crea bubble bot vuota e aggiorna token-per-token
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble chat-bubble-bot';
+    const label = document.createElement('span');
+    label.className = 'chat-label';
+    label.textContent = 'Bot';
+    const paragraph = document.createElement('p');
+    paragraph.className = 'mb-0';
+    bubble.appendChild(label);
+    bubble.appendChild(paragraph);
+    chatWindow.appendChild(bubble);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullAnswer = '';
+    let newConversationId = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // mantieni riga incompleta nel buffer
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = line.slice(6).trim();
+        if (!payload) continue;
+        try {
+          const evt = JSON.parse(payload);
+          if (evt.chunk) {
+            fullAnswer += evt.chunk;
+            paragraph.textContent = fullAnswer;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+          } else if (evt.done) {
+            newConversationId = evt.conversation_id || null;
+          } else if (evt.error) {
+            paragraph.textContent = evt.error;
+          }
+        } catch {}
       }
-    } else {
-      appendMessage('bot', data.detail || 'Errore nella richiesta');
+    }
+
+    // Persisti la risposta e aggiorna la lista conversazioni
+    const history = loadChatHistory();
+    history.push({ who: 'bot', text: fullAnswer });
+    persistChatHistory(history, activeConversationId);
+    if (newConversationId) {
+      persistActiveConversation(newConversationId);
+      persistChatHistory(loadChatHistory(), newConversationId);
+      await fetchConversations(false);
     }
   } catch (err) {
     console.error(err);
@@ -649,5 +738,22 @@ function appendMessage(who, text, shouldPersist = true) {
     persistChatHistory(history, activeConversationId);
   }
 }
+
+document.getElementById('exportChatBtn')?.addEventListener('click', () => {
+  const history = loadChatHistory();
+  if (!history.length) {
+    alert('Nessun messaggio da esportare.');
+    return;
+  }
+  const lines = history.map(m => `**${m.who === 'user' ? 'Tu' : 'Bot'}**: ${m.text}`);
+  const md = `# Conversazione\n\n${lines.join('\n\n')}\n`;
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `conversazione_${activeConversationId || Date.now()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
 </script>
 {% endblock %}
