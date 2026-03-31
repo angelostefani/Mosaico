@@ -1,10 +1,18 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block page_title %}I-NEST Mosaico{% endblock %}</title>
+  <!-- Script anti-flash: applica il tema salvato prima che il CSS venga renderizzato -->
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      var preferred = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', preferred);
+    })();
+  </script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <link href="{% static 'css/app.css' %}" rel="stylesheet">
@@ -16,7 +24,7 @@
     <div class="container">
       <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="{% url 'home' %}">
         <img src="{% static 'img/INEST_payoff_mini.png' %}" alt="Payoff I-NEST" class="navbar-payoff">
-        <span class="brand-accent">MOSAICO</span> 
+        <span class="brand-accent">MOSAICO</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -24,16 +32,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'upload' %}">Upload</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'upload' %}active{% endif %}" href="{% url 'upload' %}"><i class="bi bi-cloud-arrow-up me-1"></i>Upload</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'chat' %}">Chat</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'chat' %}active{% endif %}" href="{% url 'chat' %}"><i class="bi bi-chat-dots me-1"></i>Chat</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'list_uploads' %}">Caricamenti</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_uploads' %}active{% endif %}" href="{% url 'list_uploads' %}"><i class="bi bi-list-ul me-1"></i>Caricamenti</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'collection_config' %}">Configurazione Collection</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'collection_config' %}active{% endif %}" href="{% url 'collection_config' %}"><i class="bi bi-sliders me-1"></i>Config</a>
           </li>
         </ul>
         <ul class="navbar-nav ms-lg-4">
@@ -45,7 +53,7 @@
             <li class="nav-item me-lg-2">
               <a class="btn btn-outline-light btn-sm" href="{% url 'change_password' %}">Cambio password</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item me-lg-2">
               <form method="post" action="{% url 'logout' %}" class="d-flex">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
@@ -55,10 +63,15 @@
             <li class="nav-item me-2">
               <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Login</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item me-lg-2">
               <a class="btn btn-light btn-sm text-primary fw-semibold" href="{% url 'register' %}">Registrati</a>
             </li>
           {% endif %}
+          <li class="nav-item">
+            <button class="btn btn-outline-light btn-sm" id="themeToggleBtn" title="Cambia tema" type="button">
+              <i class="bi bi-moon-stars" id="themeToggleIcon"></i>
+            </button>
+          </li>
         </ul>
       </div>
     </div>
@@ -75,7 +88,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="py-3 border-top bg-white">
+  <footer class="py-3 border-top bg-body-tertiary">
     <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between small text-muted">
       <span>&copy; {% now "Y" %} I-NEST</span>
       <span class="text-secondary">Mosaico</span>
@@ -85,6 +98,46 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     (function () {
+      // ---- Dark mode toggle ----
+      const btn = document.getElementById('themeToggleBtn');
+      const icon = document.getElementById('themeToggleIcon');
+
+      function applyTheme(theme) {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        if (icon) icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon-stars';
+        try { localStorage.setItem('theme', theme); } catch {}
+      }
+
+      // Sincronizza icona con il tema già applicato dallo script anti-flash
+      applyTheme(document.documentElement.getAttribute('data-bs-theme') || 'light');
+
+      btn?.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-bs-theme');
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // Sincronizza tra tab
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'theme' && e.newValue) applyTheme(e.newValue);
+      });
+
+      // ---- Password visibility toggle ----
+      document.querySelectorAll('[data-pwd-toggle]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = document.getElementById(btn.dataset.pwdToggle);
+          const icon = btn.querySelector('i');
+          if (!input) return;
+          if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'bi bi-eye-slash';
+          } else {
+            input.type = 'password';
+            icon.className = 'bi bi-eye';
+          }
+        });
+      });
+
+      // ---- Logout: pulisce localStorage ----
       const STORAGE_KEY_CHAT = 'chat.currentSession';
       const STORAGE_KEY_COLLECTION = 'collection.current';
       const logoutForm = document.querySelector('form[action="{% url 'logout' %}"]');

@@ -22,10 +22,24 @@
           {% for field in form %}
             <div class="mb-3">
               <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-              {% if field.errors %}
-                {{ field|add_class:"form-control is-invalid" }}
+              {% if field.field.widget.input_type == 'password' %}
+                <div class="input-group">
+                  {% if field.errors %}
+                    {{ field|add_class:"form-control is-invalid" }}
+                  {% else %}
+                    {{ field|add_class:"form-control" }}
+                  {% endif %}
+                  <button class="btn btn-outline-secondary" type="button"
+                          data-pwd-toggle="{{ field.id_for_label }}" tabindex="-1" title="Mostra/nascondi">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
               {% else %}
-                {{ field|add_class:"form-control" }}
+                {% if field.errors %}
+                  {{ field|add_class:"form-control is-invalid" }}
+                {% else %}
+                  {{ field|add_class:"form-control" }}
+                {% endif %}
               {% endif %}
               {% if field.help_text %}
                 <div class="form-text">{{ field.help_text }}</div>
@@ -38,7 +52,7 @@
           <button class="btn btn-success w-100" type="submit">Registrati</button>
         </form>
       </div>
-      <div class="card-footer text-center bg-light">
+      <div class="card-footer text-center bg-body-tertiary">
         <small class="text-muted">Hai gia' un account?
           <a href="{% url 'login' %}" class="fw-semibold">Accedi qui</a>
         </small>

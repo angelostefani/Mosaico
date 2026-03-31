@@ -6,8 +6,8 @@
   <p class="text-muted mb-0">Poni domande sulla tua knowledge base e ottieni risposte contestuali in tempo reale.</p>
 </div>
 
-<div class="row g-4">
-  <div class="col-lg-8">
+<div class="row g-4 chat-layout" id="chatLayout">
+  <div class="col-lg-8 main-col">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body d-flex flex-column">
         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -16,6 +16,9 @@
             <span id="collectionBadge" class="badge bg-info-subtle text-info-emphasis d-none"></span>
             <button class="btn btn-outline-secondary btn-sm" id="exportChatBtn" title="Esporta conversazione" type="button">
               <i class="bi bi-download me-1"></i>Esporta
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" id="sidebarToggleBtn" title="Mostra/nascondi pannello laterale" type="button">
+              <i class="bi bi-layout-sidebar-reverse" id="sidebarToggleIcon"></i>
             </button>
           </div>
         </div>
@@ -31,7 +34,7 @@
     </div>
   </div>
 
-  <div class="col-lg-4">
+  <div class="col-lg-4 sidebar-col">
     <div class="card shadow-sm border-0">
       <div class="card-body">
         <h2 class="h5 mb-3">Contesto della richiesta</h2>
@@ -81,6 +84,28 @@
     </div>
   </div>
 </div>
+<!-- Modal conferma eliminazione conversazione -->
+<div class="modal fade" id="deleteConvModal" tabindex="-1" aria-labelledby="deleteConvModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConvModalLabel">
+          <i class="bi bi-trash me-2 text-danger"></i>Elimina conversazione
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        Questa operazione è irreversibile. Continuare?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button type="button" class="btn btn-danger" id="deleteConvConfirmBtn">
+          <i class="bi bi-trash me-1"></i>Elimina
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -91,6 +116,14 @@ const JWT_TOKEN = "{{ request.session.jwt_token|default:'' }}";
 const USERNAME = "{{ request.user.username|default:'' }}";
 // Base URL dell'API
 const API_BASE = "{{ api_base }}";
+
+// ---- Modal eliminazione ----
+let _pendingDeleteFn = null;
+const _deleteModal = new bootstrap.Modal(document.getElementById('deleteConvModal'));
+document.getElementById('deleteConvConfirmBtn').addEventListener('click', async () => {
+  _deleteModal.hide();
+  if (_pendingDeleteFn) { await _pendingDeleteFn(); _pendingDeleteFn = null; }
+});
 
 const askBtn = document.getElementById('askBtn');
 const askSpinner = document.getElementById('askSpinner');
@@ -213,6 +246,7 @@ function restoreActiveConversation() {
 
 function clearChatUI(preserveCollection = true) {
   chatWindow.innerHTML = '';
+  showChatEmptyState();
   persistChatHistory([], null);
   persistActiveConversation(null);
   if (!preserveCollection && collectionInput) {
@@ -253,26 +287,28 @@ function buildConversationCard(conversation) {
   deleteBtn.className = 'btn btn-link btn-sm text-danger p-0 flex-shrink-0';
   deleteBtn.title = 'Elimina conversazione';
   deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
-  deleteBtn.addEventListener('click', async (e) => {
+  deleteBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (!confirm('Eliminare questa conversazione?')) return;
-    try {
-      const res = await fetch(`/conversations/${conversation.id}/delete/`, {
-        method: 'DELETE',
-        headers: { 'X-CSRFToken': getCsrfToken() }
-      });
-      if (res.ok || res.status === 404) {
-        wrapper.remove();
-        if (activeConversationId === conversation.id) {
-          clearChatUI(true);
-          persistActiveConversation(null);
+    _pendingDeleteFn = async () => {
+      try {
+        const res = await fetch(`/conversations/${conversation.id}/delete/`, {
+          method: 'DELETE',
+          headers: { 'X-CSRFToken': getCsrfToken() }
+        });
+        if (res.ok || res.status === 404) {
+          wrapper.remove();
+          if (activeConversationId === conversation.id) {
+            clearChatUI(true);
+            persistActiveConversation(null);
+          }
+        } else {
+          alert('Errore durante l\'eliminazione.');
         }
-      } else {
-        alert('Errore durante l\'eliminazione.');
+      } catch {
+        alert('Errore di rete durante l\'eliminazione.');
       }
-    } catch {
-      alert('Errore di rete durante l\'eliminazione.');
-    }
+    };
+    _deleteModal.show();
   });
 
   wrapper.appendChild(body);
@@ -291,7 +327,11 @@ function renderConversations(list) {
   if (!conversationList) return;
   conversationList.innerHTML = '';
   if (!list.length) {
-    conversationList.innerHTML = '<div class="text-muted small px-2 py-1">Nessuna conversazione disponibile</div>';
+    conversationList.innerHTML = `
+      <div class="text-center py-3 text-muted small">
+        <i class="bi bi-clock-history d-block mb-1 empty-state-icon" style="font-size:1.5rem"></i>
+        Nessuna conversazione
+      </div>`;
     return;
   }
   list.forEach(conv => {
@@ -511,6 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCollectionBadge();
   updateCrossLink();
   restoreChatHistory();
+  if (!chatWindow.querySelector('.chat-bubble')) showChatEmptyState();
   fetchCollections();
   fetchModels();
   restoreSavedModel();
@@ -715,7 +756,18 @@ window.addEventListener('storage', (e) => {
   }
 });
 
+function showChatEmptyState() {
+  chatWindow.innerHTML = `
+    <div id="chatEmptyState" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted" style="min-height:200px">
+      <i class="bi bi-chat-square-dots empty-state-icon" style="font-size:2.8rem"></i>
+      <p class="mt-2 mb-0 small">Poni una domanda per iniziare la conversazione.</p>
+    </div>`;
+}
+
 function appendMessage(who, text, shouldPersist = true) {
+  // Rimuovi empty state al primo messaggio
+  document.getElementById('chatEmptyState')?.remove();
+
   const bubble = document.createElement('div');
   bubble.className = who === 'user' ? 'chat-bubble chat-bubble-user' : 'chat-bubble chat-bubble-bot';
 
@@ -738,6 +790,52 @@ function appendMessage(who, text, shouldPersist = true) {
     persistChatHistory(history, activeConversationId);
   }
 }
+
+// ---- Sidebar toggle ----
+(function () {
+  const layout = document.getElementById('chatLayout');
+  const btn = document.getElementById('sidebarToggleBtn');
+  const icon = document.getElementById('sidebarToggleIcon');
+  const STORAGE_KEY_SIDEBAR = 'chat.sidebarCollapsed';
+
+  function isMobile() { return window.innerWidth < 992; }
+
+  function applyState(collapsed) {
+    if (isMobile()) {
+      layout.classList.remove('sidebar-collapsed');
+      layout.classList.toggle('sidebar-mobile-open', !collapsed);
+    } else {
+      layout.classList.remove('sidebar-mobile-open');
+      layout.classList.toggle('sidebar-collapsed', collapsed);
+    }
+    icon.className = collapsed ? 'bi bi-layout-sidebar' : 'bi bi-layout-sidebar-reverse';
+    btn.title = collapsed ? 'Mostra pannello laterale' : 'Nascondi pannello laterale';
+    try { localStorage.setItem(STORAGE_KEY_SIDEBAR, collapsed ? '1' : '0'); } catch {}
+  }
+
+  // Stato iniziale: mobile → nascosta, desktop → ripristina da localStorage
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_SIDEBAR);
+    applyState(saved !== null ? saved === '1' : isMobile());
+  } catch {
+    applyState(isMobile());
+  }
+
+  btn?.addEventListener('click', () => {
+    const collapsed = isMobile()
+      ? layout.classList.contains('sidebar-mobile-open')
+      : !layout.classList.contains('sidebar-collapsed');
+    applyState(collapsed);
+  });
+
+  // Riadatta al resize (es. rotazione schermo)
+  window.addEventListener('resize', () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SIDEBAR);
+      applyState(saved !== null ? saved === '1' : isMobile());
+    } catch { applyState(isMobile()); }
+  });
+})();
 
 document.getElementById('exportChatBtn')?.addEventListener('click', () => {
   const history = loadChatHistory();

@@ -34,6 +34,10 @@
 <div class="card shadow-sm border-0">
   <div class="card-body">
     <div id="uploadsError"></div>
+    <div id="uploadsEmptyState" class="text-center py-4 text-muted">
+      <i class="bi bi-inbox empty-state-icon" style="font-size:2.5rem"></i>
+      <p class="mt-2 mb-0 small">Clicca <strong>Carica elenco</strong> per visualizzare i caricamenti.</p>
+    </div>
     <div id="uploadsSummary" class="text-muted small mb-2"></div>
     <div class="table-responsive d-none" id="uploadsTableWrap">
       <table class="table table-striped table-hover align-middle">
@@ -68,6 +72,7 @@ const limitInput = document.getElementById('limitInput');
 const loadBtn = document.getElementById('loadBtn');
 const loadSpinner = document.getElementById('loadSpinner');
 const uploadsError = document.getElementById('uploadsError');
+const uploadsEmptyState = document.getElementById('uploadsEmptyState');
 const uploadsSummary = document.getElementById('uploadsSummary');
 const uploadsTableWrap = document.getElementById('uploadsTableWrap');
 const uploadsTbody = document.getElementById('uploadsTbody');
@@ -114,6 +119,7 @@ async function loadUploads() {
   uploadsError.innerHTML = '';
   uploadsSummary.textContent = '';
   uploadsTableWrap.classList.add('d-none');
+  uploadsEmptyState.classList.add('d-none');
   uploadsTbody.innerHTML = '';
 
   const params = new URLSearchParams();
@@ -141,7 +147,10 @@ async function loadUploads() {
 
     const list = Array.isArray(data.uploads) ? data.uploads : [];
     if (!list.length) {
-      uploadsSummary.textContent = 'Nessun caricamento trovato per i filtri indicati.';
+      uploadsEmptyState.innerHTML = `
+        <i class="bi bi-file-earmark-x empty-state-icon" style="font-size:2.5rem"></i>
+        <p class="mt-2 mb-0 small">Nessun caricamento trovato per i filtri indicati.</p>`;
+      uploadsEmptyState.classList.remove('d-none');
       return;
     }
 

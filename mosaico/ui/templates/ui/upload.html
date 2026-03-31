@@ -310,7 +310,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateCrossLink();
   toggleCollectionWarning(getMode() === 'new' && initial.includes('_'));
   if (!uploadStatus.innerHTML) {
-    uploadStatus.innerHTML = '<div class="text-muted small">Pronto per un nuovo caricamento.</div>';
+    uploadStatus.innerHTML = `
+      <div class="d-flex align-items-center gap-2 text-muted small py-1">
+        <i class="bi bi-cloud-arrow-up empty-state-icon" style="font-size:1.3rem"></i>
+        <span>Seleziona uno o più file e scegli la collection per iniziare.</span>
+      </div>`;
   }
 });
 

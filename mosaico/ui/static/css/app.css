@@ -1,15 +1,37 @@
 :root {
+  /* Brand (invarianti tra i temi) */
   --brand-primary: #0056d6;
   --brand-secondary: #19a0a0;
   --hero-gradient-start: #1a4fd4;
   --hero-gradient-end: #19a0a0;
+
+  /* Superfici light (default) */
   --bg-soft: #f5f7fb;
+  --chat-window-bg: #f8fafc;
+  --chat-bubble-bot-bg: #ffffff;
+  --chat-bubble-bot-text: #1e293b;
+  --chat-bubble-bot-border: rgba(0, 0, 0, 0.07);
+  --empty-icon-opacity: 0.22;
+}
+
+/* Dark mode: sovrascrive solo le superfici custom */
+[data-bs-theme="dark"] {
+  --bg-soft: #0f1117;
+  --chat-window-bg: #1a1d27;
+  --chat-bubble-bot-bg: #1e2333;
+  --chat-bubble-bot-text: #e2e8f0;
+  --chat-bubble-bot-border: rgba(255, 255, 255, 0.06);
+  --empty-icon-opacity: 0.45;
 }
 
 body.bg-body {
   background: var(--bg-soft);
   min-height: 100vh;
 }
+
+/* ------------------------------------------------------------------ */
+/* Navbar                                                               */
+/* ------------------------------------------------------------------ */
 
 .navbar .brand-accent {
   color: #c5fffd;
@@ -20,9 +42,42 @@ body.bg-body {
   width: auto;
 }
 
+/* ------------------------------------------------------------------ */
+/* Transitions globali                                                  */
+/* ------------------------------------------------------------------ */
+
+.card {
+  border-radius: 1rem;
+  transition: box-shadow 0.2s ease, transform 0.18s ease;
+}
+
+/* Hover lift solo su card di contenuto (home, upload recenti, ecc.) */
+section .card:hover,
+.cards-interactive .card:hover {
+  box-shadow: 0 6px 22px rgba(0, 40, 120, 0.11) !important;
+  transform: translateY(-3px);
+}
+
+.btn {
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+              box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* ------------------------------------------------------------------ */
+/* Messaggi Django                                                      */
+/* ------------------------------------------------------------------ */
+
 .messages .alert {
   border-radius: 0.6rem;
 }
+
+/* ------------------------------------------------------------------ */
+/* Hero (index)                                                         */
+/* ------------------------------------------------------------------ */
 
 .hero {
   border-radius: 1rem;
@@ -47,9 +102,9 @@ body.bg-body {
   font-size: 1.3rem;
 }
 
-.card {
-  border-radius: 1rem;
-}
+/* ------------------------------------------------------------------ */
+/* Card (footer, generale)                                             */
+/* ------------------------------------------------------------------ */
 
 .card .card-footer {
   border-top: 0;
@@ -60,13 +115,17 @@ body.bg-body {
   color: var(--brand-primary);
 }
 
+/* ------------------------------------------------------------------ */
+/* Chat window                                                          */
+/* ------------------------------------------------------------------ */
+
 .chat-window {
-  background: #ffffff;
+  background: var(--chat-window-bg);
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 0.75rem;
-  padding: 1rem;
-  min-height: 260px;
-  max-height: 420px;
+  padding: 1.25rem 1rem;
+  min-height: 420px;
+  max-height: calc(100vh - 320px);
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -75,37 +134,119 @@ body.bg-body {
   box-shadow: inset 0 0 0 2px rgba(25, 160, 160, 0.35);
 }
 
+/* ------------------------------------------------------------------ */
+/* Chat bubbles                                                         */
+/* ------------------------------------------------------------------ */
+
+@keyframes bubbleFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .chat-bubble {
   display: inline-block;
-  max-width: 85%;
-  padding: 0.75rem 1rem;
-  border-radius: 0.9rem;
-  margin-bottom: 0.35rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
-  background: #f0f4ff;
-  color: #111;
+  max-width: 82%;
+  padding: 0.55rem 0.85rem 0.7rem;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+  animation: bubbleFadeIn 0.22s ease;
 }
 
+/* Messaggio utente — blu solido, angolo inferiore destro piatto */
 .chat-bubble-user {
   margin-left: auto;
-  background: #e6f0ff;
-  color: #0a3ea2;
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-radius: 1.1rem 1.1rem 0.3rem 1.1rem;
 }
 
+/* Messaggio bot — usa variabili per supportare dark mode */
 .chat-bubble-bot {
   margin-right: auto;
-  background: #f2fbff;
-  color: #0c4a4a;
+  background: var(--chat-bubble-bot-bg);
+  color: var(--chat-bubble-bot-text);
+  border: 1px solid var(--chat-bubble-bot-border);
+  border-left: 3px solid var(--brand-secondary);
+  border-radius: 1.1rem 1.1rem 1.1rem 0.3rem;
 }
 
+/* Label "Tu" / "Bot" sopra la bolla */
 .chat-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(17, 24, 39, 0.55);
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.2rem;
 }
+
+.chat-bubble-user .chat-label {
+  color: rgba(255, 255, 255, 0.65);
+  text-align: right;
+}
+
+.chat-bubble-bot .chat-label {
+  color: var(--brand-secondary);
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar collassabile nella pagina chat                               */
+/* ------------------------------------------------------------------ */
+
+.chat-layout .sidebar-col {
+  transition: max-width 0.3s ease, flex 0.3s ease,
+              opacity 0.25s ease, padding 0.3s ease;
+}
+
+.chat-layout.sidebar-collapsed .sidebar-col {
+  max-width: 0 !important;
+  flex: 0 0 0 !important;
+  opacity: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.chat-layout .main-col {
+  transition: max-width 0.3s ease, flex 0.3s ease;
+}
+
+.chat-layout.sidebar-collapsed .main-col {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Empty state icons — usa variabile per opacity dark/light            */
+/* ------------------------------------------------------------------ */
+
+.empty-state-icon {
+  opacity: var(--empty-icon-opacity);
+}
+
+/* Mobile: sidebar nascosta di default, mostrata solo se aperta */
+@media (max-width: 991.98px) {
+  .chat-layout .sidebar-col {
+    display: none;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    opacity: 1;
+    padding: revert !important;
+    overflow: visible;
+    pointer-events: auto;
+  }
+  .chat-layout.sidebar-mobile-open .sidebar-col {
+    display: block;
+  }
+  /* Su mobile il collapse desktop non si applica */
+  .chat-layout.sidebar-collapsed .sidebar-col {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Tabelle                                                              */
+/* ------------------------------------------------------------------ */
 
 .table thead th {
   font-weight: 600;
@@ -117,6 +258,10 @@ body.bg-body {
 .table tbody td {
   vertical-align: middle;
 }
+
+/* ------------------------------------------------------------------ */
+/* List group flush                                                     */
+/* ------------------------------------------------------------------ */
 
 .list-group-flush .list-group-item {
   border-left: 0;
@@ -130,6 +275,10 @@ body.bg-body {
 .list-group-flush .list-group-item:last-child {
   border-bottom: 0;
 }
+
+/* ------------------------------------------------------------------ */
+/* Footer                                                               */
+/* ------------------------------------------------------------------ */
 
 footer {
   margin-top: auto;
