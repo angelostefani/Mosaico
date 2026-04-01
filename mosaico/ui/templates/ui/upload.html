@@ -16,49 +16,59 @@
         </div>
         {% endif %}
         <h2 class="h5 mb-4">Dettagli caricamento</h2>
+
+        <!-- Drop zone -->
         <div class="mb-3">
           <label class="form-label fw-semibold">Seleziona file</label>
-          <div class="input-group">
-            <input type="file" class="form-control" id="fileInput" multiple>
-            <button class="btn btn-primary" id="uploadBtn">
-              <i class="bi bi-cloud-arrow-up me-1"></i>
-              Carica
-            </button>
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Zona di trascinamento file. Clicca o trascina i file qui.">
+            <i class="bi bi-cloud-arrow-up drop-zone-icon" id="dropZoneIcon" aria-hidden="true"></i>
+            <p class="mb-1 fw-semibold" id="dropZoneTitle">Trascina i file qui</p>
+            <p class="text-muted small mb-0">oppure clicca per selezionarli</p>
+            <input type="file" id="fileInput" multiple class="d-none" aria-label="Seleziona file da caricare">
           </div>
-          <small class="text-muted">Sono supportati documenti testuali e PDF. Dimensione massima secondo configurazione del backend.</small>
+          <small class="text-muted">PDF, DOCX, XLSX, TXT, MD, JSON. Puoi selezionare più file contemporaneamente.</small>
         </div>
+
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label fw-semibold d-block">Collection</label>
-            <div class="btn-group w-100 mb-2" role="group" aria-label="Modalita collection">
+            <div class="btn-group w-100 mb-2" role="group" aria-label="Modalità collection">
               <input type="radio" class="btn-check" name="collectionMode" id="modeExisting" autocomplete="off" checked>
               <label class="btn btn-outline-primary" for="modeExisting">Collection esistente</label>
               <input type="radio" class="btn-check" name="collectionMode" id="modeNew" autocomplete="off">
               <label class="btn btn-outline-primary" for="modeNew">Nuova collection</label>
             </div>
             <div class="input-group mb-2">
-              <span class="input-group-text"><i class="bi bi-list-ul"></i></span>
+              <span class="input-group-text"><i class="bi bi-list-ul" aria-hidden="true"></i></span>
               <select class="form-select" id="collectionSelect" disabled>
                 <option value="">Caricamento collections...</option>
               </select>
             </div>
             <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-folder2"></i></span>
+              <span class="input-group-text"><i class="bi bi-folder2" aria-hidden="true"></i></span>
               <input type="text" class="form-control" id="newCollectionInput" placeholder="Nome nuova collection" pattern="[^_]*" title="Il carattere underscore (_) non è consentito." disabled>
             </div>
-            <div id="collectionWarning" class="form-text text-danger d-none">Il carattere underscore (_) non è consentito nel nome della collection.</div>
+            <div id="collectionWarning" class="form-text text-danger d-none">
+              <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>Il carattere underscore (<code>_</code>) non è consentito nei nomi collection (vincolo Qdrant).
+            </div>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold" for="usernameDisplay">Utente</label>
             <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <span class="input-group-text"><i class="bi bi-person" aria-hidden="true"></i></span>
               <input type="text" class="form-control" id="usernameDisplay" value="{{ request.user.username }}" readonly>
             </div>
           </div>
         </div>
-        <div class="mt-3">
-          <a id="toChatLink" class="btn btn-outline-primary btn-sm" href="/chat/">
-            <i class="bi bi-arrow-repeat me-1"></i> Vai alla chat con questa collection
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <button class="btn btn-primary" id="uploadBtn" disabled>
+            <span id="uploadSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+            <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>
+            Carica<span id="uploadBtnCount" class="ms-1 d-none"></span>
+          </button>
+          <a id="toChatLink" class="btn btn-outline-primary" href="/chat/">
+            <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i> Vai alla chat con questa collection
           </a>
         </div>
       </div>
@@ -73,26 +83,32 @@
 
 {% block extra_scripts %}
 <script>
-// JWT recuperato dalla sessione Django
 const JWT_TOKEN = "{{ request.session.jwt_token|default:'' }}";
 const FALLBACK_TOKEN = "{{ fake_token }}";
 const API_TOKEN = JWT_TOKEN || FALLBACK_TOKEN;
-// Username corrente (se autenticato)
 const USERNAME = "{{ request.user.username|default:'' }}";
 const API_BASE = window.location.origin.replace(':9001', ':9000');
-// Endpoint server-side Django che gestisce l'upload e inoltra verso l'API
 const UPLOAD_URL = '/upload/';
 
-const fileInput = document.getElementById('fileInput');
-const uploadBtn = document.getElementById('uploadBtn');
-const uploadStatus = document.getElementById('uploadStatus');
-const modeExisting = document.getElementById('modeExisting');
-const modeNew = document.getElementById('modeNew');
-const collectionSelect = document.getElementById('collectionSelect');
-const newCollectionInput = document.getElementById('newCollectionInput');
+const fileInput      = document.getElementById('fileInput');
+const dropZone       = document.getElementById('dropZone');
+const dropZoneTitle  = document.getElementById('dropZoneTitle');
+const uploadBtn      = document.getElementById('uploadBtn');
+const uploadBtnCount = document.getElementById('uploadBtnCount');
+const uploadSpinner  = document.getElementById('uploadSpinner');
+const uploadStatus   = document.getElementById('uploadStatus');
+const modeExisting   = document.getElementById('modeExisting');
+const modeNew        = document.getElementById('modeNew');
+const collectionSelect    = document.getElementById('collectionSelect');
+const newCollectionInput  = document.getElementById('newCollectionInput');
 const STORAGE_KEY_COLLECTION = 'collection.current';
-const toChatLink = document.getElementById('toChatLink');
+const toChatLink     = document.getElementById('toChatLink');
 const collectionWarning = document.getElementById('collectionWarning');
+
+// Files currently selected (from picker or drop)
+let _pendingFiles = [];
+
+// ---- Helpers ----
 
 function getCsrfToken(name = 'csrftoken') {
   const value = `; ${document.cookie}`;
@@ -122,9 +138,7 @@ function setMode(mode) {
 }
 
 function getSelectedCollection() {
-  if (getMode() === 'new') {
-    return (newCollectionInput?.value || '').trim();
-  }
+  if (getMode() === 'new') return (newCollectionInput?.value || '').trim();
   return (collectionSelect?.value || '').trim();
 }
 
@@ -164,62 +178,88 @@ function buildCollectionOption(name) {
   return option;
 }
 
-async function fetchCollections(savedRaw = '') {
-  if (!collectionSelect) return;
-  collectionSelect.disabled = true;
-  collectionSelect.innerHTML = '<option value="">Caricamento collections...</option>';
-  const saved = (savedRaw || '').trim();
-  const savedStripped = USERNAME ? stripUsernamePrefix(saved) : saved;
+// ---- Drop zone ----
 
-  try {
-    const url = new URL(`${API_BASE}/collections`);
-    if (USERNAME) url.searchParams.set('username', USERNAME);
-    const res = await fetch(url.toString(), {
-      headers: { 'Authorization': `Bearer ${API_TOKEN}` }
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const collections = normalizeCollections(data?.collections || data);
-
-    collectionSelect.innerHTML = '<option value="">-- Seleziona una collection --</option>';
-    collections.forEach(name => {
-      collectionSelect.appendChild(buildCollectionOption(name));
-    });
-
-    const trySelect = (val) => {
-      if (!val) return false;
-      const option = Array.from(collectionSelect.options).find(
-        opt => opt.value === val || opt.dataset.original === val
-      );
-      if (option) {
-        collectionSelect.value = option.value;
-        return true;
-      }
-      return false;
-    };
-
-    const matched = trySelect(savedStripped) || trySelect(saved);
-    if (saved && !matched) {
-      if (newCollectionInput) newCollectionInput.value = savedStripped || saved;
-      setMode('new');
-    }
-  } catch (err) {
-    console.error('Errore nel caricamento collections', err);
-    collectionSelect.innerHTML = '<option value="">Nessuna collection disponibile</option>';
-    if (saved) {
-      if (newCollectionInput) newCollectionInput.value = savedStripped || saved;
-      setMode('new');
-    }
-  } finally {
-    if (getMode() !== 'new') {
-      collectionSelect.disabled = false;
-    }
-    updateCrossLink();
+function setPendingFiles(files) {
+  _pendingFiles = Array.from(files).filter(f => f.size > 0);
+  if (_pendingFiles.length) {
+    dropZoneTitle.textContent = `${_pendingFiles.length} file selezionati`;
+    dropZoneTitle.classList.add('text-primary');
+    uploadBtn.disabled = false;
+    uploadBtnCount.textContent = `(${_pendingFiles.length})`;
+    uploadBtnCount.classList.remove('d-none');
+  } else {
+    dropZoneTitle.textContent = 'Trascina i file qui';
+    dropZoneTitle.classList.remove('text-primary');
+    uploadBtn.disabled = true;
+    uploadBtnCount.classList.add('d-none');
   }
 }
 
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) setPendingFiles(fileInput.files);
+});
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', (e) => {
+  if (!dropZone.contains(e.relatedTarget)) dropZone.classList.remove('drag-over');
+});
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) setPendingFiles(e.dataTransfer.files);
+});
+
+// ---- Upload ----
+
+function createFileRow(idx, file) {
+  const row = document.createElement('div');
+  row.id = `upload-row-${idx}`;
+  row.className = 'upload-file-row';
+
+  const top = document.createElement('div');
+  top.className = 'd-flex align-items-center gap-2';
+
+  const icon = document.createElement('i');
+  icon.className = 'bi bi-file-earmark text-muted flex-shrink-0';
+  icon.setAttribute('aria-hidden', 'true');
+
+  const name = document.createElement('span');
+  name.className = 'text-truncate flex-grow-1 small';
+  name.style.maxWidth = '70%';
+  name.textContent = file.name;
+
+  const badge = document.createElement('span');
+  badge.id = `upload-status-${idx}`;
+  badge.className = 'badge bg-secondary ms-auto';
+  badge.textContent = 'In attesa…';
+
+  top.appendChild(icon);
+  top.appendChild(name);
+  top.appendChild(badge);
+
+  const track = document.createElement('div');
+  track.className = 'upload-progress-track';
+  const fill = document.createElement('div');
+  fill.className = 'upload-progress-fill';
+  fill.id = `upload-progress-${idx}`;
+  track.appendChild(fill);
+
+  row.appendChild(top);
+  row.appendChild(track);
+  return row;
+}
+
 uploadBtn.addEventListener('click', async () => {
-  if (!fileInput.files.length) return;
+  const files = _pendingFiles;
+  if (!files.length) return;
+
   const collection = getSelectedCollection();
   if (getMode() === 'new' && collection.includes('_')) {
     toggleCollectionWarning(true);
@@ -227,26 +267,22 @@ uploadBtn.addEventListener('click', async () => {
   }
 
   uploadBtn.disabled = true;
+  uploadSpinner.classList.remove('d-none');
   uploadStatus.innerHTML = '';
 
-  const files = Array.from(fileInput.files);
+  files.forEach((file, idx) => uploadStatus.appendChild(createFileRow(idx, file)));
 
-  // Crea una riga di stato per ogni file
-  files.forEach((file, idx) => {
-    uploadStatus.insertAdjacentHTML('beforeend', `
-      <div id="upload-row-${idx}" class="d-flex align-items-center gap-2 mb-1 small">
-        <span class="text-truncate flex-grow-1" style="max-width:60%">${file.name}</span>
-        <span id="upload-status-${idx}" class="badge bg-secondary">In attesa...</span>
-      </div>
-    `);
-  });
+  let successCount = 0;
+  let errorCount = 0;
 
-  let allOk = true;
   for (let idx = 0; idx < files.length; idx++) {
     const file = files[idx];
     const statusBadge = document.getElementById(`upload-status-${idx}`);
-    statusBadge.className = 'badge bg-warning text-dark';
-    statusBadge.textContent = 'In caricamento...';
+    const progressFill = document.getElementById(`upload-progress-${idx}`);
+
+    statusBadge.className = 'badge bg-warning text-dark ms-auto';
+    statusBadge.textContent = 'In caricamento…';
+    progressFill.className = 'upload-progress-fill is-uploading';
 
     const formData = new FormData();
     formData.append('file', file);
@@ -265,32 +301,101 @@ uploadBtn.addEventListener('click', async () => {
       });
       const data = await response.json();
       if (response.ok) {
-        statusBadge.className = 'badge bg-success';
+        statusBadge.className = 'badge bg-success ms-auto';
         statusBadge.textContent = 'Completato';
+        progressFill.className = 'upload-progress-fill is-done';
+        successCount++;
       } else if (response.status === 401 || response.status === 403) {
-        statusBadge.className = 'badge bg-danger';
+        statusBadge.className = 'badge bg-danger ms-auto';
         statusBadge.textContent = 'Non autorizzato';
-        allOk = false;
+        progressFill.className = 'upload-progress-fill is-error';
+        errorCount++;
       } else {
-        statusBadge.className = 'badge bg-danger';
+        statusBadge.className = 'badge bg-danger ms-auto';
         statusBadge.textContent = data.detail || data.message || 'Errore';
-        allOk = false;
+        progressFill.className = 'upload-progress-fill is-error';
+        errorCount++;
       }
     } catch (error) {
       console.error(error);
-      statusBadge.className = 'badge bg-danger';
+      statusBadge.className = 'badge bg-danger ms-auto';
       statusBadge.textContent = 'Errore di rete';
-      allOk = false;
+      progressFill.className = 'upload-progress-fill is-error';
+      errorCount++;
     }
   }
 
-  if (allOk) {
-    fileInput.value = '';
+  // Sempre pulisce la selezione
+  fileInput.value = '';
+  _pendingFiles = [];
+  setPendingFiles([]);
+
+  // Riepilogo se più file
+  if (files.length > 1) {
+    const summaryEl = document.createElement('div');
+    const isPartial = errorCount > 0 && successCount > 0;
+    summaryEl.className = `alert ${errorCount === 0 ? 'alert-success' : (isPartial ? 'alert-warning' : 'alert-danger')} small py-2 mt-2 mb-0`;
+    summaryEl.textContent = errorCount === 0
+      ? `${successCount} file caricati con successo.`
+      : `${successCount} caricati, ${errorCount} falliti.`;
+    uploadStatus.appendChild(summaryEl);
   }
-  uploadBtn.disabled = false;
+
+  uploadSpinner.classList.add('d-none');
+  uploadBtn.disabled = true; // disabilita finché non si riselezionano file
 });
 
-// All'avvio della pagina: se la collection e' valorizzata, carica il riepilogo
+// ---- Collections ----
+
+async function fetchCollections(savedRaw = '') {
+  if (!collectionSelect) return;
+  collectionSelect.disabled = true;
+  collectionSelect.innerHTML = '<option value="">Caricamento collections...</option>';
+  const saved = (savedRaw || '').trim();
+  const savedStripped = USERNAME ? stripUsernamePrefix(saved) : saved;
+
+  try {
+    const url = new URL(`${API_BASE}/collections`);
+    if (USERNAME) url.searchParams.set('username', USERNAME);
+    const res = await fetch(url.toString(), {
+      headers: { 'Authorization': `Bearer ${API_TOKEN}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const collections = normalizeCollections(data?.collections || data);
+
+    collectionSelect.innerHTML = '<option value="">-- Seleziona una collection --</option>';
+    collections.forEach(name => collectionSelect.appendChild(buildCollectionOption(name)));
+
+    const trySelect = (val) => {
+      if (!val) return false;
+      const option = Array.from(collectionSelect.options).find(
+        opt => opt.value === val || opt.dataset.original === val
+      );
+      if (option) { collectionSelect.value = option.value; return true; }
+      return false;
+    };
+
+    const matched = trySelect(savedStripped) || trySelect(saved);
+    if (saved && !matched) {
+      if (newCollectionInput) newCollectionInput.value = savedStripped || saved;
+      setMode('new');
+    }
+  } catch (err) {
+    console.error('Errore nel caricamento collections', err);
+    collectionSelect.innerHTML = '<option value="">Nessuna collection disponibile</option>';
+    if (saved) {
+      if (newCollectionInput) newCollectionInput.value = savedStripped || saved;
+      setMode('new');
+    }
+  } finally {
+    if (getMode() !== 'new') collectionSelect.disabled = false;
+    updateCrossLink();
+  }
+}
+
+// ---- Init ----
+
 document.addEventListener('DOMContentLoaded', async () => {
   setMode('existing');
   const qs = new URLSearchParams(window.location.search);
@@ -306,25 +411,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch {}
   }
   await fetchCollections(initialCollection);
-  const initial = getSelectedCollection();
   updateCrossLink();
-  toggleCollectionWarning(getMode() === 'new' && initial.includes('_'));
+  toggleCollectionWarning(getMode() === 'new' && getSelectedCollection().includes('_'));
   if (!uploadStatus.innerHTML) {
     uploadStatus.innerHTML = `
       <div class="d-flex align-items-center gap-2 text-muted small py-1">
-        <i class="bi bi-cloud-arrow-up empty-state-icon" style="font-size:1.3rem"></i>
+        <i class="bi bi-cloud-arrow-up empty-state-icon" style="font-size:1.3rem" aria-hidden="true"></i>
         <span>Seleziona uno o più file e scegli la collection per iniziare.</span>
       </div>`;
   }
 });
 
-modeExisting?.addEventListener('change', () => {
-  if (modeExisting.checked) setMode('existing');
-});
-
-modeNew?.addEventListener('change', () => {
-  if (modeNew.checked) setMode('new');
-});
+modeExisting?.addEventListener('change', () => { if (modeExisting.checked) setMode('existing'); });
+modeNew?.addEventListener('change',      () => { if (modeNew.checked)      setMode('new'); });
 
 collectionSelect?.addEventListener('change', () => {
   const value = getSelectedCollection();
@@ -346,11 +445,9 @@ newCollectionInput?.addEventListener('input', () => {
   updateCrossLink();
 });
 
-// Sincronizza cambi da altre pagine/schede
 window.addEventListener('storage', (e) => {
   if (e.key === STORAGE_KEY_COLLECTION) {
-    const newVal = (e.newValue || '').trim();
-    fetchCollections(newVal);
+    fetchCollections((e.newValue || '').trim());
   }
 });
 </script>

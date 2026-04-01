@@ -89,9 +89,24 @@
   </main>
 
   <footer class="py-3 border-top bg-body-tertiary">
-    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between small text-muted">
-      <span>&copy; {% now "Y" %} I-NEST</span>
-      <span class="text-secondary">Mosaico</span>
+    <div class="container">
+      <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 small text-muted">
+        <div class="d-flex flex-wrap gap-3">
+          <a class="text-muted text-decoration-none footer-link {% if request.resolver_match.url_name == 'upload' %}fw-semibold{% endif %}" href="{% url 'upload' %}">
+            <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>Upload
+          </a>
+          <a class="text-muted text-decoration-none footer-link {% if request.resolver_match.url_name == 'chat' %}fw-semibold{% endif %}" href="{% url 'chat' %}">
+            <i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Chat
+          </a>
+          <a class="text-muted text-decoration-none footer-link {% if request.resolver_match.url_name == 'list_uploads' %}fw-semibold{% endif %}" href="{% url 'list_uploads' %}">
+            <i class="bi bi-list-ul me-1" aria-hidden="true"></i>Caricamenti
+          </a>
+          <a class="text-muted text-decoration-none footer-link {% if request.resolver_match.url_name == 'collection_config' %}fw-semibold{% endif %}" href="{% url 'collection_config' %}">
+            <i class="bi bi-sliders me-1" aria-hidden="true"></i>Config
+          </a>
+        </div>
+        <span>&copy; {% now "Y" %} I-NEST &middot; Mosaico</span>
+      </div>
     </div>
   </footer>
 

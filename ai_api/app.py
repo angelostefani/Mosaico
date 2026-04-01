@@ -97,7 +97,7 @@ LOG_FILE = os.getenv('LOG_FILE', os.path.join(os.getcwd(), 'logs', 'app.log'))
 LOG_MAX_BYTES = int(os.getenv('LOG_MAX_BYTES', 5_000_000))
 LOG_BACKUP_COUNT = int(os.getenv('LOG_BACKUP_COUNT', 5))
 MAX_UPLOAD_SIZE_BYTES = int(os.getenv("MAX_UPLOAD_SIZE_BYTES", 20_000_000))
-ALLOWED_UPLOAD_EXTENSIONS = {".txt", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".json"}
+ALLOWED_UPLOAD_EXTENSIONS = {".txt", ".md", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".json"}
 CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:9001").split(",") if o.strip()]
 
 REQUEST_ID_CTX: ContextVar[str] = ContextVar("request_id", default="-")
@@ -799,7 +799,7 @@ def extract_text(file_location: str, return_metadata: bool = False) -> Any:
     ext = os.path.splitext(file_location)[1].lower()
     metadata: Dict[str, Any] = {"source_ext": ext, "pages": []}
 
-    if ext == ".txt":
+    if ext in (".txt", ".md"):
         with open(file_location, "r", encoding="utf-8") as f:
             text = f.read()
     elif ext == ".pdf":

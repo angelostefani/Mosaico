@@ -17,15 +17,15 @@
             <button class="btn btn-outline-secondary btn-sm" id="exportChatBtn" title="Esporta conversazione" type="button">
               <i class="bi bi-download me-1"></i>Esporta
             </button>
-            <button class="btn btn-outline-secondary btn-sm" id="sidebarToggleBtn" title="Mostra/nascondi pannello laterale" type="button">
-              <i class="bi bi-layout-sidebar-reverse" id="sidebarToggleIcon"></i>
+            <button class="btn btn-outline-secondary btn-sm" id="sidebarToggleBtn" title="Mostra/nascondi pannello laterale" aria-label="Mostra/nascondi pannello laterale" type="button">
+              <i class="bi bi-layout-sidebar-reverse" id="sidebarToggleIcon" aria-hidden="true"></i>
             </button>
           </div>
         </div>
         <div id="chatWindow" class="chat-window flex-grow-1 mb-3"></div>
-        <div class="input-group">
-          <input type="text" class="form-control" id="questionInput" placeholder="Scrivi la tua domanda...">
-          <button class="btn btn-success" id="askBtn">
+        <div class="input-group chat-input-group">
+          <textarea class="form-control" id="questionInput" rows="1" placeholder="Scrivi la tua domanda… (Invio per inviare, Shift+Invio per nuova riga)" aria-label="Domanda per l'assistente"></textarea>
+          <button class="btn btn-success" id="askBtn" aria-label="Invia domanda">
             <span id="askSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
             Invia
           </button>
@@ -117,9 +117,49 @@ const USERNAME = "{{ request.user.username|default:'' }}";
 // Base URL dell'API
 const API_BASE = "{{ api_base }}";
 
-// ---- Modal eliminazione ----
-let _pendingDeleteFn = null;
+// ---- Helpers globali ----
+let _pendingDeleteFn    = null;
+let _loadConvController = null;  // AbortController per loadConversation
+let _storageWarnShown   = false;
 const _deleteModal = new bootstrap.Modal(document.getElementById('deleteConvModal'));
+
+function currentTimeStr() {
+  return new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+}
+
+function relativeDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const diffMs   = Date.now() - date.getTime();
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffDays === 0) return 'Oggi';
+  if (diffDays === 1) return 'Ieri';
+  if (diffDays <  7) return `${diffDays} gg fa`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} sett. fa`;
+  return date.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' });
+}
+
+function scrollToBottom(smooth = false) {
+  if (smooth) {
+    chatWindow.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  } else {
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+}
+
+function showStorageWarning() {
+  if (document.getElementById('storageWarningBanner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'storageWarningBanner';
+  banner.className = 'alert alert-warning alert-dismissible small py-2 mb-2 mt-0';
+  banner.setAttribute('role', 'alert');
+  banner.innerHTML = '<i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>Spazio locale esaurito — la cronologia chat non verrà salvata. <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Chiudi"></button>';
+  const cardBody = chatWindow.closest('.card-body');
+  if (cardBody) cardBody.insertBefore(banner, chatWindow);
+}
+
+// ---- Modal eliminazione ----
 document.getElementById('deleteConvConfirmBtn').addEventListener('click', async () => {
   _deleteModal.hide();
   if (_pendingDeleteFn) { await _pendingDeleteFn(); _pendingDeleteFn = null; }
@@ -182,7 +222,10 @@ function persistChatHistory(entries, conversationId = null) {
     };
     localStorage.setItem(STORAGE_KEY_CHAT, JSON.stringify(state));
   } catch {
-    // Ignore quota errors, history just won't persist
+    if (!_storageWarnShown) {
+      _storageWarnShown = true;
+      showStorageWarning();
+    }
   }
 }
 
@@ -345,10 +388,10 @@ function normalizeConversationItem(raw) {
   const id = raw.id || raw.conversation_id || raw.conversationId || raw.uuid;
   if (!id) return null;
   const preview = raw.preview || raw.last_message || raw.lastMessage || raw.summary || '';
-  const updated = raw.updated_at || raw.updatedAt || raw.last_updated || raw.timestamp || '';
+  const updatedRaw = raw.updated_at || raw.updatedAt || raw.last_updated || raw.timestamp || '';
   const collection = raw.collection || '';
   const title = raw.title || raw.name || `Chat #${String(id).slice(-6)}`;
-  return { id: String(id), preview, updated_at: updated, collection, title };
+  return { id: String(id), preview, updated_at: relativeDate(updatedRaw), collection, title };
 }
 
 function normalizeMessages(raw) {
@@ -395,12 +438,18 @@ async function fetchConversations(showLoading = true) {
 
 async function loadConversation(conversationId) {
   if (!conversationId) return;
+  // Annulla richiesta precedente (race condition fix)
+  if (_loadConvController) _loadConvController.abort();
+  _loadConvController = new AbortController();
+  const signal = _loadConvController.signal;
+
   setConversationStatus('Caricamento conversazione...');
   try {
     const url = new URL(`${API_BASE}/conversations/${conversationId}`);
     if (USERNAME) url.searchParams.set('username', USERNAME);
     const res = await fetch(url.toString(), {
-      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
+      headers: { 'Authorization': `Bearer ${JWT_TOKEN}` },
+      signal
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
@@ -419,10 +468,25 @@ async function loadConversation(conversationId) {
     highlightActiveConversation();
     setConversationStatus('Conversazione caricata');
   } catch (err) {
+    if (err.name === 'AbortError') return;
     console.error('Errore caricamento conversazione', err);
     setConversationStatus('Impossibile caricare la conversazione', true);
   }
 }
+
+// ---- Textarea auto-expand ----
+function autoExpandTextarea() {
+  questionInput.style.height = 'auto';
+  questionInput.style.height = Math.min(questionInput.scrollHeight, 140) + 'px';
+}
+questionInput.addEventListener('input', autoExpandTextarea);
+
+questionInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (!askBtn.disabled) askBtn.click();
+  }
+});
 
 askBtn.addEventListener('click', async () => {
   const question = questionInput.value.trim();
@@ -470,16 +534,32 @@ askBtn.addEventListener('click', async () => {
       return;
     }
 
-    // Crea bubble bot vuota e aggiorna token-per-token
+    // Crea bubble bot con typing indicator; aggiorna token-per-token
     const bubble = document.createElement('div');
     bubble.className = 'chat-bubble chat-bubble-bot';
+
     const label = document.createElement('span');
     label.className = 'chat-label';
     label.textContent = 'Bot';
+
     const paragraph = document.createElement('p');
     paragraph.className = 'mb-0';
+    paragraph.innerHTML = '<span class="typing-indicator" aria-label="In elaborazione"><span></span><span></span><span></span></span>';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'chat-copy-btn';
+    copyBtn.title = 'Copia risposta';
+    copyBtn.setAttribute('aria-label', 'Copia risposta');
+    copyBtn.innerHTML = '<i class="bi bi-clipboard" aria-hidden="true"></i>';
+
+    const ts = document.createElement('span');
+    ts.className = 'chat-timestamp';
+    ts.textContent = currentTimeStr();
+
     bubble.appendChild(label);
     bubble.appendChild(paragraph);
+    bubble.appendChild(copyBtn);
+    bubble.appendChild(ts);
     chatWindow.appendChild(bubble);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
@@ -488,6 +568,7 @@ askBtn.addEventListener('click', async () => {
     let buffer = '';
     let fullAnswer = '';
     let newConversationId = null;
+    let isFirstChunk = true;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -503,16 +584,33 @@ askBtn.addEventListener('click', async () => {
           const evt = JSON.parse(payload);
           if (evt.chunk) {
             fullAnswer += evt.chunk;
-            paragraph.textContent = fullAnswer;
+            if (isFirstChunk) {
+              paragraph.textContent = fullAnswer; // sostituisce typing indicator
+              isFirstChunk = false;
+            } else {
+              paragraph.textContent = fullAnswer;
+            }
             chatWindow.scrollTop = chatWindow.scrollHeight;
           } else if (evt.done) {
             newConversationId = evt.conversation_id || null;
           } else if (evt.error) {
             paragraph.textContent = evt.error;
+            isFirstChunk = false;
           }
         } catch {}
       }
     }
+
+    // Rimuovi typing indicator se ancora presente (risposta vuota)
+    if (isFirstChunk) paragraph.textContent = '';
+
+    // Abilita copy button
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(fullAnswer).catch(() => {}).then(() => {
+        copyBtn.innerHTML = '<i class="bi bi-clipboard-check" aria-hidden="true"></i>';
+        setTimeout(() => { copyBtn.innerHTML = '<i class="bi bi-clipboard" aria-hidden="true"></i>'; }, 2000);
+      });
+    });
 
     // Persisti la risposta e aggiorna la lista conversazioni
     const history = loadChatHistory();
@@ -531,6 +629,7 @@ askBtn.addEventListener('click', async () => {
     askBtn.disabled = false;
     chatWindow.classList.remove('chat-window-loading');
     questionInput.value = '';
+    questionInput.style.height = 'auto';
   }
 });
 
@@ -781,8 +880,33 @@ function appendMessage(who, text, shouldPersist = true) {
 
   bubble.appendChild(label);
   bubble.appendChild(paragraph);
+
+  // Copy button solo sui messaggi bot nuovi (non ripristinati)
+  if (who === 'bot' && shouldPersist) {
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'chat-copy-btn';
+    copyBtn.title = 'Copia risposta';
+    copyBtn.setAttribute('aria-label', 'Copia risposta');
+    copyBtn.innerHTML = '<i class="bi bi-clipboard" aria-hidden="true"></i>';
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(text).catch(() => {}).then(() => {
+        copyBtn.innerHTML = '<i class="bi bi-clipboard-check" aria-hidden="true"></i>';
+        setTimeout(() => { copyBtn.innerHTML = '<i class="bi bi-clipboard" aria-hidden="true"></i>'; }, 2000);
+      });
+    });
+    bubble.appendChild(copyBtn);
+  }
+
+  // Timestamp solo su messaggi nuovi
+  if (shouldPersist) {
+    const ts = document.createElement('span');
+    ts.className = 'chat-timestamp';
+    ts.textContent = currentTimeStr();
+    bubble.appendChild(ts);
+  }
+
   chatWindow.appendChild(bubble);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
+  scrollToBottom(shouldPersist); // smooth solo su nuovi messaggi
 
   if (shouldPersist) {
     const history = loadChatHistory();
