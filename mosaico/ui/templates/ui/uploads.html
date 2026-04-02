@@ -2,29 +2,31 @@
 
 {% block content %}
 <div class="mb-4">
-  <h1 class="h2 fw-semibold mb-1">Storico caricamenti</h1>
-  <p class="text-muted mb-0">Filtra per utente o collection per consultare gli upload effettuati.</p>
+  <h1 class="h2 fw-semibold mb-1">{{ t.uploads_page_title }}</h1>
+  <p class="text-muted mb-0">{{ t.uploads_page_subtitle }}</p>
 </div>
 
 <div class="card shadow-sm border-0 mb-4">
   <div class="card-body">
+    <input type="hidden" id="usernameInput" value="{{ request.user.username }}">
     <div class="row g-3 align-items-end">
-      <div class="col-md-3">
-        <label for="usernameInput" class="form-label fw-semibold">Utente</label>
-        <input type="text" id="usernameInput" class="form-control" value="{{ request.user.username }}" readonly>
-      </div>
-      <div class="col-md-3">
+      <div class="col-md-5">
         <label for="collectionInput" class="form-label fw-semibold">Collection</label>
         <input type="text" id="collectionInput" class="form-control" placeholder="es. project_alpha">
       </div>
-      <div class="col-md-2">
-        <label for="limitInput" class="form-label fw-semibold">Limite</label>
-        <input type="number" id="limitInput" class="form-control" value="25" min="1" max="500">
+      <div class="col-md-3">
+        <label for="limitInput" class="form-label fw-semibold">{{ t.uploads_per_page }}</label>
+        <select id="limitInput" class="form-select">
+          <option value="10">10</option>
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
       </div>
-      <div class="col-md-2">
+      <div class="col-md-3">
         <button class="btn btn-primary w-100" id="loadBtn">
           <span id="loadSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-          <i class="bi bi-list-ul me-1"></i>Carica elenco
+          <i class="bi bi-list-ul me-1"></i>{{ t.uploads_btn_load }}
         </button>
       </div>
     </div>
@@ -43,17 +45,35 @@
       <table class="table table-striped table-hover align-middle">
         <thead class="table-light">
           <tr>
-            <th class="th-sortable" data-col="upload_id">ID <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
-            <th>Utente</th>
-            <th class="th-sortable" data-col="collection">Collection <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
-            <th class="th-sortable" data-col="original_filename">File originale <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
-            <th class="th-sortable" data-col="status">Stato <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
-            <th>Chunks</th>
-            <th class="th-sortable" data-col="created_at">Creato il <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
+            <th class="th-sortable" data-col="upload_id">{{ t.uploads_th_id }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
+            <th>{{ t.uploads_th_user }}</th>
+            <th class="th-sortable" data-col="collection">{{ t.uploads_th_collection }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
+            <th class="th-sortable" data-col="original_filename">{{ t.uploads_th_file }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
+            <th class="th-sortable" data-col="status">{{ t.uploads_th_status }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
+            <th>{{ t.uploads_th_chunks }}</th>
+            <th class="th-sortable" data-col="created_at">{{ t.uploads_th_date }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
           </tr>
         </thead>
         <tbody id="uploadsTbody"></tbody>
       </table>
+    </div>
+
+    <!-- Paginazione -->
+    <div id="paginationWrap" class="d-none mt-3">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <span id="paginationInfo" class="text-muted small"></span>
+        <nav aria-label="Navigazione pagine">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" id="pagePrev">
+              <a class="page-link" href="#" aria-label="Pagina precedente">&laquo;</a>
+            </li>
+            <span id="pageNumbers" class="d-flex"></span>
+            <li class="page-item" id="pageNext">
+              <a class="page-link" href="#" aria-label="Pagina successiva">&raquo;</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </div>
@@ -66,21 +86,38 @@ const FALLBACK_TOKEN = "{{ fake_token }}";
 const API_TOKEN = JWT_TOKEN || FALLBACK_TOKEN;
 const API_BASE = "{{ api_base }}";
 
-// ---- Sorting state ----
+const UI = {
+  reqError:    "{{ t.js_upl_req_error }}",
+  noResults:   "{{ t.js_upl_no_results }}",
+  results:     "{{ t.js_upl_results }}",
+  of:          "{{ t.js_upl_of }}",
+  collPrefix:  "{{ t.js_upl_coll_prefix }}",
+  netError:    "{{ t.js_upl_net_error }}",
+  page:        "{{ t.js_upl_page }}",
+};
+
+// ---- Sorting & pagination state ----
 let _sortCol = null;
 let _sortAsc  = true;
 let _lastList = [];
+let _currentPage = 1;
+let _totalCount = 0;
 
-const usernameInput = document.getElementById('usernameInput');
+const usernameInput   = document.getElementById('usernameInput');
 const collectionInput = document.getElementById('collectionInput');
-const limitInput = document.getElementById('limitInput');
-const loadBtn = document.getElementById('loadBtn');
-const loadSpinner = document.getElementById('loadSpinner');
-const uploadsError = document.getElementById('uploadsError');
+const limitInput      = document.getElementById('limitInput');
+const loadBtn         = document.getElementById('loadBtn');
+const loadSpinner     = document.getElementById('loadSpinner');
+const uploadsError    = document.getElementById('uploadsError');
 const uploadsEmptyState = document.getElementById('uploadsEmptyState');
-const uploadsSummary = document.getElementById('uploadsSummary');
+const uploadsSummary  = document.getElementById('uploadsSummary');
 const uploadsTableWrap = document.getElementById('uploadsTableWrap');
-const uploadsTbody = document.getElementById('uploadsTbody');
+const uploadsTbody    = document.getElementById('uploadsTbody');
+const paginationWrap  = document.getElementById('paginationWrap');
+const paginationInfo  = document.getElementById('paginationInfo');
+const pageNumbers     = document.getElementById('pageNumbers');
+const pagePrev        = document.getElementById('pagePrev');
+const pageNext        = document.getElementById('pageNext');
 
 function buildCollectionName(username, suffix) {
   const cleanSuffix = (suffix || '').trim();
@@ -124,12 +161,25 @@ function formatStatus(value) {
   return `<span class="badge ${classes} text-uppercase"><i class="bi ${icon} me-1" aria-hidden="true"></i>${value}</span>`;
 }
 
-async function loadUploads() {
+function getPageSize() {
+  return parseInt(limitInput.value, 10) || 25;
+}
+
+function getTotalPages() {
+  return Math.max(1, Math.ceil(_totalCount / getPageSize()));
+}
+
+async function loadUploads(page = 1) {
+  _currentPage = page;
   uploadsError.innerHTML = '';
   uploadsSummary.textContent = '';
   uploadsTableWrap.classList.add('d-none');
   uploadsEmptyState.classList.add('d-none');
+  paginationWrap.classList.add('d-none');
   uploadsTbody.innerHTML = '';
+
+  const pageSize = getPageSize();
+  const offset = (page - 1) * pageSize;
 
   const params = new URLSearchParams();
   const username = usernameInput.value.trim();
@@ -139,7 +189,8 @@ async function loadUploads() {
     normalizedCollection = buildCollectionName(username, collectionInput.value);
     if (normalizedCollection) params.append('collection', normalizedCollection);
   }
-  params.append('limit', limitInput.value || '25');
+  params.append('limit', pageSize);
+  params.append('offset', offset);
 
   loadBtn.disabled = true;
   loadSpinner.classList.remove('d-none');
@@ -150,32 +201,90 @@ async function loadUploads() {
     });
     const data = await res.json();
     if (!res.ok) {
-      uploadsError.innerHTML = `<div class="alert alert-danger">${data.detail || data.message || 'Errore nella richiesta'}</div>`;
+      uploadsError.innerHTML = `<div class="alert alert-danger">${data.detail || data.message || UI.reqError}</div>`;
       return;
     }
 
     const list = Array.isArray(data.uploads) ? data.uploads : [];
+    _totalCount = data.count ?? list.length;
+
     if (!list.length) {
       uploadsEmptyState.innerHTML = `
         <i class="bi bi-file-earmark-x empty-state-icon" style="font-size:2.5rem" aria-hidden="true"></i>
-        <p class="mt-2 mb-0 small">Nessun caricamento trovato per i filtri indicati.</p>`;
+        <p class="mt-2 mb-0 small">${UI.noResults}</p>`;
       uploadsEmptyState.classList.remove('d-none');
       return;
     }
 
     _lastList = list;
-    sortAndRender();
+    _sortCol = null;
+    renderRows(list);
+
+    const from = offset + 1;
+    const to = offset + list.length;
     const collectionLabel = normalizedCollection ? stripCollectionPrefix(username, normalizedCollection) : '';
-    const summarySuffix = collectionLabel ? ` - Collection: ${collectionLabel}` : '';
-    uploadsSummary.textContent = `Totale caricamenti: ${data.count ?? list.length}${summarySuffix}`;
+    const collectionSuffix = collectionLabel ? ` — ${UI.collPrefix}: ${collectionLabel}` : '';
+    uploadsSummary.textContent = `${UI.results} ${from}–${to} ${UI.of} ${_totalCount}${collectionSuffix}`;
     uploadsTableWrap.classList.remove('d-none');
+    renderPagination();
   } catch (err) {
     console.error(err);
-    uploadsError.innerHTML = '<div class="alert alert-danger">Errore di rete durante il caricamento</div>';
+    uploadsError.innerHTML = `<div class="alert alert-danger">${UI.netError}</div>`;
   } finally {
     loadSpinner.classList.add('d-none');
     loadBtn.disabled = false;
   }
+}
+
+function renderPagination() {
+  const totalPages = getTotalPages();
+  if (totalPages <= 1) { paginationWrap.classList.add('d-none'); return; }
+
+  paginationWrap.classList.remove('d-none');
+
+  // Prev
+  pagePrev.classList.toggle('disabled', _currentPage === 1);
+
+  // Next
+  pageNext.classList.toggle('disabled', _currentPage === totalPages);
+
+  // Numeri pagina: mostra max 5 pagine centrate sulla corrente
+  pageNumbers.innerHTML = '';
+  const delta = 2;
+  let start = Math.max(1, _currentPage - delta);
+  let end   = Math.min(totalPages, _currentPage + delta);
+  if (end - start < delta * 2) {
+    start = Math.max(1, end - delta * 2);
+    end   = Math.min(totalPages, start + delta * 2);
+  }
+
+  if (start > 1) pageNumbers.appendChild(makePageItem(1));
+  if (start > 2) pageNumbers.appendChild(makeEllipsis());
+  for (let p = start; p <= end; p++) pageNumbers.appendChild(makePageItem(p));
+  if (end < totalPages - 1) pageNumbers.appendChild(makeEllipsis());
+  if (end < totalPages) pageNumbers.appendChild(makePageItem(totalPages));
+
+  // Testo info
+  paginationInfo.textContent = `${UI.page} ${_currentPage} ${UI.of} ${totalPages}`;
+}
+
+function makePageItem(p) {
+  const li = document.createElement('li');
+  li.className = 'page-item' + (p === _currentPage ? ' active' : '');
+  const a = document.createElement('a');
+  a.className = 'page-link';
+  a.href = '#';
+  a.textContent = p;
+  a.addEventListener('click', (e) => { e.preventDefault(); loadUploads(p); });
+  li.appendChild(a);
+  return li;
+}
+
+function makeEllipsis() {
+  const li = document.createElement('li');
+  li.className = 'page-item disabled';
+  li.innerHTML = '<span class="page-link">…</span>';
+  return li;
 }
 
 function renderRows(list) {
@@ -206,6 +315,16 @@ function sortAndRender() {
   });
   renderRows(sorted);
 }
+
+pagePrev.querySelector('a').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (_currentPage > 1) loadUploads(_currentPage - 1);
+});
+
+pageNext.querySelector('a').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (_currentPage < getTotalPages()) loadUploads(_currentPage + 1);
+});
 
 function updateSortHeaders() {
   document.querySelectorAll('.th-sortable').forEach(th => {
@@ -239,7 +358,8 @@ document.querySelectorAll('.th-sortable').forEach(th => {
   });
 });
 
-loadBtn.addEventListener('click', loadUploads);
+loadBtn.addEventListener('click', () => loadUploads(1));
+limitInput.addEventListener('change', () => { if (_totalCount > 0) loadUploads(1); });
 
 document.addEventListener('DOMContentLoaded', () => {
   const qs = new URLSearchParams(window.location.search);
@@ -249,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const qsUsername = qs.get('username');
   if (qsUsername) usernameInput.value = qsUsername;
-  if (usernameInput.value || collectionInput.value) loadUploads();
+  if (usernameInput.value || collectionInput.value) loadUploads(1);
 });
 </script>
 {% endblock %}

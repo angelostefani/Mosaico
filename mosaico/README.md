@@ -38,6 +38,8 @@ Networking:
 - **Sincronizzazione collection** tra pagine tramite `localStorage`.
 - **Chat pubblica** accessibile via `?username=<utente>&collection=<collection>` senza autenticazione.
 - **Logging** su console e file con rotazione (`logs/mosaico.log`).
+- **Interfaccia bilingue (IT/EN)**: selettore lingua in navbar con persistenza in sessione (`_language`); tutte le pagine usano `{{ t.chiave }}` via context processor `ui.context_processors.i18n`; stringhe JS dinamiche gestite tramite oggetto `UI` renderizzato server-side.
+- **Paginazione storico upload**: parametri `offset`+`limit` verso l'API, rendering Bootstrap con ellipsis, selezione righe per pagina (10/25/50/100).
 
 ## Prerequisiti
 
@@ -163,18 +165,30 @@ docker compose logs -f frontend
 
 ```
 mosaico/
-├── mosaico/           # Configurazione Django (settings, urls, wsgi, asgi)
-├── ui/                # App Django principale
-│   ├── templates/     # Template HTML (Bootstrap)
-│   ├── static/        # File statici
-│   ├── views.py       # Logica viste
-│   ├── forms.py       # Form upload e chat
-│   └── urls.py        # Routing URL
-├── logs/              # Log applicazione (gitignored)
-├── .env.example       # Template variabili d'ambiente
-├── docker-compose.yml # Deploy containerizzato
-├── Dockerfile         # Immagine frontend
-└── docs/              # Documentazione dettagliata
+├── mosaico/                  # Configurazione Django (settings, urls, wsgi, asgi)
+├── ui/                       # App Django principale
+│   ├── templates/ui/         # Template HTML (Bootstrap)
+│   │   ├── base.html         # Layout base con navbar, selettore lingua e tema
+│   │   ├── index.html        # Home page
+│   │   ├── upload.html       # Upload documenti (layout 2 pannelli)
+│   │   ├── chat.html         # Chat RAG con streaming SSE
+│   │   ├── uploads.html      # Storico upload con paginazione
+│   │   ├── collection_config.html  # Configurazione collection
+│   │   ├── public_chat.html  # Chat pubblica senza login
+│   │   ├── login.html        # Login
+│   │   ├── register.html     # Registrazione
+│   │   └── change_password.html
+│   ├── static/               # File statici (CSS, immagini)
+│   ├── views.py              # Logica viste + set_language
+│   ├── forms.py              # Form upload e chat
+│   ├── urls.py               # Routing URL
+│   ├── i18n.py               # Dizionari IT/EN (~150 chiavi)
+│   └── context_processors.py # Inietta lang e t in ogni template
+├── logs/                     # Log applicazione (gitignored)
+├── .env.example              # Template variabili d'ambiente
+├── docker-compose.yml        # Deploy containerizzato
+├── Dockerfile                # Immagine frontend
+└── docs/                     # Documentazione dettagliata
 ```
 
 ## Documentazione
@@ -184,4 +198,4 @@ mosaico/
 
 ---
 
-*Documentazione aggiornata al 2026-03-16.*
+*Documentazione aggiornata al 2026-04-02.*

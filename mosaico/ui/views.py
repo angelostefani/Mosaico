@@ -20,6 +20,17 @@ DJANGO_TOKEN_URL = '/api/token/'
 FAKE_TOKEN = getattr(settings, 'FAKE_TOKEN', 'dev-token')
 logger = logging.getLogger(__name__)
 
+def set_language(request):
+    """Salva la lingua scelta in sessione e reindirizza alla pagina corrente."""
+    if request.method == 'POST':
+        from .i18n import SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE
+        lang = request.POST.get('language', DEFAULT_LANGUAGE)
+        if lang not in SUPPORTED_LANGUAGES:
+            lang = DEFAULT_LANGUAGE
+        request.session['_language'] = lang
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    return redirect(next_url)
+
 def _obtain_jwt(request, username, password):
     """
     Helper that asks the backend for a JWT and stores it in session.

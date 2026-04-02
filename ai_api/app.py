@@ -1587,7 +1587,8 @@ async def list_uploads(
     collection: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     upload_id: Optional[str] = Query(None),
-    limit: int = Query(100, ge=1, le=500, description="Numero massimo di upload da restituire")
+    limit: int = Query(25, ge=1, le=500, description="Numero massimo di upload da restituire"),
+    offset: int = Query(0, ge=0, description="Numero di upload da saltare (paginazione)"),
 ):
     with get_db_session() as session:
         q = session.query(Upload)
@@ -1599,15 +1600,16 @@ async def list_uploads(
             q = q.filter(Upload.status == status.strip())
         if upload_id and upload_id.strip():
             q = q.filter(Upload.upload_id == upload_id.strip())
+        total = q.count()
         rows = (
             q.order_by(Upload.created_at.desc())
+            .offset(offset)
             .limit(limit)
             .all()
         )
         uploads = [_upload_to_dict(u) for u in rows]
-        count = len(uploads)
 
-    return {"count": count, "uploads": uploads}
+    return {"count": total, "uploads": uploads}
 
 
 WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ0-9_']+")

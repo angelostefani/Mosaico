@@ -8,8 +8,8 @@
   <div class="col-md-6 col-lg-5">
     <div class="card shadow-sm border-0">
       <div class="card-body p-4">
-        <h2 class="h3 mb-3 text-center">Crea un nuovo account</h2>
-        <p class="text-muted text-center mb-4">Compila i campi per iniziare a usare la piattaforma.</p>
+        <h2 class="h3 mb-3 text-center">{{ t.register_title }}</h2>
+        <p class="text-muted text-center mb-4">{{ t.register_subtitle }}</p>
         <form method="post" novalidate>
           {% csrf_token %}
           {% if form.non_field_errors %}
@@ -30,7 +30,7 @@
                     {{ field|add_class:"form-control" }}
                   {% endif %}
                   <button class="btn btn-outline-secondary" type="button"
-                          data-pwd-toggle="{{ field.id_for_label }}" tabindex="-1" title="Mostra/nascondi">
+                          data-pwd-toggle="{{ field.id_for_label }}" tabindex="-1" title="{{ t.pwd_toggle }}">
                     <i class="bi bi-eye"></i>
                   </button>
                 </div>
@@ -49,12 +49,12 @@
               {% endfor %}
             </div>
           {% endfor %}
-          <button class="btn btn-success w-100" type="submit">Registrati</button>
+          <button class="btn btn-success w-100" type="submit">{{ t.register_btn }}</button>
         </form>
       </div>
       <div class="card-footer text-center bg-body-tertiary">
-        <small class="text-muted">Hai gia' un account?
-          <a href="{% url 'login' %}" class="fw-semibold">Accedi qui</a>
+        <small class="text-muted">{{ t.register_have_account }}
+          <a href="{% url 'login' %}" class="fw-semibold">{{ t.register_login_link }}</a>
         </small>
       </div>
     </div>

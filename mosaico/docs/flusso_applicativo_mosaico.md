@@ -55,24 +55,26 @@ FastAPI (ai_api) (:9000)
 
 ### 3. Chat RAG
 
-1. UI (`/chat/` autenticata o `/public-chat/` con `FAKE_TOKEN`) invia `POST {API_BASE}/chat` con:
+1. UI (`/chat/` autenticata o `/public-chat/` con `FAKE_TOKEN`) invia `POST {API_BASE}/chat/stream` con:
    - `question`, `username`, `collection` (anche vuota).
    - `model` selezionato (opzionale).
-   - `conversation_id` e `conversation_history` (ultimi 10 turni, per contesto).
+   - `conversation_id` e `conversation_history` (ultimi N turni entro `CHAT_HISTORY_CHAR_BUDGET` caratteri).
 2. FastAPI:
-   - Calcola embedding della domanda.
-   - Ricerca Qdrant (limite 30 risultati, soglia punteggio 0.3, rerank/MMR opzionali).
-   - Concatena chunk entro budget ~7k caratteri.
-   - Costruisce prompt e chiama Ollama (`OLLAMA_URL`, timeout 60 s, modello configurabile).
+   - Calcola embedding della domanda (con espansione multi-vector opzionale).
+   - Ricerca Qdrant (candidati `CHAT_CANDIDATES=50`, soglia adattiva: default `QDRANT_SCORE_THRESHOLD=0.42` con fallback progressivo × 0.75 → × 0.5 → 0.0).
+   - Reranking ibrido (vector + SequenceMatcher + keyword), opzionale cross-encoder (`ENABLE_CROSS_ENCODER_RERANK`).
+   - MMR diversity selection (`MMR_LAMBDA` configurabile, default 0.65).
+   - Context stitching sentence-aware (`ENABLE_STITCH`), troncamento al limite del budget senza spezzare frasi.
+   - Costruisce prompt e chiama Ollama in streaming SSE; risposta inviata token per token.
    - Salva turni in DB.
-3. Risposta: `message` + `conversation_id` per continuare la conversazione.
+3. Risposta SSE: `data: {"chunk":"..."}` progressivi + `data: {"done":true,"conversation_id":"..."}`.
 4. La history è mantenuta anche in `localStorage` lato client.
 
 ### 4. Storico upload e gestione collection
 
-- `GET {API_BASE}/uploads?username=&collection=&limit=` → lista upload con stato e metadati.
+- `GET {API_BASE}/uploads?username=&collection=&limit=&offset=` → lista upload paginata con stato e metadati; `count` nella risposta per la paginazione client.
 - `GET {API_BASE}/collections` → elenco collection Qdrant dell'utente.
-- `DELETE {API_BASE}/collection?name=` → cancellazione collection (scoped per tenant).
+- `GET/PUT/DELETE {API_BASE}/collection/config` → scope_prompt per collection.
 - Il frontend normalizza i nomi collection aggiungendo/rimuovendo il prefisso `<username>_`.
 
 ### 5. Conversazioni
@@ -107,10 +109,10 @@ Il `docker-compose.yml` del frontend monta `./db.sqlite3` e `./logs` come volumi
 
 | Componente | Responsabilità |
 |---|---|
-| **Django frontend** | UI, sessione, gestione JWT, sincronizzazione collection tramite `localStorage`, alert/errori, chiamate REST con header `Authorization` |
-| **FastAPI (ai_api)** | Endpoint `/upload`, `/chat`, `/uploads`, `/collection(s)`, `/conversations*`, `/healthz`, `/ollama/models`; orchestrazione RAG e persistenza |
+| **Django frontend** | UI, sessione, gestione JWT, i18n IT/EN (`ui/i18n.py`, context processor), sincronizzazione collection tramite `localStorage`, paginazione storico, chiamate REST con header `Authorization` |
+| **FastAPI (ai_api)** | Endpoint `/upload`, `/chat`, `/chat/stream`, `/uploads`, `/collection(s)`, `/collection/config`, `/conversations*`, `/healthz`, `/ollama/models`; orchestrazione RAG e persistenza |
 | **Qdrant** | Storage vettoriale chunk con payload (`user`, `collection`, `titolo`, `pagina`, `upload_id`) |
-| **Ollama** | Generazione testo da contesto RAG; modello configurabile |
+| **Ollama** | Generazione testo da contesto RAG; modello configurabile; streaming token-per-token |
 | **SQLite/Postgres** | Tracciamento upload, conversazioni, messaggi |
 
 ## Sicurezza e operatività
@@ -121,6 +123,19 @@ Il `docker-compose.yml` del frontend monta `./db.sqlite3` e `./logs` come volumi
 - **Logging**: rotazione configurabile (`LOG_FILE`, `LOG_MAX_BYTES`, `LOG_BACKUP_COUNT`); log SQL opzionale via `LOG_SQL=true`.
 - **Health-check API**: `GET /healthz` verifica connettività verso Qdrant, Ollama e storage.
 - **Backup**: volumi `ollama_data`, `qdrant_storage`, `postgres_data` salvano rispettivamente modelli, vettori e DB.
+
+## Internazionalizzazione (i18n)
+
+La lingua dell'interfaccia è selezionabile dall'utente tramite il pulsante in navbar. Il meccanismo è interamente custom (senza gettext) per evitare dipendenze GNU su Windows:
+
+| File | Ruolo |
+|---|---|
+| `ui/i18n.py` | Dizionari `TRANSLATIONS['it']` e `TRANSLATIONS['en']` con ~150 chiavi |
+| `ui/context_processors.py` | Legge `request.session['_language']`, inietta `lang` e `t` nel contesto di ogni template |
+| `mosaico/settings.py` | Registra `ui.context_processors.i18n` in `TEMPLATES.OPTIONS.context_processors` |
+| `ui/views.py` → `set_language` | `POST /set-language/` salva la lingua in sessione e reindirizza |
+| Template HTML | Usano `{{ t.chiave }}` per le stringhe server-side |
+| Template JS | Usano `const UI = { key: "{{ t.chiave }}" }` per le stringhe dinamiche |
 
 ## Riferimenti sorgente
 

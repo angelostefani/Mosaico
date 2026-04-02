@@ -1,6 +1,6 @@
 # Mosaico — Documentazione schermate
 
-Sintesi per presentare il funzionamento dell'app Django + FastAPI che gestisce upload di documenti, chat assistita e consultazione delle collection (con supporto per conversazioni salvate e selezione modello).
+Sintesi per presentare il funzionamento dell'app Django + FastAPI che gestisce upload di documenti, chat assistita e consultazione delle collection (con supporto per conversazioni salvate, selezione modello e interfaccia bilingue IT/EN).
 
 ## Schermate
 
@@ -19,10 +19,12 @@ Sintesi per presentare il funzionamento dell'app Django + FastAPI che gestisce u
 - Richiede autenticazione.
 
 ### Upload documento (`/upload/`)
-- Form con selezione file, campo collection e utente precompilato (readonly); link dinamico alla chat con la stessa collection.
-- Valida che la collection non contenga underscore; sincronizza il valore su `localStorage` (con listener `storage` per altre schede).
-- Richiesta `POST ${API_BASE}/upload` inoltrata dal backend Django con header `Authorization: Bearer <jwt|FAKE_TOKEN>`; timeout 300 secondi.
-- Mostra esito e Upload ID se disponibile; risponde in JSON per chiamate AJAX (`x-requested-with: XMLHttpRequest`).
+- Layout a due pannelli: pannello sinistro per la selezione/creazione collection, pannello destro con dropzone per i file.
+- Modalità collection: toggle "Esistente" / "Nuova"; dropdown caricato da `/collections`; nuovo nome validato (no underscore).
+- Supporta selezione multipla di file con progress bar per-file e badge di stato (In attesa / In caricamento / Completato / Errore).
+- Footer con link "Vai alla chat con questa collection" (aggiornato dinamicamente) e pulsante "Carica".
+- Sincronizza la collection selezionata su `localStorage` con listener `storage` per altre schede.
+- Richiesta `POST /upload/` inoltrata via AJAX; il Django view la inoltra a `{API_BASE}/upload` con header `Authorization: Bearer <jwt|FAKE_TOKEN>`; timeout 300 secondi.
 - Warning se il JWT non è stato ottenuto in fase di login.
 
 ### Chat autenticata (`/chat/`)
@@ -33,15 +35,17 @@ Sintesi per presentare il funzionamento dell'app Django + FastAPI che gestisce u
 - Invio domanda: `POST ${API_BASE}/chat` con `collection` (anche vuota), `model` selezionato, `conversation_id` corrente e `conversation_history` (ultimi 10 turni) serializzati; salvataggio storico in `localStorage` e highlight conversazione attiva.
 
 ### Storico caricamenti (`/uploads/`)
-- Filtri: utente (precompilato), collection (suffix senza prefisso utente), limite risultati.
+- Filtri: collection (suffix senza prefisso utente) e righe per pagina (10/25/50/100).
+- Paginazione server-side: `GET {API_BASE}/uploads?username=...&collection=...&limit=...&offset=...`; componente Bootstrap con ellipsis, info "Pagina X di Y" e riepilogo "Risultati X–Y di Z".
 - Normalizza il nome collection aggiungendo il prefisso `<username>_` per la chiamata API; rimuove il prefisso in tabella per leggibilità.
-- `GET ${API_BASE}/uploads?username=...&collection=...&limit=...` con token; tabella dinamica (ID, utente, collection, file, stato con badge, chunks, timestamp) e riepilogo conteggi.
-- Autoload se arrivano parametri in query string.
+- Tabella con ordinamento client-side (click su intestazione) per le colonne principali.
+- Autoload se arrivano parametri in query string (`collection`, `username`).
 
 ### Configurazione collection (`/collection-config/`)
-- Interfaccia per visualizzare e gestire le collection presenti in Qdrant.
-- Chiama `GET ${API_BASE}/collections` e `DELETE ${API_BASE}/collection` via fetch client-side con `Authorization: Bearer <FAKE_TOKEN>`.
-- Mostra il conteggio punti per collection e permette la cancellazione.
+- Interfaccia per caricare, salvare ed eliminare lo `scope_prompt` di una collection.
+- Dropdown collection caricato da `GET {API_BASE}/collections`; sincronizzato con `localStorage`.
+- `GET /collection/config` carica il prompt corrente; `PUT /collection/config` salva; `DELETE /collection/config` elimina con modal di conferma.
+- Messaggi di stato inline (successo/errore/warning) senza reload di pagina.
 
 ### Chat pubblica (`/public-chat/?username=...&collection=...`)
 - Accesso senza login: richiede `username` e `collection` in query string (non modificabili lato client).
@@ -59,11 +63,12 @@ Sintesi per presentare il funzionamento dell'app Django + FastAPI che gestisce u
 
 - **Autenticazione**: sessione Django per la UI; JWT (lifetime 60 min) da `/api/token/` salvato in `request.session['jwt_token']`; fallback `FAKE_TOKEN` in dev.
 - **Gestione token**: header `Authorization: Bearer <token>` per tutte le chiamate verso l'API (`/upload`, `/chat`, `/uploads`, `/collections`); warning dedicato se manca JWT.
-- **Upload documenti**: invio multipart (file, collection, username); timeout 300 s; feedback immediato e cross-link verso la chat con la stessa collection.
-- **Chat IA**: invio domanda a `/chat` con collection opzionale e modello selezionato; spinner, badge collection e cronologia client-side; versione pubblica usa la stessa API senza login.
+- **Upload documenti**: dropzone multi-file, progress per-file, timeout 300 s; cross-link verso la chat con la stessa collection.
+- **Chat IA**: streaming SSE `/chat/stream` token per token; badge collection, selezione modello, cronologia client-side; versione pubblica senza login.
 - **Conversazioni e modelli**: elenco da `/conversations`, apertura dettaglio, nuovo thread; invio include `conversation_id` e `conversation_history` (ultimi 10 turni). Dropdown modelli da `/ollama/models` con persistenza locale.
-- **Storico upload**: filtro per utente/collection, normalizzazione prefisso utente, badge di stato, conteggio totale e date formattate lato client.
+- **Storico upload**: filtro per collection, paginazione server-side con `offset`, normalizzazione prefisso utente, badge di stato, ordinamento client-side.
 - **Sincronizzazione collection**: `localStorage` condiviso tra Upload, Chat e Storico; query string preservate nei link incrociati.
+- **i18n IT/EN**: pulsante lingua in navbar, preferenza salvata in `request.session['_language']`; context processor `ui.context_processors.i18n` inietta `lang` e `t` (dizionario da `ui/i18n.py`) in ogni template; blocco JS `UI` renderizzato server-side per le stringhe dinamiche.
 - **Gestione errori e UX**: alert per errori API/rete, badge HTTP nella chat pubblica, indicatori di caricamento per ogni form, placeholder e testi guida.
 - **Configurazione**: `API_BASE` (default `http://192.168.118.218:9000`), `FAKE_TOKEN` per dev, porte 9001 (frontend) e 9000 (API).
 

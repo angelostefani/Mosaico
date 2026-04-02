@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="it" data-bs-theme="light">
+<html lang="{{ lang }}" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,7 +38,7 @@
             <a class="nav-link {% if request.resolver_match.url_name == 'chat' %}active{% endif %}" href="{% url 'chat' %}"><i class="bi bi-chat-dots me-1"></i>Chat</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'list_uploads' %}active{% endif %}" href="{% url 'list_uploads' %}"><i class="bi bi-list-ul me-1"></i>Caricamenti</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_uploads' %}active{% endif %}" href="{% url 'list_uploads' %}"><i class="bi bi-list-ul me-1"></i>{{ t.nav_uploads }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'collection_config' %}active{% endif %}" href="{% url 'collection_config' %}"><i class="bi bi-sliders me-1"></i>Config</a>
@@ -47,30 +47,40 @@
         <ul class="navbar-nav ms-lg-4">
           {% if user.is_authenticated %}
             <li class="nav-item d-flex align-items-center text-white-50 small me-lg-3">
-              <span class="me-2">Ciao,</span>
+              <span class="me-2">{{ t.nav_hello }}</span>
               <span class="fw-semibold text-white">{{ user.username }}</span>
             </li>
             <li class="nav-item me-lg-2">
-              <a class="btn btn-outline-light btn-sm" href="{% url 'change_password' %}">Cambio password</a>
+              <a class="btn btn-outline-light btn-sm" href="{% url 'change_password' %}">{{ t.nav_change_password }}</a>
             </li>
             <li class="nav-item me-lg-2">
               <form method="post" action="{% url 'logout' %}" class="d-flex">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                <button type="submit" class="btn btn-outline-light btn-sm">{{ t.nav_logout }}</button>
               </form>
             </li>
           {% else %}
             <li class="nav-item me-2">
-              <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Login</a>
+              <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">{{ t.nav_login }}</a>
             </li>
             <li class="nav-item me-lg-2">
-              <a class="btn btn-light btn-sm text-primary fw-semibold" href="{% url 'register' %}">Registrati</a>
+              <a class="btn btn-light btn-sm text-primary fw-semibold" href="{% url 'register' %}">{{ t.nav_register }}</a>
             </li>
           {% endif %}
-          <li class="nav-item">
-            <button class="btn btn-outline-light btn-sm" id="themeToggleBtn" title="Cambia tema" type="button">
+          <li class="nav-item me-lg-1">
+            <button class="btn btn-outline-light btn-sm" id="themeToggleBtn" title="{{ t.nav_toggle_theme }}" type="button">
               <i class="bi bi-moon-stars" id="themeToggleIcon"></i>
             </button>
+          </li>
+          <li class="nav-item">
+            <form method="post" action="{% url 'set_language' %}" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" name="language" value="{% if lang == 'en' %}it{% else %}en{% endif %}"
+                      class="btn btn-outline-light btn-sm" title="{{ t.nav_lang_switch_title }}">
+                {{ t.nav_lang_switch_label }}
+              </button>
+            </form>
           </li>
         </ul>
       </div>
@@ -99,7 +109,7 @@
             <i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Chat
           </a>
           <a class="text-muted text-decoration-none footer-link {% if request.resolver_match.url_name == 'list_uploads' %}fw-semibold{% endif %}" href="{% url 'list_uploads' %}">
-            <i class="bi bi-list-ul me-1" aria-hidden="true"></i>Caricamenti
+            <i class="bi bi-list-ul me-1" aria-hidden="true"></i>{{ t.nav_uploads }}
           </a>
           <a class="text-muted text-decoration-none footer-link {% if request.resolver_match.url_name == 'collection_config' %}fw-semibold{% endif %}" href="{% url 'collection_config' %}">
             <i class="bi bi-sliders me-1" aria-hidden="true"></i>Config

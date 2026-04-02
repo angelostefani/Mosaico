@@ -48,6 +48,8 @@ La repository separa chiaramente i componenti applicativi dai servizi di infrast
 - **Auto-pull modello Ollama** — con Ollama locale, il modello configurato viene scaricato automaticamente al primo avvio
 - **Multi-tenant** — isolamento per `username` e `collection` tramite namespace Qdrant
 - **Database duale** — SQLite in sviluppo, PostgreSQL in produzione
+- **Interfaccia bilingue** — selettore lingua (Italiano/Inglese) persistito in sessione; tutte le pagine e i messaggi JS si adattano dinamicamente
+- **Pipeline RAG migliorata** — chunking sentence-aware, soglia score adattiva, budget history in caratteri, reranker cross-encoder opzionale, MMR lambda configurabile
 
 ## Architettura
 
@@ -69,45 +71,132 @@ API FastAPI (:9000)
 
 ### Prerequisiti
 
-- Docker e Docker Compose
-- Python 3.11+ se vuoi eseguire API o frontend fuori da container
+- **Docker** e **Docker Compose** v2+ (incluso in Docker Desktop)
+- Python 3.11+ solo se vuoi eseguire API o frontend fuori dai container
 
-### Avvio completo con un solo comando (consigliato)
-
-Il `docker-compose.yml` nella root avvia tutti i servizi insieme: PostgreSQL, Qdrant, API e Frontend.
+### 1. Configurazione iniziale
 
 ```bash
-# Copia e configura le variabili d'ambiente
-cp .env.example .env   # poi edita .env con i tuoi valori
+cp .env.example .env
+# Edita .env: imposta OLLAMA_URL, OLLAMA_MODEL, credenziali DB, ecc.
 ```
 
-| Scenario | Windows (PowerShell) | Linux / macOS | Ollama usato |
+Le variabili piu importanti da verificare prima del primo avvio:
+
+| Variabile | Esempio | Note |
+|---|---|---|
+| `OLLAMA_URL` | `http://192.168.1.10:11434/api/generate` | URL del server Ollama esterno (scenario `up`) |
+| `OLLAMA_MODEL` | `gemma3:1b` | Modello da usare/scaricare |
+| `API_BASE` | `http://localhost:9000` | Come il frontend raggiunge l'API |
+| `DJANGO_SECRET_KEY` | *(stringa casuale)* | Obbligatorio in produzione |
+
+---
+
+### 2. Avvio dello stack completo
+
+Il `docker-compose.yml` nella root orchestra tutti i servizi: Qdrant, PostgreSQL, API FastAPI e Frontend Django.
+
+Sono disponibili due scenari a seconda di dove gira Ollama.
+
+#### Scenario A — Ollama su server esterno (piu comune)
+
+Usa quando hai gia Ollama in esecuzione su un'altra macchina o su localhost fuori da Docker.
+`OLLAMA_URL` nel `.env` punta a quel server.
+
+```bash
+# Linux / macOS
+make up
+
+# Windows (PowerShell)
+.\start.ps1 up
+```
+
+Equivalente Docker puro:
+```bash
+docker compose up -d --build
+```
+
+#### Scenario B — Ollama locale nel container Docker
+
+Usa quando vuoi che Ollama giri anch'esso in Docker. Al primo avvio il modello `OLLAMA_MODEL` viene scaricato automaticamente dal servizio `ollama-pull`; i riavvii successivi saltano il download grazie al volume `ollama_data`.
+
+```bash
+# Linux / macOS
+make local
+
+# Windows (PowerShell)
+.\start.ps1 local
+```
+
+Equivalente Docker puro (sovrascrive OLLAMA_URL inline):
+```bash
+OLLAMA_URL=http://ollama:11434/api/generate docker compose --profile local up -d --build
+```
+
+> Su Windows (cmd/PowerShell senza `make`) usa `.\start.ps1 local` oppure imposta la variabile d'ambiente manualmente prima del comando `docker compose`.
+
+---
+
+### 3. Comandi di gestione
+
+Tutti i comandi sono disponibili sia via `make` (Linux/macOS) sia via `start.ps1` (Windows).
+
+| Azione | `make` | `start.ps1` | Docker puro |
 |---|---|---|---|
-| Ollama su server esterno | `.\start.ps1 up` | `make up` | `OLLAMA_URL` dal `.env` |
-| Ollama locale Docker | `.\start.ps1 local` | `make local` | container `ollama` interno |
+| Avvia (Ollama esterno) | `make up` | `.\start.ps1 up` | `docker compose up -d --build` |
+| Avvia (Ollama locale) | `make local` | `.\start.ps1 local` | `OLLAMA_URL=http://ollama:11434/api/generate docker compose --profile local up -d --build` |
+| Ferma tutto | `make down` | `.\start.ps1 down` | `docker compose --profile local down` |
+| Log in tempo reale | `make logs` | `.\start.ps1 logs` | `docker compose --profile local logs -f` |
 
-Con **Ollama locale** il modello configurato in `OLLAMA_MODEL` viene scaricato automaticamente al primo avvio tramite il servizio `ollama-pull`. I riavvii successivi non riscaricano il modello grazie al volume `ollama_data`.
+> `make down` e `.\start.ps1 down` fermano anche i container del profilo `local` (Ollama + ollama-pull) se erano stati avviati.
 
-Per fermare tutti i container: `.\start.ps1 down` (Windows) / `make down` (Linux/macOS)
+---
 
-### Avvio per moduli (alternativa)
+### 4. Primo accesso
 
-Se preferisci avviare i componenti separatamente o vuoi piu controllo:
+Dopo l'avvio (attendere 20-30 secondi per l'inizializzazione):
+
+1. Apri il browser su **`http://localhost:9001`**
+2. Registra un account (o usa il superuser creato con `createsuperuser`)
+3. Vai su **Upload** e carica un documento
+4. Vai su **Chat** e inizia a interrogare la knowledge base
+
+---
+
+### 5. Avvio per moduli (alternativa avanzata)
+
+Se preferisci avviare i componenti separatamente o hai un'infrastruttura parzialmente esistente:
 
 ```bash
+# 1. Qdrant
 cd qdrant_project && docker compose up -d
-```
 
-```bash
+# 2. Ollama (con pull manuale del modello)
 cd ollama_project && docker compose up -d
-docker compose exec ollama ollama pull gemma3:1b   # scarica il modello manualmente
+docker compose exec ollama ollama pull gemma3:1b
+
+# 3. PostgreSQL (opzionale — l'API usa SQLite di default)
+cd postgres_project && docker compose up -d
+
+# 4. API FastAPI e Frontend Django
+cd ai_api   && docker compose up -d --build
+cd mosaico  && docker compose up -d --build
 ```
+
+Per la configurazione dettagliata di ogni modulo consulta:
+[`ai_api/README.md`](./ai_api/README.md) · [`mosaico/README.md`](./mosaico/README.md) · [`qdrant_project/README.md`](./qdrant_project/README.md) · [`ollama_project/README.md`](./ollama_project/README.md)
+
+---
+
+### 6. Cambio modello Ollama
 
 ```bash
-cd postgres_project && docker compose up -d
-```
+# Scarica il nuovo modello nel container
+docker compose exec ollama ollama pull <nuovo-modello>
 
-Per backend e frontend consulta [`ai_api/README.md`](./ai_api/README.md) e [`mosaico/README.md`](./mosaico/README.md).
+# Aggiorna OLLAMA_MODEL nel .env, poi riavvia
+make local   # oppure .\start.ps1 local
+```
 
 ## Endpoint principali
 
@@ -153,3 +242,9 @@ Per backend e frontend consulta [`ai_api/README.md`](./ai_api/README.md) e [`mos
 Il modulo API e stato rinominato da `mosaico_api/` a `ai_api/`. Tutta la documentazione e i link sono stati aggiornati di conseguenza.
 
 Funzionalita aggiunte nella revisione corrente: streaming SSE su `/chat/stream`, upload multipli con progress per-file, eliminazione ed esportazione conversazioni, supporto file `.json`, pull automatico del modello Ollama al primo avvio, script `start.ps1` per Windows.
+
+Revisione successiva:
+- **UI upload** riprogettata a due pannelli (configurazione collection a sinistra, dropzone a destra).
+- **Storico caricamenti** con paginazione server-side (parametro `offset`) e selezione righe per pagina.
+- **i18n IT/EN**: selettore lingua in navbar, dizionari in `ui/i18n.py`, context processor `ui.context_processors.i18n`; tutte le pagine usano `{{ t.chiave }}` e blocchi JS `UI`.
+- **Qualita RAG**: chunking sentence-aware, soglia score adattiva con fallback progressivo, budget in caratteri per la history (`CHAT_HISTORY_CHAR_BUDGET`), truncation sentence-aware nel contesto, `MMR_LAMBDA` configurabile, reranker cross-encoder opzionale (`ENABLE_CROSS_ENCODER_RERANK`).

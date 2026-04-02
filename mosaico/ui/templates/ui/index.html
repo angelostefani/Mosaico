@@ -6,14 +6,14 @@
   <div class="hero-gradient p-5 text-white">
     <div class="row align-items-center g-4">
       <div class="col-lg-7">
-        <h1 class="display-5 fw-semibold mb-3">Benvenuto in MOSAICO</h1>
-        <p class="lead mb-4">Gestisci i documenti, interagisci con l'intelligenza artificiale e consulta le collection in modo rapido da un'unica interfaccia.</p>
+        <h1 class="display-5 fw-semibold mb-3">{{ t.home_title }}</h1>
+        <p class="lead mb-4">{{ t.home_subtitle }}</p>
         <div class="d-flex flex-wrap gap-2">
           <a class="btn btn-light btn-lg text-primary fw-semibold" href="{% url 'upload' %}">
-            <i class="bi bi-cloud-arrow-up me-2"></i>Carica documento
+            <i class="bi bi-cloud-arrow-up me-2"></i>{{ t.home_btn_upload }}
           </a>
           <a class="btn btn-outline-light btn-lg" href="{% url 'chat' %}">
-            <i class="bi bi-chat-dots me-2"></i>Apri chat IA
+            <i class="bi bi-chat-dots me-2"></i>{{ t.home_btn_chat }}
           </a>
         </div>
       </div>
@@ -36,9 +36,9 @@
           <div class="icon-circle bg-primary-subtle text-primary mb-3">
             <i class="bi bi-list-columns"></i>
           </div>
-          <h5 class="card-title">Storico Uploads</h5>
-          <p class="card-text text-muted">Consulta rapidamente gli ultimi documenti caricati, filtra per collection e monitora lo stato degli upload.</p>
-          <a class="stretched-link text-primary fw-semibold" href="{% url 'list_uploads' %}">Vai alla vista Uploads</a>
+          <h5 class="card-title">{{ t.home_card1_title }}</h5>
+          <p class="card-text text-muted">{{ t.home_card1_text }}</p>
+          <a class="stretched-link text-primary fw-semibold" href="{% url 'list_uploads' %}">{{ t.home_card1_link }}</a>
         </div>
       </div>
     </div>
@@ -48,9 +48,9 @@
           <div class="icon-circle bg-success-subtle text-success mb-3">
             <i class="bi bi-cloud-upload"></i>
           </div>
-          <h5 class="card-title">Upload guidato</h5>
-          <p class="card-text text-muted">Carica i file, tieni traccia degli ultimi caricamenti e accedi rapidamente all'elenco.</p>
-          <a class="stretched-link text-primary fw-semibold" href="{% url 'upload' %}">Apri la pagina di upload</a>
+          <h5 class="card-title">{{ t.home_card2_title }}</h5>
+          <p class="card-text text-muted">{{ t.home_card2_text }}</p>
+          <a class="stretched-link text-primary fw-semibold" href="{% url 'upload' %}">{{ t.home_card2_link }}</a>
         </div>
       </div>
     </div>
@@ -60,9 +60,9 @@
           <div class="icon-circle bg-info-subtle text-info mb-3">
             <i class="bi bi-robot"></i>
           </div>
-          <h5 class="card-title">Chat potenziata</h5>
-          <p class="card-text text-muted">Poni domande e ricevi risposte contestualizzate, con badge dinamici che ti ricordano la collection attiva.</p>
-          <a class="stretched-link text-primary fw-semibold" href="{% url 'chat' %}">Entra nella chat</a>
+          <h5 class="card-title">{{ t.home_card3_title }}</h5>
+          <p class="card-text text-muted">{{ t.home_card3_text }}</p>
+          <a class="stretched-link text-primary fw-semibold" href="{% url 'chat' %}">{{ t.home_card3_link }}</a>
         </div>
       </div>
     </div>

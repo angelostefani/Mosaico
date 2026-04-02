@@ -2,18 +2,18 @@
 
 {% block content %}
 <div class="mb-4">
-  <h1 class="h2 fw-semibold mb-1">Configurazione Collection</h1>
-  <p class="text-muted mb-0">Gestisci scope prompt e impostazioni della collection corrente.</p>
+  <h1 class="h2 fw-semibold mb-1">{{ t.config_page_title }}</h1>
+  <p class="text-muted mb-0">{{ t.config_page_subtitle }}</p>
 </div>
 
 <div class="row g-4">
   <div class="col-lg-8">
     <div class="card shadow-sm border-0">
       <div class="card-body">
-        <h2 class="h5 mb-4">Dettagli configurazione</h2>
+        <h2 class="h5 mb-4">{{ t.config_card_title }}</h2>
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label fw-semibold" for="usernameInput">Utente</label>
+            <label class="form-label fw-semibold" for="usernameInput">{{ t.config_user_label }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-person"></i></span>
               <input type="text" class="form-control" id="usernameInput" value="{{ request.user.username }}" readonly>
@@ -29,23 +29,23 @@
             </div>
           </div>
           <div class="col-12">
-            <label class="form-label fw-semibold" for="scopePromptInput">Scope prompt</label>
-            <textarea class="form-control" id="scopePromptInput" rows="8" placeholder="Inserisci il testo di scope_prompt"></textarea>
+            <label class="form-label fw-semibold" for="scopePromptInput">{{ t.config_scope_label }}</label>
+            <textarea class="form-control" id="scopePromptInput" rows="8" placeholder="{{ t.config_scope_placeholder }}"></textarea>
           </div>
         </div>
       </div>
       <div class="card-footer bg-body-tertiary d-flex flex-wrap gap-2">
         <button class="btn btn-primary" id="loadBtn">
           <span id="loadSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-          <i class="bi bi-arrow-clockwise me-1"></i>Carica configurazione
+          <i class="bi bi-arrow-clockwise me-1"></i>{{ t.config_btn_load }}
         </button>
         <button class="btn btn-success" id="saveBtn">
           <span id="saveSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-          <i class="bi bi-save me-1"></i>Salva configurazione
+          <i class="bi bi-save me-1"></i>{{ t.config_btn_save }}
         </button>
         <button class="btn btn-outline-danger" id="deleteBtn">
           <span id="deleteSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-          <i class="bi bi-trash me-1"></i>Elimina configurazione
+          <i class="bi bi-trash me-1"></i>{{ t.config_btn_delete }}
         </button>
       </div>
     </div>
@@ -59,17 +59,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteConfigModalLabel">
-          <i class="bi bi-trash me-2 text-danger" aria-hidden="true"></i>Elimina configurazione
+          <i class="bi bi-trash me-2 text-danger" aria-hidden="true"></i>{{ t.config_modal_title }}
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ t.modal_close }}"></button>
       </div>
       <div class="modal-body">
-        Questa operazione eliminerà la configurazione per la collection <strong id="deleteConfigCollectionName"></strong>. L'operazione è irreversibile.
+        {{ t.config_modal_body_pre }} <strong id="deleteConfigCollectionName"></strong>{{ t.config_modal_body_post }}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ t.config_modal_cancel }}</button>
         <button type="button" class="btn btn-danger" id="deleteConfigConfirmBtn">
-          <i class="bi bi-trash me-1" aria-hidden="true"></i>Elimina
+          <i class="bi bi-trash me-1" aria-hidden="true"></i>{{ t.config_modal_confirm }}
         </button>
       </div>
     </div>
@@ -85,6 +85,15 @@ const API_TOKEN = JWT_TOKEN || FALLBACK_TOKEN;
 const API_BASE = "{{ api_base }}";
 const CONFIG_URL = `${API_BASE}/collection/config`;
 const STORAGE_KEY_COLLECTION = 'collection.current';
+
+const UI = {
+  noCollection:       "{{ t.js_cfg_no_collection }}",
+  unauthorized:       "{{ t.js_cfg_unauthorized }}",
+  noScope:            "{{ t.js_cfg_no_scope }}",
+  collectionsLoading: "{{ t.js_collections_loading }}",
+  collectionsSelect:  "{{ t.js_collections_select }}",
+  collectionsNone:    "{{ t.js_collections_none }}",
+};
 
 const usernameInput = document.getElementById('usernameInput');
 const collectionInput = document.getElementById('collectionInput');
@@ -134,7 +143,7 @@ function readResponseMessage(data, fallback) {
 async function loadConfig() {
   const collection = (collectionInput?.value || '').trim();
   if (!collection) {
-    showStatus('warning', 'Inserisci prima il nome collection.');
+    showStatus('warning', UI.noCollection);
     return;
   }
 
@@ -148,7 +157,7 @@ async function loadConfig() {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        showStatus('danger', 'Sessione non autorizzata. Effettua nuovamente l\'accesso.');
+        showStatus('danger', UI.unauthorized);
       } else {
         showStatus('danger', readResponseMessage(data, `Errore ${res.status} durante il caricamento.`));
       }
@@ -175,11 +184,11 @@ async function saveConfig() {
     : (selectedOption?.dataset.original ?? selectedCollection ?? '');
   const scopePrompt = (scopePromptInput?.value || '').trim();
   if (!collection) {
-    showStatus('warning', 'Inserisci prima il nome collection.');
+    showStatus('warning', UI.noCollection);
     return;
   }
   if (!scopePrompt) {
-    showStatus('warning', 'Il campo scope_prompt e obbligatorio.');
+    showStatus('warning', UI.noScope);
     return;
   }
 
@@ -202,7 +211,7 @@ async function saveConfig() {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        showStatus('danger', 'Sessione non autorizzata. Effettua nuovamente l\'accesso.');
+        showStatus('danger', UI.unauthorized);
       } else {
         showStatus('danger', readResponseMessage(data, `Errore ${res.status} durante il salvataggio.`));
       }
@@ -220,7 +229,7 @@ async function saveConfig() {
 async function deleteConfig() {
   const collection = (collectionInput?.value || '').trim();
   if (!collection) {
-    showStatus('warning', 'Inserisci prima il nome collection.');
+    showStatus('warning', UI.noCollection);
     return;
   }
   document.getElementById('deleteConfigCollectionName').textContent = `"${collection}"`;
@@ -239,7 +248,7 @@ async function _doDeleteConfig() {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        showStatus('danger', 'Sessione non autorizzata. Effettua nuovamente l\'accesso.');
+        showStatus('danger', UI.unauthorized);
       } else {
         showStatus('danger', readResponseMessage(data, `Errore ${res.status} durante l'eliminazione.`));
       }
@@ -295,7 +304,7 @@ function buildCollectionOption(name) {
 async function fetchCollections(initialValue = '') {
   if (!collectionInput) return;
   collectionInput.disabled = true;
-  collectionInput.innerHTML = '<option value="">Caricamento collections...</option>';
+  collectionInput.innerHTML = `<option value="">${UI.collectionsLoading}</option>`;
   const username = (usernameInput?.value || '').trim();
   const savedRaw = (initialValue || '').trim();
   const savedStripped = username ? stripUsernamePrefix(savedRaw) : savedRaw;
@@ -309,9 +318,9 @@ async function fetchCollections(initialValue = '') {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const collections = normalizeCollections(data?.collections || data);
-    if (!collections.length) throw new Error('Nessuna collection disponibile');
+    if (!collections.length) throw new Error(UI.collectionsNone);
 
-    collectionInput.innerHTML = '<option value="">-- Seleziona una collection --</option>';
+    collectionInput.innerHTML = `<option value="">${UI.collectionsSelect}</option>`;
     collections.forEach(name => {
       collectionInput.appendChild(buildCollectionOption(name));
     });
@@ -332,7 +341,7 @@ async function fetchCollections(initialValue = '') {
     }
   } catch (err) {
     console.error('Errore nel caricamento collections', err);
-    collectionInput.innerHTML = '<option value="">Nessuna collection disponibile</option>';
+    collectionInput.innerHTML = `<option value="">${UI.collectionsNone}</option>`;
   } finally {
     collectionInput.disabled = false;
   }
