@@ -85,7 +85,7 @@ Le variabili piu importanti da verificare prima del primo avvio:
 
 | Variabile | Esempio | Note |
 |---|---|---|
-| `OLLAMA_URL` | `http://192.168.1.10:11434/api/generate` | URL del server Ollama esterno (scenario `up`) |
+| `OLLAMA_URL` | `http://xxx.xxx.xxx.xxx:11434/api/generate` | URL del server Ollama esterno (scenario `up`) |
 | `OLLAMA_MODEL` | `gemma3:1b` | Modello da usare/scaricare |
 | `API_BASE` | `http://localhost:9000` | Come il frontend raggiunge l'API |
 | `DJANGO_SECRET_KEY` | *(stringa casuale)* | Obbligatorio in produzione |
