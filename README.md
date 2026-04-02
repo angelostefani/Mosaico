@@ -37,7 +37,7 @@ La repository separa chiaramente i componenti applicativi dai servizi di infrast
 | [`mosaico/`](./mosaico/README.md) | Frontend Django per autenticazione, upload, chat e gestione collection | `9001` |
 | [`qdrant_project/`](./qdrant_project/README.md) | Stack Docker minimale per Qdrant | `6333` |
 | [`ollama_project/`](./ollama_project/README.md) | Stack Docker per Ollama e modelli locali | `11434` |
-| [`postgres_project/`](./postgres_project/docker-compose.yml) | Stack Docker per PostgreSQL opzionale | `5433 -> 5432` |
+| [`postgres_project/`](./postgres_project/docker-compose.yml) | Stack Docker per PostgreSQL opzionale | `5432` |
 
 ## Funzionalita principali
 
@@ -64,7 +64,7 @@ API FastAPI (:9000)
   |--------------------> Qdrant (:6333)
   |--------------------> Ollama (:11434)
   |
-  +--------------------> PostgreSQL (:5433, opzionale)
+  +--------------------> PostgreSQL (:5432)
 ```
 
 ## Quick Start
@@ -207,7 +207,7 @@ make local   # oppure .\start.ps1 local
 | Frontend Django | `http://localhost:9001` |
 | Qdrant | `http://localhost:6333` |
 | Ollama | `http://localhost:11434` |
-| PostgreSQL | `localhost:5433` |
+| PostgreSQL | `localhost:5432` |
 
 ## Endpoint API notevoli
 
