@@ -7,6 +7,7 @@ import re
 from datetime import datetime, UTC
 from typing import Optional, List, Tuple, Dict, Any
 from contextlib import contextmanager
+from collections import Counter
 from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -14,11 +15,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import pdfplumber
 import docx
 import openpyxl
-try:
-    # Import pesante; lo carichiamo solo se disponibile
-    from sentence_transformers import SentenceTransformer  # type: ignore
-except Exception:  # ImportError o altri errori during import
-    SentenceTransformer = None  # type: ignore
+# Import pesante: caricato lazy al primo uso per evitare cold-start/blocchi inutili.
+SentenceTransformer = None  # type: ignore
 # grpc DLL may be blocked by Windows Application Control policy; stub it out
 # since the app uses only the REST transport (no prefer_grpc=True).
 try:
@@ -103,6 +101,11 @@ LOG_BACKUP_COUNT = int(os.getenv('LOG_BACKUP_COUNT', 5))
 MAX_UPLOAD_SIZE_BYTES = int(os.getenv("MAX_UPLOAD_SIZE_BYTES", 20_000_000))
 ALLOWED_UPLOAD_EXTENSIONS = {".txt", ".md", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".json"}
 CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:9001").split(",") if o.strip()]
+_pytest_mode = bool(os.getenv("PYTEST_CURRENT_TEST"))
+ALLOW_EMBEDDING_FALLBACK = os.getenv(
+    "ALLOW_EMBEDDING_FALLBACK",
+    "true" if _pytest_mode else "false",
+).lower() in ("1", "true", "yes")
 
 REQUEST_ID_CTX: ContextVar[str] = ContextVar("request_id", default="-")
 
@@ -171,24 +174,65 @@ class _EmbeddingModelHolder:
         self._instance: Optional["SentenceTransformer"] = None  # type: ignore[name-defined]
         self._failed = False
         self._fallback_logged = False
+        self._status = "uninitialized"
+        self._error: Optional[str] = None
 
     def get(self) -> "SentenceTransformer":  # type: ignore[name-defined]
+        if _pytest_mode and ALLOW_EMBEDDING_FALLBACK:
+            self._status = "fallback"
+            self._error = "Fallback embedding forzato in ambiente pytest."
+            class _FallbackEmbedder:
+                def encode(self, inputs):
+                    def enc_one(text: str):
+                        h = abs(hash(text))
+                        size = 32
+                        vec = [(h >> (i % 32)) & 0xFF for i in range(size)]
+                        return [float(v) / 255.0 for v in vec]
+                    if isinstance(inputs, list):
+                        return [enc_one(t) for t in inputs]
+                    return enc_one(inputs)
+            return _FallbackEmbedder()  # type: ignore
+
+        global SentenceTransformer
+        if SentenceTransformer is None and not self._failed:
+            try:
+                from sentence_transformers import SentenceTransformer as _SentenceTransformer  # type: ignore
+                SentenceTransformer = _SentenceTransformer  # type: ignore
+            except Exception as exc:
+                self._failed = True
+                self._status = "unavailable"
+                self._error = str(exc)
+
         if SentenceTransformer is not None and not self._failed:
             if self._instance is None:
                 with self._lock:
                     if self._instance is None:
                         try:
                             self._instance = SentenceTransformer(EMBEDDING_MODEL)
+                            self._status = "ready"
+                            self._error = None
                             if ENABLE_RAG_DEBUG:
                                 logger.info("Embedding model '%s' caricato con successo.", EMBEDDING_MODEL)
                         except Exception as exc:  # pragma: no cover - logging path
                             self._failed = True
+                            self._status = "unavailable"
+                            self._error = str(exc)
                             logger.warning(
-                                "Impossibile caricare il modello '%s': %s. Uso fallback deterministico.",
+                                "Impossibile caricare il modello '%s': %s.",
                                 EMBEDDING_MODEL, exc,
                             )
             if self._instance is not None:
                 return self._instance
+
+        if not ALLOW_EMBEDDING_FALLBACK:
+            if SentenceTransformer is None and not self._error:
+                self._error = "sentence-transformers non disponibile."
+            self._status = "unavailable"
+            raise RuntimeError(
+                "Modello embedding non disponibile. "
+                "Installare/configurare sentence-transformers oppure abilitare "
+                "ALLOW_EMBEDDING_FALLBACK=true solo in ambienti controllati."
+            )
 
         class _FallbackEmbedder:
             def encode(self, inputs):
@@ -202,9 +246,24 @@ class _EmbeddingModelHolder:
                 return enc_one(inputs)
 
         if not self._fallback_logged:
-            logger.warning("Uso del fallback per gli embedding: sentence-transformers non disponibile.")
+            logger.warning(
+                "Uso del fallback per gli embedding: sentence-transformers non disponibile o non caricabile."
+            )
             self._fallback_logged = True
+        self._status = "fallback"
         return _FallbackEmbedder()  # type: ignore
+
+    def status(self) -> Dict[str, Any]:
+        detail = self._error
+        if self._status == "fallback" and not detail:
+            detail = "Fallback deterministico attivo."
+        return {
+            "ok": self._status == "ready",
+            "mode": self._status,
+            "fallback_enabled": ALLOW_EMBEDDING_FALLBACK,
+            "detail": detail,
+            "model": EMBEDDING_MODEL,
+        }
 
 
 _embedding_model_holder = _EmbeddingModelHolder()
@@ -260,6 +319,18 @@ def get_db_session() -> Session:
         raise
     finally:
         session.close()
+
+
+@contextmanager
+def get_upload_db_conn():
+    """
+    Compat helper per test legacy: espone una connessione DBAPI raw.
+    """
+    conn = engine.raw_connection()
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 def _utc_now_dt() -> datetime:
@@ -691,8 +762,14 @@ async def preload_embedding_model_on_startup() -> None:
     Carica il modello embedding all'avvio per evitare cold-start alla prima richiesta.
     """
     logger.info("Precaricamento modello embedding '%s' in avvio...", EMBEDDING_MODEL)
-    await run_in_threadpool(get_embedding_model)
-    logger.info("Precaricamento embedding completato.")
+    try:
+        await run_in_threadpool(get_embedding_model)
+        logger.info("Precaricamento embedding completato.")
+    except HTTPException as exc:
+        logger.warning(
+            "Precaricamento embedding non completato: %s. Il servizio rimane avviato ma chat/upload risponderanno 503 finché il modello non sarà disponibile.",
+            exc.detail,
+        )
 
 
 @app.middleware("http")
@@ -1009,8 +1086,16 @@ def _qdrant_search_points(
 
 
 def get_embedding_model() -> SentenceTransformer:
-    """Restituisce il modello di embedding (o un fallback deterministico)."""
-    return _embedding_model_holder.get()
+    """Restituisce il modello di embedding oppure segnala un degrado non consentito."""
+    try:
+        return _embedding_model_holder.get()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+def get_embedding_status() -> Dict[str, Any]:
+    """Espone lo stato runtime dell'embedding model per health check e test."""
+    return _embedding_model_holder.status()
 
 
 def process_document(
@@ -1613,6 +1698,21 @@ async def list_uploads(
 
 
 WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ0-9_']+")
+STOPWORDS_IT_EN = {
+    "abbia", "agli", "alla", "alle", "allo", "anche", "ancora", "avere", "che", "chi",
+    "come", "con", "cosa", "cosi", "dagli", "dalla", "dalle", "dallo", "degli", "della",
+    "delle", "dello", "dentro", "dopo", "dove", "due", "era", "essere", "fare", "fra",
+    "gli", "hai", "hanno", "il", "in", "io", "la", "le", "lei", "loro", "ma", "mi", "mia",
+    "mie", "mio", "nei", "nella", "nelle", "nello", "noi", "non", "nostro", "nostri",
+    "oppure", "per", "pero", "piu", "quale", "quali", "quando", "quello", "questa", "queste",
+    "questi", "questo", "sarà", "se", "sei", "senza", "sono", "sopra", "sotto", "sua", "sue",
+    "sul", "sulla", "sulle", "sullo", "suo", "suoi", "tra", "tre", "tu", "tua", "tue", "tuo",
+    "tuoi", "una", "uno", "use", "using", "what", "when", "where", "which", "who", "why",
+    "will", "with", "would", "about", "after", "also", "and", "are", "been", "before", "being",
+    "between", "both", "can", "could", "does", "each", "from", "have", "into", "more", "most",
+    "other", "should", "than", "that", "the", "their", "them", "then", "there", "these", "they",
+    "this", "those", "through", "under", "very", "was", "were", "while", "you", "your",
+}
 
 def _tokenize(text: str) -> List[str]:
     return [w.lower() for w in WORD_RE.findall(text or "") if len(w) >= 3]
@@ -1633,17 +1733,15 @@ def _select_query_expansions(question: str, limit: int) -> List[str]:
     """
     if limit <= 0:
         return []
-    tokens = _tokenize(question)
-    seen = set()
-    expansions: List[str] = []
-    for token in tokens:
-        if token in seen:
-            continue
-        seen.add(token)
-        expansions.append(token)
-        if len(expansions) >= limit:
-            break
-    return expansions
+    tokens = [token for token in _tokenize(question) if token not in STOPWORDS_IT_EN]
+    if not tokens:
+        return []
+    counts = Counter(tokens)
+    ranked = sorted(
+        counts.items(),
+        key=lambda item: (item[1], -len(item[0]), question.lower().find(item[0])),
+    )
+    return [token for token, _count in ranked[:limit]]
 
 
 def _vector_to_list(vec: Any) -> List[float]:
@@ -1691,6 +1789,35 @@ def _similarity(a: str, b: str) -> float:
     # Similarità “leggera” su max 2k caratteri; evita costi eccessivi
     return SequenceMatcher(None, a[:2048].lower(), b[:2048].lower()).ratio()
 
+
+def _dedup_results(results: List[Any], sim_threshold: float = 0.97) -> List[Any]:
+    fast_seen = set()
+    seen_texts: List[str] = []
+    seen_numeric_tokens: List[Tuple[str, ...]] = []
+    out: List[Any] = []
+    for r in results:
+        raw_text = (_payload_of_generic(r).get("text_chunk") or "").strip()
+        if not raw_text:
+            continue
+        normalized = _normalize_text(raw_text).lower()
+        numeric_tokens = tuple(re.findall(r"\d+(?:[.,]\d+)?", normalized))
+        fingerprint = (len(normalized), normalized[:64], normalized[-64:])
+        if fingerprint in fast_seen:
+            continue
+        keep = True
+        for prev, prev_numbers in zip(seen_texts, seen_numeric_tokens):
+            if numeric_tokens != prev_numbers:
+                continue
+            if SequenceMatcher(None, normalized[:2048], prev[:2048]).ratio() >= sim_threshold:
+                keep = False
+                break
+        if keep:
+            fast_seen.add(fingerprint)
+            seen_texts.append(normalized)
+            seen_numeric_tokens.append(numeric_tokens)
+            out.append(r)
+    return out
+
 def mmr_select(candidates: List[Any], rel_scores: Dict[int, float], k: int, lam: float = 0.65) -> List[Any]:
     """
     Seleziona K risultati con Maximal Marginal Relevance.
@@ -1734,11 +1861,11 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
     Unisce chunk consecutivi della stessa sorgente/pagina per migliorare coerenza.
     Restituisce lista di (testo_assemblato, meta_primario).
     """
-    # Normalizza in (payload, result)
+    # Normalizza in (payload, result, original_rank)
     enriched = []
-    for r in results:
+    for rank, r in enumerate(results):
         p = _payload_of_generic(r)
-        enriched.append((p, r))
+        enriched.append((p, r, rank))
 
     # Ordina per (source_file, page_number, chunk_index)
     enriched.sort(key=lambda pr: (
@@ -1747,16 +1874,15 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
         pr[0].get("chunk_index", 10**9),
     ))
 
-    stitched: List[Tuple[str, Dict[str, Any]]] = []
+    stitched_runs: List[Tuple[str, Dict[str, Any], float, int]] = []
     i = 0
-    total_chars = 0
-    while i < len(enriched) and total_chars < char_budget:
+    while i < len(enriched):
         run = [enriched[i]]
         i += 1
         # prova a estendere con contigui
         while i < len(enriched) and len(run) < max_run_len:
-            p_prev, _ = run[-1]
-            p_cur, _ = enriched[i]
+            p_prev, _r_prev, _rank_prev = run[-1]
+            p_cur, _r_cur, _rank_cur = enriched[i]
             same_src = p_prev.get("source_file") == p_cur.get("source_file")
             same_pg = p_prev.get("page_number") == p_cur.get("page_number")
             idx_prev = p_prev.get("chunk_index")
@@ -1769,16 +1895,26 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
 
         # assembla il run
         texts = []
-        for p, _ in run:
+        run_score = 0.0
+        best_rank = min(rank for _p, _r, rank in run)
+        for p, r, _rank in run:
             txt = (p.get("text_chunk") or "").strip()
             if not txt:
                 continue
+            run_score = max(run_score, float(getattr(r, "score", 0.0) or 0.0))
             texts.append(f"[p.{p.get('page_number')}][c.{p.get('chunk_index')}] {txt}")
 
         if not texts:
             continue
 
         block = "\n\n".join(texts)
+        stitched_runs.append((block, run[0][0], run_score, best_rank))
+
+    stitched_runs.sort(key=lambda item: (-item[2], item[3]))
+
+    stitched: List[Tuple[str, Dict[str, Any]]] = []
+    total_chars = 0
+    for block, meta, _score, _rank in stitched_runs:
         if total_chars + len(block) > char_budget:
             # taglia l'ultimo blocco rispettando i confini di frase
             remaining = char_budget - total_chars
@@ -1789,15 +1925,15 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
             if last_boundary > len(truncated) // 2:
                 truncated = truncated[:last_boundary + 1]
             block = truncated
-        stitched.append((block, run[0][0]))
+        stitched.append((block, meta))
         total_chars += len(block)
 
     return stitched
 
 
-def rerank_results(question: str, results: list, top_k: int = 3) -> list:
+def rerank_results(question: str, results: list) -> List[Tuple[float, Any]]:
     import math
-    scored = []
+    scored: List[Tuple[float, Any]] = []
 
     # Cross-encoder reranking semantico (se abilitato)
     if ENABLE_CROSS_ENCODER_RERANK:
@@ -1828,14 +1964,16 @@ def rerank_results(question: str, results: list, top_k: int = 3) -> list:
 
     # ordina per rilevanza pura
     scored.sort(reverse=True, key=lambda x: x[0])
-    ordered = [r for _, r in scored]
-    rel_scores = {i: s for i, (s, _) in enumerate(scored)}
+    return scored
 
+
+def apply_mmr(scored_results: List[Tuple[float, Any]], top_k: int) -> List[Any]:
+    ordered = [r for _, r in scored_results]
+    rel_scores = {i: s for i, (s, _) in enumerate(scored_results)}
     k = min(top_k, len(ordered))
     if k <= 0:
         return []
-    mmr = mmr_select(ordered, rel_scores, k=k, lam=MMR_LAMBDA)
-    return mmr
+    return mmr_select(ordered, rel_scores, k=k, lam=MMR_LAMBDA)
 
 
 
@@ -1853,27 +1991,8 @@ async def chat(
     if not question or not question.strip():
         raise HTTPException(status_code=400, detail="La domanda non può essere vuota")
 
-    from difflib import SequenceMatcher
-
     def _payload_of(r) -> Dict[str, Any]:
         return (getattr(r, "payload", None) or {}) if hasattr(r, "payload") else (r.get("payload", {}) if isinstance(r, dict) else {})
-
-    def _dedup(results: List[Any], sim_threshold: float = 0.95) -> List[Any]:
-        seen: List[str] = []
-        out: List[Any] = []
-        for r in results:
-            t = (_payload_of(r).get("text_chunk") or "").strip().lower()
-            if not t:
-                continue
-            keep = True
-            for s in seen:
-                if SequenceMatcher(None, t[:2048], s[:2048]).ratio() >= sim_threshold:
-                    keep = False
-                    break
-            if keep:
-                seen.append(t)
-                out.append(r)
-        return out
 
     def _normalize_history(raw_history: Optional[str]) -> Tuple[Optional[List[Dict[str, str]]], Optional[str]]:
         """
@@ -2025,12 +2144,17 @@ async def chat(
     pool = filtered_results[:pool_k]
 
     if ENABLE_RERANK:
-        reranked = rerank_results(question, pool, top_k=min(pool_k, len(pool))) if ENABLE_MMR else pool
+        reranked_scored = rerank_results(question, pool)
     else:
-        reranked = pool
+        reranked_scored = [(float(getattr(r, "score", 0.0) or 0.0), r) for r in pool]
+
+    if ENABLE_MMR:
+        reranked = apply_mmr(reranked_scored, top_k=min(pool_k, len(reranked_scored)))
+    else:
+        reranked = [r for _score, r in reranked_scored[:min(pool_k, len(reranked_scored))]]
 
     # 3) dedup
-    deduped = _dedup(reranked, sim_threshold=0.97)
+    deduped = _dedup_results(reranked, sim_threshold=0.97)
 
     # 4) stitch
     if ENABLE_STITCH:
@@ -2150,6 +2274,7 @@ async def chat(
             coll,
             username_val or "-",
             model_override or OLLAMA_MODEL,
+            exc,
             exc_info=True,
         )
         raise HTTPException(status_code=500, detail="Errore interno nel chatbot")
@@ -2167,25 +2292,6 @@ async def chat_stream(
 ):
     if not question or not question.strip():
         raise HTTPException(status_code=400, detail="La domanda non può essere vuota")
-
-    from difflib import SequenceMatcher
-
-    def _dedup_stream(results: List[Any], sim_threshold: float = 0.95) -> List[Any]:
-        seen: List[str] = []
-        out: List[Any] = []
-        for r in results:
-            t = (_payload_of_generic(r).get("text_chunk") or "").strip().lower()
-            if not t:
-                continue
-            keep = True
-            for s in seen:
-                if SequenceMatcher(None, t[:2048], s[:2048]).ratio() >= sim_threshold:
-                    keep = False
-                    break
-            if keep:
-                seen.append(t)
-                out.append(r)
-        return out
 
     def _normalize_history_stream(raw_history: Optional[str]) -> Tuple[Optional[List[Dict[str, str]]], Optional[str]]:
         if not raw_history or not raw_history.strip():
@@ -2287,10 +2393,14 @@ async def chat_stream(
     pool_k = max(CHAT_RESULT_LIMIT * 2, CHAT_RESULT_LIMIT)
     pool = filtered_results[:pool_k]
     if ENABLE_RERANK:
-        reranked = rerank_results(question, pool, top_k=min(pool_k, len(pool))) if ENABLE_MMR else pool
+        reranked_scored = rerank_results(question, pool)
     else:
-        reranked = pool
-    deduped = _dedup_stream(reranked, sim_threshold=0.97)
+        reranked_scored = [(float(getattr(r, "score", 0.0) or 0.0), r) for r in pool]
+    if ENABLE_MMR:
+        reranked = apply_mmr(reranked_scored, top_k=min(pool_k, len(reranked_scored)))
+    else:
+        reranked = [r for _score, r in reranked_scored[:min(pool_k, len(reranked_scored))]]
+    deduped = _dedup_results(reranked, sim_threshold=0.97)
 
     if ENABLE_STITCH:
         stitched_blocks = stitch_chunks(deduped, char_budget=CHAT_CONTEXT_CHAR_BUDGET, max_run_len=3)
@@ -2505,6 +2615,7 @@ async def healthz():
     ollama_status = {"ok": False, "error": None, "latency_ms": None}
     storage_status = {"upload_dir": UPLOAD_DIR, "writable": False, "error": None}
     db_status = _db_healthcheck()
+    embedding_status = get_embedding_status()
 
     # Check Qdrant
     t0 = time.time()
@@ -2546,6 +2657,7 @@ async def healthz():
         and ollama_status["ok"]
         and storage_status["writable"]
         and db_status["ok"]
+        and embedding_status["ok"]
     )
 
     body = {
@@ -2553,6 +2665,7 @@ async def healthz():
         "qdrant": qdrant_status,
         "ollama": ollama_status,
         "database": db_status,
+        "embedding": embedding_status,
         "storage": storage_status,
         "config": {
             "qdrant_host": QDRANT_HOST,
@@ -2560,6 +2673,7 @@ async def healthz():
             "ollama_url": OLLAMA_URL,
             "ollama_model": OLLAMA_MODEL,
             "embedding_model": EMBEDDING_MODEL,
+            "allow_embedding_fallback": ALLOW_EMBEDDING_FALLBACK,
             "chunk_size": CHUNK_SIZE,
             "chunk_overlap": CHUNK_OVERLAP,
             "qdrant_score_threshold": QDRANT_SCORE_THRESHOLD,

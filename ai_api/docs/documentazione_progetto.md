@@ -9,7 +9,7 @@ Servizio FastAPI che abilita caricamento, indicizzazione vettoriale e interrogaz
 ## Funzionalità principali
 
 - **Upload e normalizzazione**: accetta file `.txt`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, pulisce il testo, effettua chunking configurabile e conserva riferimenti a pagina/offset (o riga/foglio per Excel).
-- **Indicizzazione vettoriale**: calcola embedding con `sentence-transformers` (fallback deterministico se il modello non è disponibile) e inserisce i punti in Qdrant con payload esteso (`upload_id`, `user`, `collection`, titolo documento, numero chunk/pagina).
+- **Indicizzazione vettoriale**: calcola embedding con `sentence-transformers` e inserisce i punti in Qdrant con payload esteso (`upload_id`, `user`, `collection`, titolo documento, numero chunk/pagina). Il fallback deterministico è disabilitato di default e va abilitato esplicitamente solo per test/debug con `ALLOW_EMBEDDING_FALLBACK=true`.
 - **Gestione upload**: salvataggio fisico in `uploads/` (o `UPLOAD_DIR`), metadati nel database con stati `processing/completed/failed` e messaggi di errore.
 - **Database duale**: `DB_ENGINE=sqlite` (default, sviluppo) oppure `DB_ENGINE=postgres` (produzione). Lo schema viene creato automaticamente all'avvio in entrambi i casi.
 - **Ricerca e chat RAG**: embed della domanda + eventuali espansioni multi-vettore, ricerca in Qdrant, filtro su punteggio minimo, rerank opzionale, dedup e stitching dei chunk per costruire il contesto passato al modello Ollama.
@@ -61,7 +61,7 @@ logs/            — log applicativi con rotazione
 
 ### Conversazione RAG
 1. `POST /chat` valida la collection target e calcola embedding per domanda + termini di espansione (se `ENABLE_MULTI_VECTOR_SEARCH`).
-2. Query a Qdrant (primaria + opzionali espansioni), filtro per `QDRANT_SCORE_THRESHOLD`, rerank opzionale (`ENABLE_RERANK`, `ENABLE_MMR`), dedup e stitching entro `CHAT_CONTEXT_CHAR_BUDGET`.
+2. Query a Qdrant (primaria + opzionali espansioni), filtro per `QDRANT_SCORE_THRESHOLD`, rerank opzionale (`ENABLE_RERANK`), MMR opzionale (`ENABLE_MMR`), dedup e stitching rank-preserving entro `CHAT_CONTEXT_CHAR_BUDGET`.
 3. Se la collection ha un `scope_prompt` configurato, viene preposto al system prompt.
 4. Composizione prompt con cronologia (JSON di turni o testo libero) e invio a Ollama (`OLLAMA_URL`, modello `OLLAMA_MODEL` o override `model` per-request).
 5. Salvataggio messaggi nel database con `conversation_id` restituito nella risposta (riutilizzabile per continuare la conversazione).
@@ -150,6 +150,6 @@ Le credenziali Postgres (`PG_DB`, `PG_USER`, `PG_PASSWORD`) vengono lette dal fi
 
 - Middleware di logging aggiunge `request-id` e tempi di risposta a ogni richiesta.
 - CORS configurabile via `CORS_ORIGINS`; in sviluppo si può usare `*`.
-- Il fallback embedding deterministico garantisce che il servizio parta anche senza GPU o modello disponibile.
-- Suite di test: `pytest -q` (copre chunking, estrazione, endpoints principali e integrazione con fallback embedding).
+- Se il modello embedding non è disponibile e `ALLOW_EMBEDDING_FALLBACK=false`, il servizio resta avviato ma gli endpoint RAG (`/upload`, `/chat`, `/chat/stream`) rispondono `503` e `/healthz` segnala stato degradato.
+- Suite di test: `pytest -q` (copre chunking, estrazione, endpoints principali e casi mirati di stitching, rerank/MMR e fallback embedding).
 - Script di debug in `debug/` per testare manualmente upload, chat e API da riga di comando.

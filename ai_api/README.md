@@ -153,7 +153,7 @@ MAX_UPLOAD_SIZE_BYTES=20000000
 | `CHUNK_OVERLAP` | `50` | Sovrapposizione tra chunk consecutivi |
 | `QDRANT_SCORE_THRESHOLD` | `0.3` | Punteggio minimo risultati Qdrant |
 | `ENABLE_RAG_DEBUG` | `false` | Log diagnostici aggiuntivi per chunking e retrieval |
-| `ENABLE_RERANK` / `ENABLE_MMR` / `ENABLE_STITCH` | `true` | Controllo pipeline RAG avanzata |
+| `ENABLE_RERANK` / `ENABLE_MMR` / `ENABLE_STITCH` | `true` | Controllo pipeline RAG avanzata (`ENABLE_RERANK` per il punteggio combinato, `ENABLE_MMR` per la diversificazione finale) |
 | `ENABLE_MULTI_VECTOR_SEARCH` | `true` | Ricerca multi-vettore con espansione query |
 | `CHAT_RESULT_LIMIT` / `CHAT_CANDIDATES` | `30` | Chunk recuperati e candidati interrogati per chat |
 | `CHAT_EXPANSION_LIMIT` / `CHAT_EXPANSION_CANDIDATES` | `3` / `12` | Parametri espansione multi-vettore |
@@ -163,6 +163,7 @@ MAX_UPLOAD_SIZE_BYTES=20000000
 | `MAX_CONVERSATION_LIST` | `50` | Limite massimo per `GET /conversations` |
 | `OLLAMA_MODEL` | `gpt-oss:20b` | Modello Ollama di default |
 | `OLLAMA_TIMEOUT` | `60` | Timeout (secondi) richieste Ollama |
+| `ALLOW_EMBEDDING_FALLBACK` | `false` | Abilita solo in test/debug il fallback deterministico degli embedding; se `false`, gli endpoint RAG rispondono `503` quando il modello non è disponibile |
 | `CORS_ORIGINS` | `http://localhost:9001` | Origini CORS ammesse (`,`-separated; `*` per tutte) |
 | `LOG_LEVEL` | `INFO` | Livello log |
 | `LOG_FILE` | `./logs/app.log` | Percorso log con rotazione |

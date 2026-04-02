@@ -1,9 +1,16 @@
 import os
 import json
 import tempfile
+import asyncio
 import pytest
 from fastapi.testclient import TestClient
 from openpyxl import Workbook
+
+os.environ.setdefault("SKIP_AUTH", "true")
+os.environ.setdefault("ALLOW_EMBEDDING_FALLBACK", "true")
+os.environ.setdefault("PYTEST_CURRENT_TEST", "bootstrap")
+os.environ.setdefault("DB_ENGINE", "sqlite")
+os.environ.setdefault("UPLOAD_DB_PATH", os.path.join(os.path.dirname(__file__), "test_uploads.sqlite3"))
 
 import app
 
@@ -13,15 +20,13 @@ client = TestClient(app.app)
 @pytest.fixture(autouse=True)
 def clean_conversations():
     # Pulisce le tabelle delle conversazioni prima e dopo ogni test
-    with app.get_upload_db_conn() as conn:
-        conn.execute("DELETE FROM conversation_messages")
-        conn.execute("DELETE FROM conversations")
-        conn.commit()
+    with app.get_db_session() as session:
+        session.query(app.ConversationMessage).delete()
+        session.query(app.Conversation).delete()
     yield
-    with app.get_upload_db_conn() as conn:
-        conn.execute("DELETE FROM conversation_messages")
-        conn.execute("DELETE FROM conversations")
-        conn.commit()
+    with app.get_db_session() as session:
+        session.query(app.ConversationMessage).delete()
+        session.query(app.Conversation).delete()
 
 
 def test_chunk_text_simple():
@@ -139,7 +144,7 @@ def test_upload_endpoint_excel(tmp_path):
 @ pytest.fixture(autouse=False)
 def dummy_ask(monkeypatch):
     # Override di ask per restituire risposta fissa
-    def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
         return "dummy answer"
     monkeypatch.setattr(app, "ask", fake_ask)
     yield
@@ -172,7 +177,7 @@ def test_chat_endpoint(dummy_ask, override_search):
 def test_chat_endpoint_with_history(monkeypatch, override_search):
     captured = {}
 
-    def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
         captured["history"] = conversation_history
         return "with history"
 
@@ -200,7 +205,7 @@ def test_chat_endpoint_with_history(monkeypatch, override_search):
 def test_chat_endpoint_with_model_override(monkeypatch, override_search):
     captured = {}
 
-    def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
         captured["model_override"] = model_override
         return "with model"
 
@@ -221,7 +226,7 @@ def test_chat_endpoint_with_model_override(monkeypatch, override_search):
 def test_chat_continues_conversation(monkeypatch, override_search):
     histories = []
 
-    def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
         histories.append(conversation_history)
         return f"reply-{len(histories)}"
 
@@ -264,37 +269,55 @@ def test_recent_conversations_endpoint(dummy_ask, override_search):
 
 
 def test_ask_function(monkeypatch):
-    # Simula la risposta streaming di requests.post
-    class DummyResponse:
-        status_code = 200
-        def __init__(self):
-            self._lines = [b'{"response":"hello"}', b'']
-        def iter_lines(self):
-            return iter(self._lines)
-        def raise_for_status(self):
-            return None
-        def close(self):
-            pass
-
     captured = {"models": []}
 
-    def dummy_post(*args, **kwargs):
+    class DummyStreamResponse:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return False
+
+        def raise_for_status(self):
+            return None
+
+        async def aiter_lines(self):
+            for line in ['{"response":"hello"}', ""]:
+                yield line
+
+    class DummyAsyncClient:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return False
+
+        def stream(self, *args, **kwargs):
+            captured["prompt"] = kwargs["json"]["prompt"]
+            captured["models"].append(kwargs["json"]["model"])
+            return DummyStreamResponse()
+
+    def dummy_post(*args, **kwargs):  # pragma: no cover - compat guard
         captured["prompt"] = kwargs["json"]["prompt"]
         captured["models"].append(kwargs["json"]["model"])
-        return DummyResponse()
+        raise AssertionError("requests.post non dovrebbe essere usato da ask()")
 
     monkeypatch.setattr(app.requests, "post", dummy_post)
+    monkeypatch.setattr(app.httpx, "AsyncClient", DummyAsyncClient)
 
-    answer = app.ask("prompt", "context", "user: hello")
+    answer = asyncio.run(app.ask("prompt", "context", "user: hello"))
     assert answer == "hello"
     assert "user: hello" in captured["prompt"]
     assert captured["models"][-1] == app.OLLAMA_MODEL
 
-    answer_override = app.ask("prompt", "context", model_override="custom-model")
+    answer_override = asyncio.run(app.ask("prompt", "context", model_override="custom-model"))
     assert answer_override == "hello"
     assert captured["models"][-1] == "custom-model"
 
-    answer_scope = app.ask("prompt", "context", collection_scope="Sei un esperto in cinema e film")
+    answer_scope = asyncio.run(app.ask("prompt", "context", collection_scope="Sei un esperto in cinema e film"))
     assert answer_scope == "hello"
     assert "Ambito di pertinenza della collection" in captured["prompt"]
     assert "Sei un esperto in cinema e film" in captured["prompt"]
@@ -332,7 +355,7 @@ def test_collection_config_endpoints():
 def test_chat_passes_collection_scope(monkeypatch, override_search):
     captured = {}
 
-    def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
         captured["collection_scope"] = collection_scope
         return "with scope"
 
@@ -385,6 +408,17 @@ def test_healthz_endpoint(monkeypatch, tmp_path):
             "port": None,
         },
     )
+    monkeypatch.setattr(
+        app,
+        "get_embedding_status",
+        lambda: {
+            "ok": True,
+            "mode": "ready",
+            "fallback_enabled": False,
+            "detail": None,
+            "model": "test-model",
+        },
+    )
 
     resp = client.get("/healthz")
     assert resp.status_code == 200
@@ -394,6 +428,7 @@ def test_healthz_endpoint(monkeypatch, tmp_path):
     assert data["ollama"]["ok"] is True
     assert data["storage"]["writable"] is True
     assert data["database"]["ok"] is True
+    assert data["embedding"]["ok"] is True
 
 
 def test_list_ollama_models(monkeypatch):
@@ -467,3 +502,122 @@ def test_collections_endpoint_with_username(monkeypatch):
     data = resp.json()
     assert data["count"] == 3
     assert data["collections"] == ["user1_docs", "user1", "user1_reports"]
+
+
+def test_stitch_chunks_preserves_best_rank_under_budget():
+    class Result:
+        def __init__(self, text, score, source, page, chunk):
+            self.score = score
+            self.payload = {
+                "text_chunk": text,
+                "source_file": source,
+                "page_number": page,
+                "chunk_index": chunk,
+            }
+
+    results = [
+        Result("Top result block.", 0.99, "zeta.pdf", 1, 0),
+        Result("Lower ranked first chunk.", 0.20, "alpha.pdf", 1, 0),
+        Result("Lower ranked second chunk.", 0.19, "alpha.pdf", 1, 1),
+    ]
+
+    stitched = app.stitch_chunks(results, char_budget=40, max_run_len=3)
+    assert stitched
+    assert "Top result block." in stitched[0][0]
+
+
+def test_dedup_results_keeps_similar_but_distinct_chunks():
+    class Result:
+        def __init__(self, text):
+            self.payload = {"text_chunk": text}
+            self.score = 0.9
+
+    rows = [
+        Result("Articolo 12 - limite 10 MW per il sito A."),
+        Result("Articolo 12 - limite 12 MW per il sito A."),
+    ]
+
+    deduped = app._dedup_results(rows, sim_threshold=0.97)
+    assert len(deduped) == 2
+
+
+def test_chat_returns_503_when_embedding_model_unavailable(monkeypatch):
+    def fail_embedding():
+        raise app.HTTPException(status_code=503, detail="embedding down")
+
+    monkeypatch.setattr(app, "get_embedding_model", fail_embedding)
+
+    response = client.post("/chat", data={"question": "Test?"})
+    assert response.status_code == 503
+    assert response.json()["detail"] == "embedding down"
+
+
+def test_healthz_reports_embedding_degraded(monkeypatch, tmp_path):
+    class DummyQdrant:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def get_collections(self):
+            return {"collections": []}
+
+    class DummyResp:
+        status_code = 200
+
+    monkeypatch.setattr(app, "QdrantClient", DummyQdrant)
+    monkeypatch.setattr(app.requests, "get", lambda *args, **kwargs: DummyResp())
+    monkeypatch.setattr(app, "UPLOAD_DIR", str(tmp_path))
+    monkeypatch.setattr(
+        app,
+        "_db_healthcheck",
+        lambda: {
+            "ok": True,
+            "error": None,
+            "latency_ms": 1,
+            "engine": "sqlite",
+            "database": "test",
+            "host": None,
+            "port": None,
+        },
+    )
+    monkeypatch.setattr(
+        app,
+        "get_embedding_status",
+        lambda: {
+            "ok": False,
+            "mode": "fallback",
+            "fallback_enabled": True,
+            "detail": "Fallback deterministico attivo.",
+            "model": "test-model",
+        },
+    )
+
+    resp = client.get("/healthz")
+    assert resp.status_code == 503
+    assert resp.json()["status"] == "degraded"
+    assert resp.json()["embedding"]["mode"] == "fallback"
+
+
+def test_chat_executes_rerank_even_when_mmr_disabled(monkeypatch, override_search):
+    captured = {"rerank": 0, "mmr": 0}
+
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+        return "ok"
+
+    def fake_rerank(question, results):
+        captured["rerank"] += 1
+        return [(0.9, results[0])]
+
+    def fake_apply_mmr(scored_results, top_k):
+        captured["mmr"] += 1
+        return [r for _score, r in scored_results[:top_k]]
+
+    monkeypatch.setattr(app, "ask", fake_ask)
+    monkeypatch.setattr(app, "rerank_results", fake_rerank)
+    monkeypatch.setattr(app, "apply_mmr", fake_apply_mmr)
+    monkeypatch.setattr(app, "ENABLE_RERANK", True)
+    monkeypatch.setattr(app, "ENABLE_MMR", False)
+
+    response = client.post("/chat", data={"question": "Test?"})
+    assert response.status_code == 200
+    assert captured["rerank"] == 1
+    assert captured["mmr"] == 0
