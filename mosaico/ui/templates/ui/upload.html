@@ -6,76 +6,67 @@
   <p class="text-muted mb-0">Carica rapidamente nuovi file nel sistema e tieni traccia degli ultimi caricamenti per la tua collection.</p>
 </div>
 
-<div class="row g-4">
-  <div class="col-lg-7">
-    <div class="card shadow-sm border-0 h-100">
-      <div class="card-body">
-        {% if jwt_warning %}
-        <div class="alert alert-warning small" role="alert">
-          {{ jwt_warning }}
-        </div>
-        {% endif %}
-        <h2 class="h5 mb-4">Dettagli caricamento</h2>
+{% if jwt_warning %}
+<div class="alert alert-warning small" role="alert">{{ jwt_warning }}</div>
+{% endif %}
 
-        <!-- Drop zone -->
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Seleziona file</label>
-          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Zona di trascinamento file. Clicca o trascina i file qui.">
-            <i class="bi bi-cloud-arrow-up drop-zone-icon" id="dropZoneIcon" aria-hidden="true"></i>
-            <p class="mb-1 fw-semibold" id="dropZoneTitle">Trascina i file qui</p>
-            <p class="text-muted small mb-0">oppure clicca per selezionarli</p>
-            <input type="file" id="fileInput" multiple class="d-none" aria-label="Seleziona file da caricare">
-          </div>
-          <small class="text-muted">PDF, DOCX, XLSX, TXT, MD, JSON. Puoi selezionare più file contemporaneamente.</small>
-        </div>
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="row g-0">
 
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold d-block">Collection</label>
-            <div class="btn-group w-100 mb-2" role="group" aria-label="Modalità collection">
-              <input type="radio" class="btn-check" name="collectionMode" id="modeExisting" autocomplete="off" checked>
-              <label class="btn btn-outline-primary" for="modeExisting">Collection esistente</label>
-              <input type="radio" class="btn-check" name="collectionMode" id="modeNew" autocomplete="off">
-              <label class="btn btn-outline-primary" for="modeNew">Nuova collection</label>
-            </div>
-            <div class="input-group mb-2">
-              <span class="input-group-text"><i class="bi bi-list-ul" aria-hidden="true"></i></span>
-              <select class="form-select" id="collectionSelect" disabled>
-                <option value="">Caricamento collections...</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-folder2" aria-hidden="true"></i></span>
-              <input type="text" class="form-control" id="newCollectionInput" placeholder="Nome nuova collection" pattern="[^_]*" title="Il carattere underscore (_) non è consentito." disabled>
-            </div>
-            <div id="collectionWarning" class="form-text text-danger d-none">
-              <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>Il carattere underscore (<code>_</code>) non è consentito nei nomi collection (vincolo Qdrant).
-            </div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold" for="usernameDisplay">Utente</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-person" aria-hidden="true"></i></span>
-              <input type="text" class="form-control" id="usernameDisplay" value="{{ request.user.username }}" readonly>
-            </div>
-          </div>
+      <!-- Pannello sinistro: configurazione -->
+      <div class="col-md-4 border-end p-4">
+        <h2 class="h6 text-uppercase text-muted fw-semibold mb-3" style="letter-spacing:.05em">Configurazione</h2>
+
+        <label class="form-label fw-semibold d-block">Collection</label>
+        <div class="btn-group w-100 mb-2" role="group" aria-label="Modalità collection">
+          <input type="radio" class="btn-check" name="collectionMode" id="modeExisting" autocomplete="off" checked>
+          <label class="btn btn-outline-primary btn-sm" for="modeExisting">Esistente</label>
+          <input type="radio" class="btn-check" name="collectionMode" id="modeNew" autocomplete="off">
+          <label class="btn btn-outline-primary btn-sm" for="modeNew">Nuova</label>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text"><i class="bi bi-list-ul" aria-hidden="true"></i></span>
+          <select class="form-select" id="collectionSelect" disabled>
+            <option value="">Caricamento collections...</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-folder2" aria-hidden="true"></i></span>
+          <input type="text" class="form-control" id="newCollectionInput" placeholder="Nome nuova collection" pattern="[^_]*" title="Il carattere underscore (_) non è consentito." disabled>
+        </div>
+        <div id="collectionWarning" class="form-text text-danger d-none">
+          <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>Underscore (<code>_</code>) non consentito (vincolo Qdrant).
         </div>
 
-        <div class="d-flex flex-wrap gap-2 mt-3">
-          <button class="btn btn-primary" id="uploadBtn" disabled>
-            <span id="uploadSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-            <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>
-            Carica<span id="uploadBtnCount" class="ms-1 d-none"></span>
-          </button>
-          <a id="toChatLink" class="btn btn-outline-primary" href="/chat/">
-            <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i> Vai alla chat con questa collection
-          </a>
-        </div>
       </div>
-      <div class="card-footer bg-light">
-        <div id="uploadStatus"></div>
+
+      <!-- Pannello destro: drop zone + status -->
+      <div class="col-md-8 p-4 d-flex flex-column">
+        <h2 class="h6 text-uppercase text-muted fw-semibold mb-3" style="letter-spacing:.05em">File da caricare</h2>
+        <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Zona di trascinamento file. Clicca o trascina i file qui.">
+          <i class="bi bi-cloud-arrow-up drop-zone-icon" id="dropZoneIcon" aria-hidden="true"></i>
+          <p class="mb-1 fw-semibold" id="dropZoneTitle">Trascina i file qui</p>
+          <p class="text-muted small mb-0">oppure clicca per selezionarli</p>
+          <input type="file" id="fileInput" multiple class="d-none" aria-label="Seleziona file da caricare">
+        </div>
+        <small class="text-muted mt-2">PDF, DOCX, XLSX, TXT, MD, JSON. Puoi selezionare più file contemporaneamente.</small>
+
+        <div id="uploadStatus" class="mt-3 flex-grow-1"></div>
       </div>
+
     </div>
+  </div>
+
+  <div class="card-footer bg-light d-flex justify-content-end gap-2">
+    <a id="toChatLink" class="btn btn-outline-primary" href="/chat/">
+      <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i> Vai alla chat con questa collection
+    </a>
+    <button class="btn btn-primary" id="uploadBtn" disabled>
+      <span id="uploadSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+      <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>
+      Carica<span id="uploadBtnCount" class="ms-1 d-none"></span>
+    </button>
   </div>
 </div>
 

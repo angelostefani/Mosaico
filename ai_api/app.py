@@ -89,6 +89,10 @@ ENABLE_MULTI_VECTOR_SEARCH = os.getenv('ENABLE_MULTI_VECTOR_SEARCH', 'true').low
 CHAT_EXPANSION_LIMIT = int(os.getenv('CHAT_EXPANSION_LIMIT', 3))
 CHAT_EXPANSION_CANDIDATES = int(os.getenv('CHAT_EXPANSION_CANDIDATES', 12))
 CHAT_HISTORY_PROMPT_LIMIT = int(os.getenv("CHAT_HISTORY_PROMPT_LIMIT", 30))
+CHAT_HISTORY_CHAR_BUDGET = int(os.getenv("CHAT_HISTORY_CHAR_BUDGET", 3000))
+MMR_LAMBDA = float(os.getenv("MMR_LAMBDA", "0.65"))
+ENABLE_CROSS_ENCODER_RERANK = os.getenv('ENABLE_CROSS_ENCODER_RERANK', 'false').lower() in ('1', 'true', 'yes')
+CROSS_ENCODER_MODEL = os.getenv('CROSS_ENCODER_MODEL', 'cross-encoder/ms-marco-MiniLM-L-6-v2')
 CONVERSATION_PREVIEW_CHARS = int(os.getenv("CONVERSATION_PREVIEW_CHARS", 120))
 MAX_CONVERSATION_LIST = int(os.getenv("MAX_CONVERSATION_LIST", 50))
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -204,6 +208,35 @@ class _EmbeddingModelHolder:
 
 
 _embedding_model_holder = _EmbeddingModelHolder()
+
+
+class _CrossEncoderHolder:
+    """Lazy loader per il cross-encoder (opzionale, usato con ENABLE_CROSS_ENCODER_RERANK)."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._model = None
+        self._failed = False
+
+    def get(self):
+        if not ENABLE_CROSS_ENCODER_RERANK:
+            return None
+        if self._failed:
+            return None
+        if self._model is None:
+            with self._lock:
+                if self._model is None and not self._failed:
+                    try:
+                        from sentence_transformers.cross_encoder import CrossEncoder  # type: ignore
+                        self._model = CrossEncoder(CROSS_ENCODER_MODEL)
+                        logger.info("[cross-encoder] modello caricato: %s", CROSS_ENCODER_MODEL)
+                    except Exception as exc:
+                        self._failed = True
+                        logger.warning("[cross-encoder] impossibile caricare '%s': %s", CROSS_ENCODER_MODEL, exc)
+        return self._model
+
+
+_cross_encoder_holder = _CrossEncoderHolder()
 
 # Creazione cartella upload se non esiste
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -738,8 +771,19 @@ def chunk_text(
     step = max(1, chunk_size - chunk_overlap)
 
     chunks: List[Any] = []
+    boundary_tolerance = min(50, chunk_size // 10)
     for start in range(0, len(text_to_process), step):
         end = min(start + chunk_size, len(text_to_process))
+        # Cerca il confine di frase più vicino entro la tolleranza
+        if end < len(text_to_process):
+            search_from = max(start + 1, end - boundary_tolerance)
+            best_boundary = -1
+            for bc in ('.', '!', '?', '\n'):
+                pos = text_to_process.rfind(bc, search_from, end + boundary_tolerance)
+                if pos > best_boundary and pos > start:
+                    best_boundary = pos
+            if best_boundary > start:
+                end = min(best_boundary + 1, len(text_to_process))
         raw_chunk = text_to_process[start:end]
         if not raw_chunk:
             continue
@@ -1734,11 +1778,15 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
 
         block = "\n\n".join(texts)
         if total_chars + len(block) > char_budget:
-            # taglia l'ultimo blocco se sfora molto
+            # taglia l'ultimo blocco rispettando i confini di frase
             remaining = char_budget - total_chars
             if remaining <= 0:
                 break
-            block = block[:max(0, remaining)]
+            truncated = block[:max(0, remaining)]
+            last_boundary = max(truncated.rfind('.'), truncated.rfind('!'), truncated.rfind('?'), truncated.rfind('\n'))
+            if last_boundary > len(truncated) // 2:
+                truncated = truncated[:last_boundary + 1]
+            block = truncated
         stitched.append((block, run[0][0]))
         total_chars += len(block)
 
@@ -1746,26 +1794,45 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
 
 
 def rerank_results(question: str, results: list, top_k: int = 3) -> list:
+    import math
     scored = []
-    for r in results:
-        payload = _payload_of_generic(r)
-        text = payload.get("text_chunk", "") or ""
-        vector_score = getattr(r, "score", 0.0) or 0.0
-        text_sim = _similarity(question, text)
-        kw_overlap = _keyword_overlap(question, text)
-        combined = 0.60 * vector_score + 0.25 * text_sim + 0.15 * kw_overlap
-        scored.append((combined, r))
+
+    # Cross-encoder reranking semantico (se abilitato)
+    if ENABLE_CROSS_ENCODER_RERANK:
+        cross_encoder = _cross_encoder_holder.get()
+        if cross_encoder is not None:
+            try:
+                pairs = [(question, (_payload_of_generic(r).get("text_chunk") or "")[:512]) for r in results]
+                ce_scores = cross_encoder.predict(pairs)
+                for r, ce_score in zip(results, ce_scores):
+                    vector_score = getattr(r, "score", 0.0) or 0.0
+                    ce_normalized = 1.0 / (1.0 + math.exp(-float(ce_score)))
+                    combined = 0.50 * vector_score + 0.50 * ce_normalized
+                    scored.append((combined, r))
+            except Exception as ce_err:
+                logger.warning("[rerank] cross-encoder fallito, fallback a rerank classico: %s", ce_err)
+                scored = []
+
+    # Fallback: rerank classico (vector + text_sim + keyword)
+    if not scored:
+        for r in results:
+            payload = _payload_of_generic(r)
+            text = payload.get("text_chunk", "") or ""
+            vector_score = getattr(r, "score", 0.0) or 0.0
+            text_sim = _similarity(question, text)
+            kw_overlap = _keyword_overlap(question, text)
+            combined = 0.60 * vector_score + 0.25 * text_sim + 0.15 * kw_overlap
+            scored.append((combined, r))
 
     # ordina per rilevanza pura
     scored.sort(reverse=True, key=lambda x: x[0])
     ordered = [r for _, r in scored]
-    # mappa punteggio -> indice **nella stessa lista** passata a mmr_select
     rel_scores = {i: s for i, (s, _) in enumerate(scored)}
 
     k = min(top_k, len(ordered))
     if k <= 0:
         return []
-    mmr = mmr_select(ordered, rel_scores, k=k, lam=0.65)
+    mmr = mmr_select(ordered, rel_scores, k=k, lam=MMR_LAMBDA)
     return mmr
 
 
@@ -1837,9 +1904,12 @@ async def chat(
     def _history_to_prompt(turns: Optional[List[Dict[str, str]]], free_text: Optional[str]) -> Optional[str]:
         if turns:
             formatted = [f"{t['role']}: {t['content']}" for t in turns]
-            return "\n".join(formatted)
+            # Tronca i turni più vecchi rispettando il budget in caratteri
+            while len(formatted) > 1 and sum(len(s) for s in formatted) > CHAT_HISTORY_CHAR_BUDGET:
+                formatted.pop(0)
+            return "\n".join(formatted) or None
         if free_text:
-            return free_text.strip()
+            return free_text.strip()[:CHAT_HISTORY_CHAR_BUDGET] or None
         return None
 
     embedding_model = get_embedding_model()
@@ -1934,6 +2004,16 @@ async def chat(
                 "chunk_index": payload.get("chunk_index"),
                 "page_number": payload.get("page_number"),
             })
+
+    # Fallback adattivo: abbassa soglia progressivamente per evitare risposte vuote
+    if not filtered_results and results:
+        for fallback_threshold in (threshold * 0.75, threshold * 0.5, 0.0):
+            fallback_threshold = max(0.0, fallback_threshold)
+            filtered_results = [r for r in results if (getattr(r, "score", None) is None or getattr(r, "score", None) >= fallback_threshold)]
+            if filtered_results:
+                if ENABLE_RAG_DEBUG:
+                    logger.debug("[chat] soglia adattiva: %.2f -> %.2f, risultati=%s", threshold, fallback_threshold, len(filtered_results))
+                break
 
     if not filtered_results:
         return JSONResponse(status_code=200, content={"message": "Nessun contesto rilevante."})
@@ -2129,9 +2209,12 @@ async def chat_stream(
 
     def _history_to_prompt_stream(turns: Optional[List[Dict[str, str]]], free_text: Optional[str]) -> Optional[str]:
         if turns:
-            return "\n".join(f"{t['role']}: {t['content']}" for t in turns)
+            formatted = [f"{t['role']}: {t['content']}" for t in turns]
+            while len(formatted) > 1 and sum(len(s) for s in formatted) > CHAT_HISTORY_CHAR_BUDGET:
+                formatted.pop(0)
+            return "\n".join(formatted) or None
         if free_text:
-            return free_text.strip()
+            return free_text.strip()[:CHAT_HISTORY_CHAR_BUDGET] or None
         return None
 
     embedding_model = get_embedding_model()
@@ -2184,6 +2267,14 @@ async def chat_stream(
     results = _merge_results(primary_results or [], additional_results)
     threshold = max(0.0, QDRANT_SCORE_THRESHOLD)
     filtered_results = [r for r in results if (getattr(r, "score", None) is None or getattr(r, "score", None) >= threshold)]
+
+    # Fallback adattivo per evitare risposte vuote
+    if not filtered_results and results:
+        for fallback_threshold in (threshold * 0.75, threshold * 0.5, 0.0):
+            fallback_threshold = max(0.0, fallback_threshold)
+            filtered_results = [r for r in results if (getattr(r, "score", None) is None or getattr(r, "score", None) >= fallback_threshold)]
+            if filtered_results:
+                break
 
     if not filtered_results:
         async def _no_ctx():
