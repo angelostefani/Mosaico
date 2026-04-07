@@ -1,0 +1,428 @@
+================================================================================
+MOSAICO — Piattaforma locale di Document QA & RAG
+Presentazione Tecnica
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+SEZIONE 1 — INTRODUZIONE
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 1 — Titolo
+────────────────────────────────────────────────────────────────────────────────
+
+MOSAICO
+Piattaforma modulare locale di Document QA & RAG
+
+• Nessuna dipendenza cloud. Tutto on-premises.
+• Interroga i tuoi documenti con un LLM locale.
+• Multi-tenant, configurabile, open source.
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 2 — Il Problema
+────────────────────────────────────────────────────────────────────────────────
+
+Perché non basta ChatGPT?
+
+• I documenti aziendali spesso non possono uscire dalla rete interna
+  (normative, contratti, dati sensibili, compliance GDPR)
+
+• I modelli cloud (GPT-4, Gemini, Claude) richiedono di inviare i dati
+  a server esterni → rischio di violazione della riservatezza
+
+• Le API cloud hanno costi variabili, latenza di rete, limiti di contesto
+
+• Nessun controllo su come i dati vengono usati per il fine-tuning
+
+→ Serve una soluzione locale, controllabile, adattabile al dominio.
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 3 — La Soluzione
+────────────────────────────────────────────────────────────────────────────────
+
+Mosaico: Document QA locale in 3 passi
+
+  [1] CARICA documenti
+      PDF, DOCX, XLSX, TXT, JSON
+
+  [2] GENERA EMBEDDING
+      Indicizzazione semantica su Qdrant (vector DB locale)
+
+  [3] FAI DOMANDE
+      LLM locale (via Ollama) risponde basandosi sui tuoi documenti
+
+Caratteristiche chiave:
+• Completamente on-premises, zero cloud
+• Isolamento multi-tenant (un namespace per utente/gruppo)
+• RAG pipeline avanzata: reranking, MMR, stitching
+• Streaming real-time delle risposte
+
+
+────────────────────────────────────────────────────────────────────────────────
+SEZIONE 2 — ARCHITETTURA
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 4 — Stack Tecnologico
+────────────────────────────────────────────────────────────────────────────────
+
+Stack tecnologico
+
+  LIVELLO           TECNOLOGIA                PORTA
+  ─────────────     ──────────────────────    ──────
+  Frontend          Django 5 + Bootstrap      :9001
+  Backend API       FastAPI + Uvicorn         :9000
+  Vector Database   Qdrant                    :6333
+  LLM locale        Ollama                    :11434
+  DB relazionale    PostgreSQL (prod)         :5433
+                    SQLite (dev)              —
+
+Librerie chiave:
+• pdfplumber, python-docx, openpyxl  — estrazione testo
+• sentence-transformers              — generazione embedding
+• qdrant-client                      — interfaccia vector DB
+• SQLAlchemy 2.0                     — ORM astratto (SQLite ↔ PostgreSQL)
+• httpx (async)                      — chiamate HTTP non-bloccanti
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 5 — Diagramma Architetturale
+────────────────────────────────────────────────────────────────────────────────
+
+Flusso delle richieste
+
+  ┌─────────┐     HTTP      ┌──────────────────┐     HTTP      ┌─────────────────────┐
+  │ Browser │ ──────────→  │  Django Frontend  │ ──────────→  │   FastAPI AI API    │
+  │         │              │    (:9001)        │              │      (:9000)         │
+  └─────────┘              └──────────────────┘              └──────────┬──────────┘
+                                                                        │
+                                              ┌─────────────────────────┼──────────────────────┐
+                                              ▼                         ▼                      ▼
+                                     ┌───────────────┐       ┌──────────────────┐   ┌──────────────────┐
+                                     │    Qdrant     │       │     Ollama       │   │   PostgreSQL     │
+                                     │  (:6333)      │       │   (:11434)       │   │    (:5433)       │
+                                     │  Vector DB    │       │   Local LLM      │   │   Persistence    │
+                                     └───────────────┘       └──────────────────┘   └──────────────────┘
+
+Responsabilità:
+• Django      → UI, sessioni utente, autenticazione JWT, forwarding richieste
+• FastAPI     → logica RAG, ingestion documenti, endpoint API
+• Qdrant      → ricerca vettoriale semantica, isolamento per collection
+• Ollama      → inferenza LLM locale (streaming)
+• PostgreSQL  → upload history, conversazioni, configurazioni collection
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 6 — Deployment
+────────────────────────────────────────────────────────────────────────────────
+
+Modalità di deployment
+
+  SCENARIO A — Ollama esterno (consigliato per GPU esterna)
+    make up
+    # usa OLLAMA_URL dal file .env
+
+  SCENARIO B — Ollama in Docker (tutto self-contained)
+    make local
+    # profile "local": ollama-pull scarica automaticamente OLLAMA_MODEL
+    # al primo avvio; i successivi sono no-op (volume ollama_data)
+
+  SCENARIO C — Sviluppo locale senza Docker
+    cd ai_api && python app.py           # API su :9000
+    cd mosaico && python manage.py runserver 0.0.0.0:9001
+
+Variabili .env critiche:
+  OLLAMA_URL=http://...          # endpoint LLM
+  OLLAMA_MODEL=gemma3:1b         # modello da usare
+  DB_ENGINE=sqlite|postgres      # backend database
+  QDRANT_HOST, QDRANT_PORT       # indirizzo Qdrant
+
+
+────────────────────────────────────────────────────────────────────────────────
+SEZIONE 3 — PIPELINE RAG
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 7 — Overview Pipeline RAG
+────────────────────────────────────────────────────────────────────────────────
+
+La pipeline RAG in 5 fasi
+
+  ┌───────────┐   ┌───────────┐   ┌───────────┐   ┌───────────────┐   ┌───────────┐
+  │  1. INGEST │→ │ 2. CHUNK  │→ │ 3. EMBED  │→ │  4. RETRIEVE  │→ │ 5. GENERATE│
+  │  documento │   │  & index  │   │  & store  │   │   & rerank    │   │  risposta  │
+  └───────────┘   └───────────┘   └───────────┘   └───────────────┘   └───────────┘
+
+  Upload        Sentence-       all-MiniLM      Multi-vector        Ollama LLM
+  documento     aware           L6-v2           + MMR + stitch      streaming SSE
+                chunking        → Qdrant
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 8 — Fase 1–2: Ingestione & Chunking
+────────────────────────────────────────────────────────────────────────────────
+
+Ingestione documenti
+
+Formati supportati:
+  • PDF      → pdfplumber (estrazione per pagina, con metadati pagina)
+  • DOCX     → python-docx (estrazione paragrafi)
+  • XLSX     → openpyxl (righe → formato "col=valore")
+  • TXT, MD  → lettura diretta
+  • JSON     → normalizzazione e serializzazione
+
+Normalizzazione testo:
+  • Rimozione caratteri di controllo (0x00–0x1F, 0x7F)
+  • Collasso spazi multipli
+  • Normalizzazione newline (CRLF → LF)
+  • Condensazione righe vuote (preserva paragrafi)
+
+Chunking sentence-aware:
+  • Dimensione target: 600 caratteri (CHUNK_SIZE)
+  • Overlap: 120 caratteri (CHUNK_OVERLAP)
+  • Rispetta i boundary di frase (., !, ?, \n) entro una zona di tolleranza
+  → Evita tagli a metà frase; mantiene continuità semantica
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 9 — Fase 3: Embedding & Indicizzazione
+────────────────────────────────────────────────────────────────────────────────
+
+Embedding & indicizzazione su Qdrant
+
+Modello di embedding:
+  sentence-transformers/all-MiniLM-L6-v2
+  • Ottimizzato per inglese/italiano
+  • Caricamento lazy (non al boot, ma alla prima richiesta)
+  • Fallback deterministico in modalità test
+
+Struttura Qdrant:
+  • Una collection per tenant: {username}_{collection}
+  • Metrica: cosine similarity
+  • Payload per ogni punto (chunk):
+      - text_chunk     → testo del frammento
+      - source_file    → nome file originale
+      - page_number    → pagina di provenienza
+      - chunk_index    → posizione nel documento
+      - upload_id      → UUID dell'upload
+      - username       → proprietario
+      - char_start/end → offset nel testo completo
+
+Isolamento multi-tenant:
+  → Nessun rischio di cross-contamination tra utenti/team
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 10 — Fase 4: Retrieval Avanzato
+────────────────────────────────────────────────────────────────────────────────
+
+Retrieval: pipeline a più stadi
+
+  [1] MULTI-VECTOR SEARCH (ENABLE_MULTI_VECTOR_SEARCH)
+      • Query expansion: estrazione token significativi dalla domanda
+      • Ricerche parallele con embedding multipli
+      • Merge con best-score-per-result (deduplicazione by score)
+
+  [2] RERANKING IBRIDO (ENABLE_RERANK)
+      • Similarity vettoriale:  60%
+      • Text similarity fuzzy:  25%  (SequenceMatcher)
+      • Keyword overlap:        15%  (token matching)
+      • Opzionale: cross-encoder semantico (ENABLE_CROSS_ENCODER_RERANK)
+        → cross-encoder/ms-marco-MiniLM-L-6-v2
+        → 50% vettoriale + 50% cross-encoder score
+
+  [3] MMR — Maximal Marginal Relevance (ENABLE_MMR)
+      • Formula: λ × relevance − (1−λ) × max_sim_to_selected
+      • MMR_LAMBDA=0.65 → 65% rilevanza, 35% diversità
+      → Previene chunk omogenei/ripetitivi nel contesto
+
+  [4] DEDUPLICAZIONE
+      • Fingerprinting + SequenceMatcher (soglia 97%)
+      → Rimuove quasi-duplicati mantenendo token numerici distinti
+
+  [5] STITCHING (ENABLE_STITCH)
+      • Merge di chunk consecutivi (stessa sorgente/pagina, max 3 per run)
+      → Ricostruisce blocchi logici, migliora coerenza della risposta
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 11 — Fase 5: Generazione Risposta
+────────────────────────────────────────────────────────────────────────────────
+
+Generazione risposta via LLM locale
+
+Struttura del prompt:
+  ┌──────────────────────────────────────────────┐
+  │ SYSTEM PROMPT                                │
+  │  Ruolo RAG + 7 regole anti-jailbreak         │
+  ├──────────────────────────────────────────────┤
+  │ SCOPE PROMPT (opzionale per collection)      │
+  │  es. "Sei un esperto di sicurezza infrastru" │
+  ├──────────────────────────────────────────────┤
+  │ HISTORY (ultime N conversazioni)             │
+  │  budget: CHAT_HISTORY_CHAR_BUDGET = 3000     │
+  ├──────────────────────────────────────────────┤
+  │ CONTEXT (chunk recuperati da Qdrant)         │
+  │  budget: CHAT_CONTEXT_CHAR_BUDGET = 9000     │
+  ├──────────────────────────────────────────────┤
+  │ QUESTION (domanda utente)                    │
+  └──────────────────────────────────────────────┘
+
+Integrazione Ollama:
+  • HTTP POST streaming a /api/generate
+  • Risposta via Server-Sent Events (SSE)
+  • Frontend riceve token in real-time
+  • Format: data: {"chunk":"..."} … data: {"done":true,"conversation_id":"..."}
+  • Timeout: 180 secondi
+
+
+────────────────────────────────────────────────────────────────────────────────
+SEZIONE 4 — FUNZIONALITÀ & CONFIGURAZIONE
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 12 — Feature Flags & Parametri RAG
+────────────────────────────────────────────────────────────────────────────────
+
+Configurazione via .env — nessun cambio di codice richiesto
+
+Feature flags:
+  FLAG                            DEFAULT   DESCRIZIONE
+  ──────────────────────────────  ───────   ──────────────────────────────────
+  ENABLE_RERANK                   true      Reranking ibrido dei candidati
+  ENABLE_MMR                      true      Diversità tramite MMR
+  ENABLE_STITCH                   true      Merge chunk consecutivi
+  ENABLE_MULTI_VECTOR_SEARCH      true      Query expansion + ricerca multipla
+  ENABLE_CROSS_ENCODER_RERANK     false     Reranking semantico (più lento)
+  ENABLE_RAG_DEBUG                true      Log dettagliati pipeline RAG
+
+Parametri RAG chiave:
+  CHUNK_SIZE                  600    Dimensione chunk (caratteri)
+  CHUNK_OVERLAP               120    Overlap tra chunk consecutivi
+  QDRANT_SCORE_THRESHOLD      0.42   Soglia minima similarity vettoriale
+  CHAT_RESULT_LIMIT           10     Max chunk nel contesto finale
+  CHAT_CANDIDATES             50     Candidati estratti da Qdrant per query
+  CHAT_CONTEXT_CHAR_BUDGET    9000   Budget caratteri per il contesto LLM
+  MMR_LAMBDA                  0.65   Bilanciamento rilevanza/diversità
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 13 — API Principali
+────────────────────────────────────────────────────────────────────────────────
+
+Endpoint FastAPI (porta 9000)
+
+  METODO   PATH                       SCOPO                    AUTH
+  ──────   ─────────────────────────  ───────────────────────  ────
+  POST     /upload                    Ingestione documento      JWT
+  POST     /chat                      Risposta RAG completa     JWT
+  POST     /chat/stream               Risposta RAG streaming    JWT
+  GET      /uploads                   Storia upload (paginata)  JWT
+  GET      /conversations             Lista conversazioni       JWT
+  GET      /conversations/{id}        Dettaglio conversazione   JWT
+  DELETE   /conversations/{id}        Elimina conversazione     JWT
+  GET      /collection/config         Config collection         JWT
+  PUT      /collection/config         Imposta scope/prompt      JWT
+  DELETE   /collection/config         Rimuovi config            JWT
+  GET      /ollama/models             Modelli disponibili       JWT
+  GET      /healthz                   Health check sistema      JWT
+  GET      /docs                      Swagger UI                —
+
+Pagine Django (porta 9001):
+  /           Home/Dashboard
+  /login/     Autenticazione
+  /upload/    Caricamento documenti (2-panel: config + dropzone)
+  /chat/      Chat RAG con streaming
+  /uploads/   Storico upload con paginazione
+  /collection-config/  Personalizzazione scope collection
+  /public-chat/        Chat anonima (modalità pubblica)
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 14 — Autenticazione & Sicurezza
+────────────────────────────────────────────────────────────────────────────────
+
+Autenticazione & sicurezza
+
+Flusso JWT:
+  1. Utente si autentica su Django → emissione JWT (lifetime 60 min)
+  2. Token salvato in sessione Django
+  3. Ogni richiesta Django → FastAPI include il token nel header
+  4. FastAPI verifica il token tramite /api/token/verify/ di Django
+  5. Dev: SKIP_AUTH=true bypassa la verifica (solo ambiente locale)
+
+Sicurezza applicativa:
+  • CORS configurabile per ambiente (django-cors-headers)
+  • CSRF token su tutti i form Django
+  • Prompt di sistema con 7 regole anti-jailbreak embedded
+  • Isolamento multi-tenant: ogni collection Qdrant è nominata
+    {username}_{collection} → impossibile accedere ai dati altrui
+  • Logging con Request-ID per audit e tracing distribuito
+
+
+────────────────────────────────────────────────────────────────────────────────
+SEZIONE 5 — QUALITÀ & OSSERVABILITÀ
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 15 — Testing & Osservabilità
+────────────────────────────────────────────────────────────────────────────────
+
+Testing & debug
+
+Test suite:
+  cd ai_api && pytest -q
+  pytest -q tests/test_app.py -k upload   # subset per feature
+
+  • Copertura: upload, chat, conversazioni, collection config, health
+  • Embedding fallback deterministico per test senza modello GPU
+  • Debug scripts standalone in ai_api/debug/
+
+Osservabilità:
+  • Logging rotante: 5 file × 5 MB, con timestamp e livello
+  • Request-ID propagato su ogni request (X-Request-ID header)
+    → Correlazione log su più servizi
+  • Tutte le request loggate: metodo, path, status, durata ms
+  • ENABLE_RAG_DEBUG=true → log dettagliati di ogni fase RAG
+    (score threshold, chunk selezionati, budget utilizzato)
+  • GET /healthz → JSON con stato, latenze, configurazione attiva
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 16 — Punti di Forza & Limitazioni
+────────────────────────────────────────────────────────────────────────────────
+
+Punti di forza
+
+  ✓ Privacy totale           Nessun dato trasmesso all'esterno
+  ✓ Modulare                 Ogni componente è sostituibile indipendentemente
+  ✓ Configurabile            Feature flags → A/B test senza code change
+  ✓ Streaming real-time      SSE → UX fluida, latenza percepita ridotta
+  ✓ Multi-tenant             Isolamento dati by design (Qdrant collections)
+  ✓ Internazionalizzazione   IT/EN con pattern estendibile
+  ✓ Dual-db                  SQLite (dev) → PostgreSQL (prod), stessa ORM
+  ✓ RAG avanzata             Reranking, MMR, stitching, query expansion
+
+Limitazioni attuali
+
+  ✗ Velocità LLM su CPU   Modelli locali sono lenti senza GPU (1B–3B param)
+  ✗ No OCR integrato      PDF con solo immagini → nessun testo estratto
+  ✗ No sync real-time     Documento aggiornato → ri-upload manuale richiesto
+  ✗ Singola istanza       Qdrant/Ollama non scalano orizzontalmente out-of-box
+  ✗ Embedding en/it-only  Modello all-MiniLM ottimizzato per EN/IT
+
+
+────────────────────────────────────────────────────────────────────────────────
+SEZIONE 6 — CONCLUSIONE
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+SLIDE 17 — Roadmap & Domande
+────────────────────────────────────────────────────────────────────────────────
+
+Possibili evoluzioni
+
+  • OCR integrato (Tesseract/PaddleOCR) per PDF con immagini
+  • Supporto multilingua esteso (embedding multilingual-e5)
+  • Cross-encoder abilitato di default con modello quantizzato
+  • Sync automatico documenti (webhook / polling su cartelle)
+  • UI amministrazione collection (gestione upload, purge, stats)
+  • Scaling orizzontale Qdrant (cluster mode)
+  • Valutazione qualità RAG automatizzata (RAGAS framework)
+
+Repository: github.com/angelostefani/Mosaico
+
+════════════════════════════════════════════════════════════════════════════════
+DOMANDE?
+════════════════════════════════════════════════════════════════════════════════
