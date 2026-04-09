@@ -52,6 +52,7 @@
             <th class="th-sortable" data-col="status">{{ t.uploads_th_status }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
             <th>{{ t.uploads_th_chunks }}</th>
             <th class="th-sortable" data-col="created_at">{{ t.uploads_th_date }} <i class="bi bi-chevron-expand sort-icon" aria-hidden="true"></i></th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="uploadsTbody"></tbody>
@@ -73,6 +74,28 @@
             </li>
           </ul>
         </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal conferma eliminazione documento -->
+<div class="modal fade" id="deleteUploadModal" tabindex="-1" aria-labelledby="deleteUploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUploadModalLabel">
+          <i class="bi bi-trash me-2 text-danger"></i>Delete document
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        This operation is irreversible. Continue?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="deleteUploadConfirmBtn">
+          <i class="bi bi-trash me-1"></i>Delete
+        </button>
       </div>
     </div>
   </div>
@@ -292,6 +315,7 @@ function renderRows(list) {
   const username = usernameInput.value.trim();
   list.forEach((item) => {
     const tr = document.createElement('tr');
+    tr.dataset.uploadId = item.upload_id;
     tr.innerHTML = `
       <td>${item.upload_id || '-'}</td>
       <td>${item.username || '-'}</td>
@@ -300,6 +324,7 @@ function renderRows(list) {
       <td>${formatStatus(item.status)}</td>
       <td>${item.num_chunks ?? '-'}</td>
       <td>${formatDate(item.created_at)}</td>
+      <td><button class="btn btn-sm btn-outline-danger" onclick="deleteUpload('${item.upload_id}', this)" title="Elimina documento"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
     `;
     uploadsTbody.appendChild(tr);
   });
@@ -356,6 +381,54 @@ document.querySelectorAll('.th-sortable').forEach(th => {
     updateSortHeaders();
     sortAndRender();
   });
+});
+
+function getCsrfToken(name = 'csrftoken') {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return '';
+}
+
+const _deleteUploadModal = new bootstrap.Modal(document.getElementById('deleteUploadModal'));
+let _pendingDeleteUpload = null;
+
+function deleteUpload(uploadId, btn) {
+  _pendingDeleteUpload = async () => {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    try {
+      const res = await fetch(`/uploads/${uploadId}/delete/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCsrfToken() }
+      });
+      if (res.ok) {
+        const tr = btn.closest('tr');
+        if (tr) tr.remove();
+        _lastList = _lastList.filter(u => u.upload_id !== uploadId);
+        _totalCount = Math.max(0, _totalCount - 1);
+        const from = (_currentPage - 1) * getPageSize() + 1;
+        const to = from + _lastList.length - 1;
+        uploadsSummary.textContent = uploadsSummary.textContent.replace(/\d+–\d+ .+ \d+/, `${from}–${to} ${UI.of} ${_totalCount}`);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert('Errore: ' + (data.detail || res.statusText));
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-trash" aria-hidden="true"></i>';
+      }
+    } catch (err) {
+      console.error(err);
+      alert(UI.netError);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-trash" aria-hidden="true"></i>';
+    }
+  };
+  _deleteUploadModal.show();
+}
+
+document.getElementById('deleteUploadConfirmBtn').addEventListener('click', async () => {
+  _deleteUploadModal.hide();
+  if (_pendingDeleteUpload) { await _pendingDeleteUpload(); _pendingDeleteUpload = null; }
 });
 
 loadBtn.addEventListener('click', () => loadUploads(1));

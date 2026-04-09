@@ -16,4 +16,5 @@ urlpatterns = [
     path('password/change/', views.change_password, name='change_password'),
     path('uploads/', views.list_uploads, name='list_uploads'),
     path('conversations/<str:conversation_id>/delete/', views.delete_conversation, name='delete_conversation'),
+    path('uploads/<str:upload_id>/delete/', views.delete_upload, name='delete_upload'),
 ]

@@ -32,7 +32,7 @@ except ImportError:
     ]:
         sys.modules.setdefault(_m, _grpc_mock)
 from qdrant_client import QdrantClient
-from qdrant_client.models import VectorParams, Distance, PointStruct
+from qdrant_client.models import VectorParams, Distance, PointStruct, Filter, FieldCondition, MatchValue, FilterSelector
 from qdrant_client.http.exceptions import ResponseHandlingException
 from httpx import ConnectError as HTTPXConnectError
 from httpcore import ConnectError as HTTPCoreConnectError
@@ -1695,6 +1695,50 @@ async def list_uploads(
         uploads = [_upload_to_dict(u) for u in rows]
 
     return {"count": total, "uploads": uploads}
+
+
+@app.delete(
+    "/upload/{upload_id}",
+    summary="Elimina un documento e i suoi chunk da Qdrant",
+    tags=["Documenti"],
+    dependencies=[Depends(django_verify_token)]
+)
+async def delete_upload(upload_id: str):
+    with get_db_session() as session:
+        upload = session.query(Upload).filter(Upload.upload_id == upload_id).first()
+        if not upload:
+            raise HTTPException(status_code=404, detail="Upload non trovato")
+
+        collection_name = upload.collection
+        file_path = upload.file_path
+
+        # Delete Qdrant points for this upload_id
+        if collection_name:
+            try:
+                qdrant = init_qdrant_client()
+                if qdrant.collection_exists(collection_name):
+                    qdrant.delete(
+                        collection_name=collection_name,
+                        points_selector=FilterSelector(
+                            filter=Filter(
+                                must=[FieldCondition(key="upload_id", match=MatchValue(value=upload_id))]
+                            )
+                        )
+                    )
+            except Exception as e:
+                logger.warning("Errore durante la cancellazione dei punti Qdrant per upload %s: %s", upload_id, e)
+
+        # Delete stored file from disk
+        if file_path and os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                logger.warning("Errore durante la cancellazione del file %s: %s", file_path, e)
+
+        session.delete(upload)
+        session.commit()
+
+    return {"status": "deleted", "upload_id": upload_id}
 
 
 WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ0-9_']+")
