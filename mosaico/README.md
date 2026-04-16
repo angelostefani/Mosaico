@@ -132,7 +132,7 @@ Il compose sovrascrive alcune variabili `.env`:
 
 ```
 DJANGO_DEBUG=false
-API_BASE=http://192.168.153.248:9000
+API_BASE=http://xxx.xxx.xxx.xxx:9000
 ALLOWED_HOSTS=localhost,127.0.0.1,...
 CSRF_TRUSTED_ORIGINS=http://localhost:9001,...
 ```
