@@ -70,7 +70,7 @@ Sintesi per presentare il funzionamento dell'app Django + FastAPI che gestisce u
 - **Sincronizzazione collection**: `localStorage` condiviso tra Upload, Chat e Storico; query string preservate nei link incrociati.
 - **i18n IT/EN**: pulsante lingua in navbar, preferenza salvata in `request.session['_language']`; context processor `ui.context_processors.i18n` inietta `lang` e `t` (dizionario da `ui/i18n.py`) in ogni template; blocco JS `UI` renderizzato server-side per le stringhe dinamiche.
 - **Gestione errori e UX**: alert per errori API/rete, badge HTTP nella chat pubblica, indicatori di caricamento per ogni form, placeholder e testi guida.
-- **Configurazione**: `API_BASE` (default `http://192.168.118.218:9000`), `FAKE_TOKEN` per dev, porte 9001 (frontend) e 9000 (API).
+- **Configurazione**: `API_BASE` (default `http://xxx.xxx.xxx.xxx:9000`), `FAKE_TOKEN` per dev, porte 9001 (frontend) e 9000 (API).
 
 ## URL di riferimento
 

@@ -1,5 +1,5 @@
-![Pipeline Status](https://10.196.1.1/ics-projects/ai/i-nest_api/badges/main/pipeline.svg)
-![Coverage](https://10.196.1.1/ics-projects/ai/i-nest_api/badges/main/coverage.svg)
+![Pipeline Status](https://xxx.xxx.xxx.xxx/ics-projects/ai/i-nest_api/badges/main/pipeline.svg)
+![Coverage](https://xxx.xxx.xxx.xxx/ics-projects/ai/i-nest_api/badges/main/coverage.svg)
 
 # Document QA & Chat API
 **Versione 1.4 - 31/03/2026**

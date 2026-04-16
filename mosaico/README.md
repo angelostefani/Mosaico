@@ -93,7 +93,7 @@ Tutte le variabili sono opzionali e hanno valori di default. Configurarle in `.e
 | `DJANGO_DEBUG` | `true` | Modalità debug (`true`/`false`) |
 | `ALLOWED_HOSTS` | `*` | Host autorizzati, separati da virgola |
 | `CSRF_TRUSTED_ORIGINS` | — | URL trusted per CSRF (es. `http://localhost:9001`) |
-| `API_BASE` | `http://192.168.118.218:9000` | URL base dell'API FastAPI |
+| `API_BASE` | `http://xxx.xxx.xxx.xxx:9000` | URL base dell'API FastAPI |
 | `FAKE_TOKEN` | `dev-token` | Token di fallback per dev (sostituisce JWT mancante) |
 | `DJANGO_ENABLE_COOP` | `false` | Abilita header `Cross-Origin-Opener-Policy` |
 | `LOG_LEVEL` | `INFO` | Livello di log (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
@@ -132,7 +132,7 @@ Il compose sovrascrive alcune variabili `.env`:
 
 ```
 DJANGO_DEBUG=false
-API_BASE=http://192.168.153.248:9000
+API_BASE=http://xxx.xxx.xxx.xxx:9000
 ALLOWED_HOSTS=localhost,127.0.0.1,...
 CSRF_TRUSTED_ORIGINS=http://localhost:9001,...
 ```

@@ -18,7 +18,7 @@ Browser
   ▼
 Django Frontend (:9001)
   │  REST con Authorization: Bearer <jwt>
-  │  API_BASE (default http://192.168.118.218:9000)
+  │  API_BASE (default http://xxx.xxx.xxx.xxx:9000)
   ▼
 FastAPI (ai_api) (:9000)
   ├──► Qdrant (:6333)   — insert/search vettori
@@ -98,7 +98,7 @@ I progetti sono indipendenti e vengono avviati singolarmente con Docker Compose.
 | Ollama | `ollama_project/docker-compose.yml` | 11434 | Volume `ollama_data` |
 | Qdrant | `qdrant_project/docker-compose.yml` | 6333 | Volume `qdrant_storage` |
 | API | `ai_api/docker-compose.yml` | 9000 | `QDRANT_HOST=qdrant`, `OLLAMA_URL=...` |
-| Frontend | `mosaico/docker-compose.yml` | 9001 | `API_BASE=http://192.168.153.248:9000` |
+| Frontend | `mosaico/docker-compose.yml` | 9001 | `API_BASE=http://xxx.xxx.xxx.xxx:9000` |
 | Postgres | `postgres_project/docker-compose.yml` | 5433→5432 | Volume `postgres_data` |
 
 Il `docker-compose.yml` del frontend monta `./db.sqlite3` e `./logs` come volumi per la persistenza dei dati tra i restart.

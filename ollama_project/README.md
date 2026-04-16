@@ -96,10 +96,10 @@ docker run --rm -v ollama_data:/data -v $(pwd):/backup busybox tar xzf /backup/o
 
 ## Accesso da rete locale
 
-Se il tuo computer ha IP `192.168.1.10`, puoi accedere a Ollama da altri dispositivi della rete con:
+Se il tuo computer ha IP `xxx.xxx.xxx.xxx`, puoi accedere a Ollama da altri dispositivi della rete con:
 
 ```
-http://192.168.1.10:11434
+http://xxx.xxx.xxx.xxx:11434
 ```
 
 Assicurati che:

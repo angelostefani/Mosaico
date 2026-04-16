@@ -40,7 +40,7 @@ docker run --rm -v ollama_data:/data -v $(pwd):/backup busybox tar xzf /backup/o
 ```
 
 ## Accesso da rete locale
-API raggiungibili su `http://<IP_HOST>:11434` (es. `http://192.168.1.10:11434`). Assicurarsi che il firewall consenta la porta 11434 e che Docker esponga su `0.0.0.0` (già previsto nello stack).
+API raggiungibili su `http://<IP_HOST>:11434` (es. `http://xxx.xxx.xxx.xxx:11434`). Assicurarsi che il firewall consenta la porta 11434 e che Docker esponga su `0.0.0.0` (già previsto nello stack).
 
 ## Deploy su server remoto (VPS)
 1. Copia file: `scp -r ollama_project user@server:/home/user/`
