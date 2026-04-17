@@ -102,6 +102,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked@14/marked.min.js"></script>
 <script>
 // JWT recuperato dalla sessione Django
 const JWT_TOKEN = "{{ request.session.jwt_token|default:'' }}";
@@ -623,7 +624,11 @@ askBtn.addEventListener('click', async () => {
     }
 
     // Rimuovi typing indicator se ancora presente (risposta vuota)
-    if (isFirstChunk) paragraph.textContent = '';
+    if (isFirstChunk) {
+      paragraph.textContent = '';
+    } else if (fullAnswer) {
+      paragraph.innerHTML = marked.parse(fullAnswer);
+    }
 
     // Abilita copy button
     copyBtn.addEventListener('click', () => {
@@ -897,7 +902,11 @@ function appendMessage(who, text, shouldPersist = true) {
 
   const paragraph = document.createElement('p');
   paragraph.className = 'mb-0';
-  paragraph.textContent = text;
+  if (who === 'bot') {
+    paragraph.innerHTML = marked.parse(text);
+  } else {
+    paragraph.textContent = text;
+  }
 
   bubble.appendChild(label);
   bubble.appendChild(paragraph);

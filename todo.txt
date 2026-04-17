@@ -1,0 +1,40 @@
+Ho la necessità di fare una valutazione delle API REST "ai_api" http://localhost:9000/docs# per validare la qualità dei chunk recuperati e della risposta deella chat a fronte di una query inserita dall'utente.
+Propongo di aggiungere un endpoint "/evaluation" (simile a "/chat") che prenda in input:
+
+question *
+string
+
+username
+string | (string | null)
+
+collection
+string | (string | null)
+
+model
+string | (string | null)
+
+reference
+string | (string | null)
+
+Descrizione campi:
+"question", "username", "collection", "model" hanno lo stesso significato dei campi dell'endpoint "/chat".
+Il campo "reference" contiene la risposta di riferimento, considerata ottima, e verso cui dovrebbe tendere la risposta della chat".
+
+L'output dovrà essere nella forma JSON, ecco un esempio: 
+{
+  "question": "Entro quanto tempo deve essere effettuata la valutazione del rischio?",
+  "retrieved_contexts": [
+    "Il soggetto critico effettua la valutazione del rischio entro nove mesi dalla notifica di designazione.",
+    "La valutazione viene aggiornata almeno ogni quattro anni."
+  ],
+  "response": "La valutazione del rischio deve essere effettuata entro nove mesi dalla notifica di designazione.",
+  "reference": "Entro nove mesi dalla notifica di designazione."
+}
+
+Descrizione campi: 
+"question": è la stessa dell'input
+"retrieved_contexts": conterrà il testo dei chuncks recuperati.
+"response": contiene la risposta del sistema.
+"reference": è la stessa dell'input.
+
+Fammi una analisi e dammi un piano di implementazione, attendi il mio OK prima di procedere con l'implementazione.

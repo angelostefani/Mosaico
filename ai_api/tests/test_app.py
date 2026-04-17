@@ -621,3 +621,69 @@ def test_chat_executes_rerank_even_when_mmr_disabled(monkeypatch, override_searc
     assert response.status_code == 200
     assert captured["rerank"] == 1
     assert captured["mmr"] == 0
+
+
+# ---------------------------------------------------------------------------
+# /evaluation
+# ---------------------------------------------------------------------------
+
+def test_evaluation_basic(monkeypatch, override_search):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+        return "risposta generata"
+
+    monkeypatch.setattr(app, "ask", fake_ask)
+
+    response = client.post(
+        "/evaluation",
+        data={"question": "Qual è il termine?", "reference": "Entro nove mesi."},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["question"] == "Qual è il termine?"
+    assert data["reference"] == "Entro nove mesi."
+    assert data["response"] == "risposta generata"
+    assert isinstance(data["retrieved_contexts"], list)
+    assert len(data["retrieved_contexts"]) > 0
+    assert all(isinstance(c, str) for c in data["retrieved_contexts"])
+    assert isinstance(data["retrieved_sources"], list)
+    assert len(data["retrieved_sources"]) == len(data["retrieved_contexts"])
+
+
+def test_evaluation_no_context(monkeypatch):
+    class EmptyClient:
+        def collection_exists(self, coll):
+            return True
+        def search(self, collection_name, query_vector, limit, with_payload):
+            return []
+
+    monkeypatch.setattr(app, "init_qdrant_client", lambda: EmptyClient())
+
+    response = client.post(
+        "/evaluation",
+        data={"question": "Domanda senza contesto?"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["retrieved_contexts"] == []
+    assert data["retrieved_sources"] == []
+    assert data["response"] == "Nessun contesto rilevante."
+    assert data["reference"] is None
+
+
+def test_evaluation_with_reference(monkeypatch, override_search):
+    async def fake_ask(prompt, context, conversation_history=None, model_override=None, collection_scope=None):
+        return "la risposta"
+
+    monkeypatch.setattr(app, "ask", fake_ask)
+
+    response = client.post(
+        "/evaluation",
+        data={"question": "Test?", "reference": "Risposta di riferimento ottima."},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["reference"] == "Risposta di riferimento ottima."
+    assert data["response"] == "la risposta"
+    assert "retrieved_contexts" in data
+    assert "retrieved_sources" in data
+    assert len(data["retrieved_sources"]) == len(data["retrieved_contexts"])

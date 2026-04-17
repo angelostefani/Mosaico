@@ -1190,7 +1190,7 @@ def process_document(
     pages_meta = metadata.get("pages") or []
     doc_title = _derive_doc_title(normalized_text)
     base_payload: Dict[str, Any] = {
-        "source_file": os.path.basename(file_location),
+        "source_file": original_filename or os.path.basename(file_location),
         "username": username_val or None,
         "collection": collection_val or None,
         "upload_id": upload_id_val,
@@ -2322,6 +2322,155 @@ async def chat(
             exc_info=True,
         )
         raise HTTPException(status_code=500, detail="Errore interno nel chatbot")
+
+
+@app.post("/evaluation", summary="Valuta qualità RAG", tags=["Chat"])
+async def evaluation(
+    question: str = Form(...),
+    username: Optional[str] = Form(None),
+    collection: Optional[str] = Form(None),
+    model: Optional[str] = Form(None),
+    reference: Optional[str] = Form(None),
+    token_payload: Dict[str, Any] = Depends(django_verify_token),
+):
+    if not question or not question.strip():
+        raise HTTPException(status_code=400, detail="La domanda non può essere vuota")
+
+    def _payload_of(r) -> Dict[str, Any]:
+        return (getattr(r, "payload", None) or {}) if hasattr(r, "payload") else (r.get("payload", {}) if isinstance(r, dict) else {})
+
+    embedding_model = get_embedding_model()
+    expansion_terms: List[str] = []
+    if ENABLE_MULTI_VECTOR_SEARCH:
+        expansion_terms = _select_query_expansions(question, CHAT_EXPANSION_LIMIT)
+    query_texts = [question] + expansion_terms
+    query_embeddings = await run_in_threadpool(embedding_model.encode, query_texts)
+    if hasattr(query_embeddings, "tolist"):
+        query_embeddings = query_embeddings.tolist()
+    if not isinstance(query_embeddings, list):
+        query_embeddings = [query_embeddings]
+    if len(query_embeddings) < len(query_texts):
+        query_embeddings = query_embeddings + [query_embeddings[-1]] * (len(query_texts) - len(query_embeddings))
+
+    q_emb = _vector_to_list(query_embeddings[0])
+    expansion_vectors = [
+        _vector_to_list(vec) for vec in query_embeddings[1:len(expansion_terms) + 1]
+    ]
+
+    username_val = _resolve_username(username, token_payload)
+    coll = _build_collection_name(username_val, collection)
+
+    client = init_qdrant_client()
+    if not client.collection_exists(coll):
+        raise HTTPException(status_code=404, detail=f"Collection '{coll}' non trovata.")
+    coll_config = get_collection_config(coll)
+    collection_scope = coll_config.get("scope_prompt") if coll_config else None
+
+    try:
+        primary_results = await run_in_threadpool(
+            _qdrant_search_points,
+            client,
+            coll,
+            q_emb,
+            CHAT_CANDIDATES,
+        )
+    except Exception as e:
+        logger.error("[evaluation] errore ricerca primaria Qdrant coll=%s: %s", coll, e, exc_info=True)
+        raise HTTPException(status_code=503, detail=f"Errore ricerca in Qdrant: {e}")
+
+    additional_results: List[Any] = []
+    if ENABLE_MULTI_VECTOR_SEARCH and expansion_vectors:
+        per_query_limit = max(1, CHAT_EXPANSION_CANDIDATES)
+        for vec in expansion_vectors:
+            try:
+                retrieved = await run_in_threadpool(_qdrant_search_points, client, coll, vec, per_query_limit)
+                if retrieved:
+                    additional_results.extend(retrieved)
+            except Exception as exp_err:
+                logger.error("[evaluation] errore ricerca espansione coll=%s: %s", coll, exp_err, exc_info=True)
+
+    results = _merge_results(primary_results or [], additional_results)
+    threshold = max(0.0, QDRANT_SCORE_THRESHOLD)
+    filtered_results = [r for r in results if (getattr(r, "score", None) is None or getattr(r, "score", None) >= threshold)]
+
+    if not filtered_results and results:
+        for fallback_threshold in (threshold * 0.75, threshold * 0.5, 0.0):
+            fallback_threshold = max(0.0, fallback_threshold)
+            filtered_results = [r for r in results if (getattr(r, "score", None) is None or getattr(r, "score", None) >= fallback_threshold)]
+            if filtered_results:
+                break
+
+    if not filtered_results:
+        return JSONResponse(status_code=200, content={
+            "question": question,
+            "retrieved_contexts": [],
+            "retrieved_sources": [],
+            "response": "Nessun contesto rilevante.",
+            "reference": reference,
+        })
+
+    pool_k = max(CHAT_RESULT_LIMIT * 2, CHAT_RESULT_LIMIT)
+    pool = filtered_results[:pool_k]
+
+    if ENABLE_RERANK:
+        reranked_scored = rerank_results(question, pool)
+    else:
+        reranked_scored = [(float(getattr(r, "score", 0.0) or 0.0), r) for r in pool]
+
+    if ENABLE_MMR:
+        reranked = apply_mmr(reranked_scored, top_k=min(pool_k, len(reranked_scored)))
+    else:
+        reranked = [r for _score, r in reranked_scored[:min(pool_k, len(reranked_scored))]]
+
+    deduped = _dedup_results(reranked, sim_threshold=0.97)
+
+    retrieved_contexts = []
+    retrieved_sources = []
+    for r in deduped[:CHAT_RESULT_LIMIT]:
+        p = _payload_of(r)
+        txt = (p.get("text_chunk") or "").strip()
+        if not txt:
+            continue
+        retrieved_contexts.append(txt)
+        retrieved_sources.append(p.get("source_file") or "")
+
+    if ENABLE_STITCH:
+        stitched_blocks = stitch_chunks(deduped, char_budget=CHAT_CONTEXT_CHAR_BUDGET, max_run_len=3)
+        pieces = [blk for blk, _meta in stitched_blocks]
+        context = "\n\n".join(pieces) if pieces else "Nessun contesto rilevante."
+    else:
+        final = deduped[:CHAT_RESULT_LIMIT]
+        context_pieces = []
+        if final:
+            total = 0
+            for r in final:
+                p = _payload_of(r)
+                txt = (p.get("text_chunk") or "").strip()
+                if not txt:
+                    continue
+                if total + len(txt) > CHAT_CONTEXT_CHAR_BUDGET:
+                    break
+                prefix = f"[p.{p.get('page_number')}][c.{p.get('chunk_index')}] "
+                context_pieces.append(prefix + txt)
+                total += len(txt)
+        context = "\n\n".join(context_pieces) if context_pieces else "Nessun contesto rilevante."
+
+    model_override = model.strip() if model and model.strip() else None
+    try:
+        answer = await ask(question, context, None, model_override, collection_scope)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error("[evaluation] errore ask coll=%s: %s", coll, exc, exc_info=True)
+        raise HTTPException(status_code=500, detail="Errore interno nella valutazione")
+
+    return JSONResponse(status_code=200, content={
+        "question": question,
+        "retrieved_contexts": retrieved_contexts,
+        "retrieved_sources": retrieved_sources,
+        "response": answer,
+        "reference": reference,
+    })
 
 
 @app.post("/chat/stream", summary="Interagisci con l'IA (streaming SSE)", tags=["Chat"])

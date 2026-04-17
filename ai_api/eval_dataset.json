@@ -1,0 +1,202 @@
+[
+  {
+    "question": "Qual è il ruolo di ENEA nel settore delle energie rinnovabili e delle Comunità Energetiche?",
+    "reference": "ENEA è un ente pubblico che si occupa di ricerca, innovazione e supporto tecnico nel settore energetico.\nNel campo delle Comunità Energetiche Rinnovabili (CER), il suo ruolo è fornire supporto tecnico-scientifico: sviluppa strumenti, aiuta enti locali e stakeholder a prendere decisioni informate e affianca le istituzioni sugli aspetti tecnici e tecnologici.\nInoltre, supporta la nascita e lo sviluppo delle CER sui territori e promuove modelli di gestione replicabili, favorendo il confronto tra i diversi attori coinvolti."
+  },
+  {
+    "question": "Quali sono gli strumenti che ENEA mette a disposizione per facilitare lo sviluppo delle comunità energetiche?",
+    "reference": "ENEA mette a disposizione diversi strumenti gratuiti per supportare lo sviluppo delle Comunità Energetiche.\nTra questi ci sono strumenti digitali come RECON (simulatore energetico-economico), il Geoportale per la pianificazione territoriale e piattaforme per il monitoraggio e la gestione delle CER.\nA questi si affiancano strumenti di analisi (come ECListener), progetti pilota per testare soluzioni concrete e un Osservatorio che fornisce dati, analisi e supporto su aspetti tecnici, economici e organizzativi."
+  },
+  {
+    "question": "Cos'è il TIAD e perché è rilevante per RECON?",
+    "reference": "Il TIAD è il riferimento normativo definito da ARERA che regola l’autoconsumo diffuso.\nÈ rilevante per RECON perché ne guida i calcoli: il simulatore applica le regole del TIAD per determinare come viene valorizzata l’energia condivisa e incentivata nelle comunità energetiche.\nIn pratica, RECON utilizza il quadro regolatorio definito dal TIAD (insieme agli altri provvedimenti collegati) per fornire risultati coerenti con le regole ufficiali."
+  },
+  {
+    "question": "Chi ha sviluppato RECON?",
+    "reference": "RECON (Renewable Energy Community ecONomic simulator) è stato sviluppato da ENEA, l’Agenzia nazionale per le nuove tecnologie, l’energia e lo sviluppo economico sostenibile.\nIl simulatore è nato nell’ambito della Ricerca di Sistema Elettrico (PTR 2022–2024), in particolare nel progetto dedicato alle tecnologie per favorire l’uso efficiente dell’energia elettrica negli usi finali, finanziato dal Ministero dell’Ambiente e della Sicurezza Energetica.\nAll’interno di ENEA, lo sviluppo di RECON è stato curato dal Laboratorio Smart Cities and Communities (SCC), operante all'interno della Divisione Strumenti e Servizi per le Infrastrutture Critiche e le Comunità Energetiche Rinnovabili (ICER), appartenente al Dipartimento Tecnologie Energetiche e Fonti Rinnovabili (TERIN)."
+  },
+  {
+    "question": "Qual è l'obiettivo principale del simulatore RECON?",
+    "reference": "L’obiettivo principale di RECON è fornire uno strumento web gratuito per effettuare valutazioni preliminari energetiche, economiche e finanziarie a supporto della creazione di Comunità Energetiche Rinnovabili (CER) e gruppi di autoconsumo collettivo (GAC).\nIn pratica, aiuta enti locali e stakeholder a prendere decisioni informate e favorisce il coinvolgimento attivo dei cittadini nella transizione energetica."
+  },
+  {
+    "question": "Quali configurazioni di autoconsumo diffuso è in grado di analizzare RECON?",
+    "reference": "RECON è in grado di analizzare le principali configurazioni di autoconsumo diffuso previste dalla normativa italiana.\nIn particolare, supporta:\n- le Comunità Energetiche Rinnovabili (CER);\n- i Gruppi di Autoconsumatori di energia rinnovabile che agiscono collettivamente (GAC).\nSi tratta quindi delle configurazioni di autoconsumo diffuso regolamentate e incentivate dal quadro normativo vigente (D.lgs. 199/2021 e TIAD)."
+  },
+  {
+    "question": "Come funziona il simulatore RECON?",
+    "reference": "RECON è un’applicazione web accessibile gratuitamente che funziona a partire da un set di input inseriti dall’utente in quattro sezioni principali:\n- dati generali (configurazione, località, utenti e POD),\n- impianti di produzione (caratteristiche tecniche ed economiche),\n- membri e profili di consumo,\n- parametri tecnici, economici e finanziari.\nA partire da questi dati, il simulatore esegue un’analisi energetica ed economica (con simulazione oraria di produzione e consumi) e calcola indicatori chiave per valutare l’investimento. Tra questi: autoconsumo, autosufficienza, energia immessa in rete, emissioni evitate, incentivi, costi, ricavi e principali indicatori finanziari.\nI risultati vengono mostrati in grafici e tabelle, con la possibilità di scaricare un report PDF della simulazione."
+  },
+  {
+    "question": "Come è strutturato RECON?",
+    "reference": "RECON è strutturato in quattro sezioni principali di input:\n1. Dati generali (tipologia di configurazione, località, utenti e POD),\n2. Impianti di produzione (caratteristiche tecniche ed economiche),\n3. Membri della configurazione (tipologie di utenza e profili di consumo),\n4. Parametri (aspetti tecnici, economici e finanziari).\nDal punto di vista dell’utente, ogni sezione è composta da campi compilabili con suggerimenti (tooltip) che aiutano a capire dati e risultati."
+  },
+  {
+    "question": "RECON mi aiuta a tenere conto delle facilitazioni di legge e dei contributi statali?",
+    "reference": "Sì, RECON tiene conto delle agevolazioni di legge e dei contributi statali, ma in modo simulato e preliminare.\nNel dettaglio, il tool:\n- considera gli incentivi sull’autoconsumo diffuso (tariffa premio) e il contributo legato all’energia condivisa secondo il TIAD;\n- include anche contributi in conto capitale (es. PNRR) e detrazioni fiscali nelle valutazioni economiche.\nTuttavia, questi elementi sono trattati sulla base delle regole vigenti e con ipotesi semplificate nel tempo. RECON non verifica i requisiti reali di accesso agli incentivi e non sostituisce le verifiche ufficiali con GSE o altri enti competenti."
+  },
+  {
+    "question": "Qual è l'ultima versione di RECON e a quale contesto regolatorio italiano è aggiornata?",
+    "reference": "L’ultima versione riportata è RECON 2.2.2 (Rev. 5 agosto 2025).\nÈ aggiornata al quadro normativo italiano vigente, in particolare a:\n- D.lgs. 199/2021 (recepimento della direttiva RED II),\n- TIAD ARERA (Delibera 727/2022/R/EEL, aggiornata dalla 15/2024/R/EEL),\n- Decreto MASE 07/12/2023 n. 414 (Decreto CACER), modificato dal DM 16/05/2025 n. 127,\n- Regole Operative GSE aggiornate al 16/07/2025."
+  },
+  {
+    "question": "Quali sono le principali novità introdotte con l'ultima versione di RECON?",
+    "reference": "Le principali novità introdotte nelle versioni più recenti di RECON (2.2 / 2.2.2) riguardano sia gli aspetti tecnici sia quelli economici e di usabilità.\nIn sintesi:\n- possibilità di simulare impianti eolici e idroelettrici, oltre al fotovoltaico;\n- maggiore dettaglio nella modellazione degli utenti, con cluster e profili di consumo differenziati;\n- possibilità di valutare come utilizzare i ricavi (reinvestimento in servizi o redistribuzione ai membri);\n- aggiornamento dei prezzi dell’energia (forward su orizzonte ventennale) e delle curve orarie;\n- integrazione delle detrazioni fiscali per il fotovoltaico;\n- miglioramenti di usabilità (es. caricamento dati da Excel, gestione profili orari);\n- possibilità di scaricare un report PDF dei risultati."
+  },
+  {
+    "question": "In quale modo RECON tiene conto della evoluazione del quadro normativo italiano?",
+    "reference": "RECON tiene conto dell’evoluzione del quadro normativo italiano tramite aggiornamenti periodici.\nIn pratica, ENEA aggiorna il simulatore per allinearlo alle regole vigenti (come D.lgs. 199/2021, TIAD, Decreto CACER e Regole Operative GSE), integrando:\n- i nuovi provvedimenti e aggiornamenti normativi,\n- le regole sugli incentivi,\n- i meccanismi di valorizzazione dell’autoconsumo diffuso."
+  },
+  {
+    "question": "Come è stata validata la metodologia di RECON?",
+    "reference": "La metodologia di RECON è stata sviluppata in ambito scientifico (Ricerca di Sistema Elettrico) e validata con più approcci.\nDa un lato, i modelli sono stati verificati singolarmente confrontandoli con dati reali o simulatori:\n- idroelettrico con dati reali (deviazione <10%),\n- eolico con simulazioni dettagliate (<1%),\n- fotovoltaico basato su dati PVGIS del JRC.\nLa metodologia è stata testata confrontando i risultati con dati reali e altri simulatori, con scostamenti generalmente contenuti (pochi punti percentuali).\nIn parallelo, la metodologia è stata presentata in ambito tecnico-scientifico e verificata rispetto alla coerenza normativa (TIAD, RED II), oltre che applicata in casi reali."
+  },
+  {
+    "question": "Quanti progetti sono stati realizzati grazie a RECON fino ad oggi? (stess test)",
+    "reference": "Non è possibile indicare quanti progetti siano stati effettivamente realizzati grazie a RECON, perché questo dato non è riportato nelle fonti.\nL’unico numero disponibile riguarda gli utenti: circa 7.400 utenti registrati (dato 2025).\nSono citati alcuni casi concreti di utilizzo (es. ACER Reggio Emilia, Comune di Magliano Alpi), ma non esiste un conteggio ufficiale dei progetti realizzati."
+  },
+  {
+    "question": "Esiste un tutorial di RECON?",
+    "reference": "Non è menzionato esplicitamente un “tutorial” di RECON.\nSono però disponibili materiali che svolgono la stessa funzione:\n- il Manuale Utente RECON v2.2.2, che guida all’uso e alla comprensione di input e risultati;\n- la presentazione ufficiale ENEA, utile come introduzione;\n- alcuni webinar ENEA dedicati a CER e RECON."
+  },
+  {
+    "question": "RECON può essere usato da un utente non esperto di comunità energetiche?",
+    "reference": "Sì, RECON può essere usato anche da utenti non esperti.\nÈ pensato per supportare enti locali, cittadini e stakeholder, con input relativamente semplici e l’aiuto di tooltip esplicativi. Può funzionare anche con dati non completi, grazie a stime interne.\nTuttavia, i risultati sono preliminari: RECON non sostituisce studi di fattibilità professionali e non può essere utilizzato per finalità commerciali o professionali."
+  },
+  {
+    "question": "Quali tecnologie di produzione da fonti rinnovabili (FER) sono supportate in RECON?",
+    "reference": "RECON supporta tre tecnologie di produzione da fonti rinnovabili:\n- fotovoltaico,\n- eolico,\n- idroelettrico.\nIn particolare, consente di modellare impianti fotovoltaici (anche su più sezioni) e impianti eolici e idroelettrici (in configurazione mono sezione)."
+  },
+  {
+    "question": "Quali possibilità di finanziamento degli impianti vengono considerate nella simulazione RECON?",
+    "reference": "RECON considera diverse modalità di finanziamento:\n- acquisto con capitale proprio o tramite prestito,\n- acquisto tramite fornitore di energia,\n- acquisto a carico della CER,\n- noleggio operativo,\n- leasing finanziario.\nTutte queste opzioni sono integrate nei flussi di cassa della simulazione."
+  },
+  {
+    "question": "RECON tiene conto dei contributi in conto capitale, anche da PNRR, nella sua simulazione?",
+    "reference": "Sì, RECON include contributi pubblici in conto capitale (anche PNRR), con campi dedicati per inserirli e con i relativi limiti di investimento.\nTuttavia, li considera solo a livello simulato: non verifica i requisiti reali di accesso ai bandi."
+  },
+  {
+    "question": "Quali sono i requisiti di localizzazione per accedere al Contributo PNRR per CER e GAC?",
+    "reference": "Per accedere al contributo PNRR (M2C2 Investimento 1.2), l’impianto deve essere installato in un Comune con meno di 50.000 abitanti."
+  },
+  {
+    "question": "RECON tiene conto della cumulabilità degli incentivi?",
+    "reference": "Sì, RECON considera incentivi, contributi pubblici e detrazioni fiscali nella simulazione, inclusi gli effetti sulla tariffa premio (ridotta proporzionalmente in presenza di contributi in conto capitale, fino a un massimo del 50% se il contributo copre il 40% dei costi).\nTuttavia, non verifica i vincoli normativi di cumulabilità: questi restano a carico degli enti competenti (es. GSE)."
+  },
+  {
+    "question": "RECON permette di gestire i prosumer e gli eventuali impianti già esistenti?",
+    "reference": "Sì, RECON consente di gestire diverse tipologie di utenti (consumer, prosumer, producer), anche con più POD e impianti.\nPer i prosumer con impianti già operativi, è possibile tenerne conto nei calcoli (incluso l’autoconsumo), e indicare la data di entrata in esercizio per distinguere tra impianti nuovi ed esistenti. Possono essere inclusi anche produttori terzi (es. ESCo)."
+  },
+  {
+    "question": "Quali dati devo raccogliere per poter usare RECON? Devo disporre di tutti i dati sin dall’inizio o posso procedere per fasi?",
+    "reference": "RECON richiede dati organizzati in quattro sezioni:\n- dati generali (configurazione, località, utenti, POD),\n- impianti (dati tecnici ed economici),\n- membri (tipologie di utenza e consumi),\n- parametri (prezzi, costi, finanziamento, benefici).\nNon è necessario avere tutti i dati subito: è possibile procedere per fasi e anche senza seguire un ordine rigido (con il vincolo di definire prima utenti e POD). In caso di dati mancanti, il simulatore può utilizzare stime interne (es. profili ARERA)."
+  },
+  {
+    "question": "RECON è in grado di supplire alla mancanza di dati degli utenti?",
+    "reference": "Sì. Quando i dati non sono disponibili, RECON li stima tramite algoritmi e profili predefiniti.\nPer le utenze residenziali utilizza profili medi ARERA scalati sui consumi disponibili; per altre utenze è possibile definire profili orari qualitativi, adattati ai dati mensili. Questo consente di avviare simulazioni anche con dati parziali."
+  },
+  {
+    "question": "Quali sono i principali dati di input tecnici per la simulazione di impianti rinnovabili?",
+    "reference": "Dipendono dalla tecnologia:\n- Fotovoltaico: potenza nominale, inclinazione e orientamento, perdite di sistema, tipo di installazione, eventuali sezioni multiple, località e dati meteo.\n- Eolico: caratteristiche del sito, velocità del vento, aerogeneratore (curva di potenza), altezza del mozzo.\n- Idroelettrico: regime fluviale, portata, salto disponibile, potenza nominale e curve di durata."
+  },
+  {
+    "question": "Quali dati di costo dell'energia sono richiesti per i prosumer per calcolare i risparmi da autoconsumo fisico?",
+    "reference": "RECON richiede il valore della quota energia (€/kWh) della voce “spesa per la materia energia”, ricavabile dalla bolletta e al netto dell’IVA. Questo dato serve per stimare i risparmi legati all’autoconsumo fisico."
+  },
+  {
+    "question": "Cosa si intende per \"Potenza d’obbligo\" (Po) nel contesto degli impianti FV in RECON?",
+    "reference": "La Potenza d’obbligo (Po) è la quota di potenza dell’impianto (kW) necessaria per rispettare gli obblighi di integrazione delle fonti rinnovabili negli edifici di nuova costruzione o ristrutturazioni importanti.\nL’energia associata a questa quota non beneficia della tariffa premio."
+  },
+  {
+    "question": "Cosa si intende per \"Acquisto a carico della CER\"?",
+    "reference": "È una modalità in cui l’impianto viene acquistato direttamente dalla Comunità Energetica. La CER sostiene i costi di investimento e manutenzione, che sono riflessi nei flussi di cassa della configurazione. L’impianto può essere installato presso un membro, con gestione centralizzata dei costi e ripartizione interna dei benefici (es. tramite canoni e ricavi da energia e autoconsumo)."
+  },
+  {
+    "question": "Posso usare RECON a supporto della mia attività di consulente?",
+    "reference": "No. RECON è destinato solo ad attività informative e valutazioni preliminari, non a uso commerciale o professionale.\nPuò essere usato da un consulente solo come supporto informativo iniziale, ma non come strumento professionale ufficiale."
+  },
+  {
+    "question": "Come si comporta RECON rispetto agli obiettivi sociali ed economici delle CER, oltre al semplice profitto? (stess test)",
+    "reference": "RECON non valuta direttamente gli obiettivi sociali, ma consente di modellarli in maniera semplificata.\nIn particolare, permette di simulare l’utilizzo dei ricavi per servizi collettivi, redistribuzione tra i membri o altre finalità sociali."
+  },
+  {
+    "question": "In RECON come viene calcolato l’incentivo sull’autoconsumo diffuso?",
+    "reference": "L’incentivo è calcolato secondo il quadro normativo vigente (TIAD e Decreto CACER): si applica all’energia condivisa, definita come il minimo orario tra energia immessa in rete dagli impianti e quella prelevata dai membri.\nRECON calcola la tariffa premio e il contributo di valorizzazione, integrandoli nei flussi di cassa, con il meccanismo di acconto e conguaglio previsto dal GSE."
+  },
+  {
+    "question": "Come viene calcolata la produzione degli impianti fotovoltaici in RECON?",
+    "reference": "RECON calcola la produzione degli impianti fotovoltaici tramite chiamate API al database PVGIS del Joint Research Centre (JRC) della Commissione Europea, utilizzando dati di produzione su base oraria."
+  },
+  {
+    "question": "Di quale tipologia di utenti RECON è in grado di simulare il comportamente energetico?",
+    "reference": "RECON può simulare diverse tipologie di utenza: residenziale, uffici, scuole, esercizi commerciali, attività industriali e artigianali, oltre a profili generici (basati su consumo e/o orario di attività).\nGestisce anche diversi ruoli: consumer, prosumer, producer e produttori terzi."
+  },
+  {
+    "question": "In che modo RECON modella il profilo di consumo delle utenze residenziali?",
+    "reference": "RECON modella il profilo di consumo delle utenze residenziali a partire dai dati pubblicati da ARERA, differenziandoli in base alla regione, alla provincia e alla classe di potenza del contatore (es. 3 kW, 4,5 kW, ecc.). Se disponibili, questi profili vengono poi adattati inserendo i prelievi di energia effettivi dell'utente (su base mensile o annuale, eventualmente divisi per fasce orarie F1, F2, F3) ricavabili dalla bolletta"
+  },
+  {
+    "question": "In che modo RECON modella il profilo di consumo di utenze come uffici o scuole?",
+    "reference": "RECON utilizza modelli basati sugli orari di attività: distingue tra ore di utilizzo (consumi più alti) e inattività (consumi di base), tenendo conto di giorni lavorativi, chiusure e, per le scuole, del calendario scolastico."
+  },
+  {
+    "question": "In che modo RECON assicura la coerenza dei dati orari di consumo per l'utenza Industriale/Artigianale?",
+    "reference": "RECON parte da un profilo orario qualitativo (anche caricato da Excel) distinto tra giorni lavorativi e non, e lo scala sui consumi reali (mensili o annuali). Verifica la coerenza con orari di attività e periodi di chiusura."
+  },
+  {
+    "question": "Qual è la riduzione massima applicata alla tariffa premio in caso di accesso a contributi in conto capitale?",
+    "reference": "Coerentemente con la normativa vigente, RECON riduce la tariffa premio in proporzione al valore del contributo, per una riduzione massima del 50% (che si applica quando il contributo raggiunge il 40% dei costi ammissibili)."
+  },
+  {
+    "question": "Quali sono le opzioni di vendita dell’energia immessa in rete supportate da RECON?",
+    "reference": "In RECON, le opzioni di vendita dell’energia immessa in rete sono: Ritiro Dedicato GSE (RID) oppure mercato libero."
+  },
+  {
+    "question": "RECON tiene conto di dati esterni, come ad esempio il meteo, la geografia?",
+    "reference": "Sì. RECON utilizza la località (Comune/Provincia) per simulare la produzione degli impianti, integrando dati come radiazione solare e velocità del vento.\nQueste informazioni servono anche per identificare la zona di mercato (prezzi zonali GME) e supportare i calcoli economici."
+  },
+  {
+    "question": "Quali sono le opzioni di redistribuzione/reinvestimento dei benefici economici all'interno della CER?",
+    "reference": "RECON permette di destinare i ricavi a:\n- redistribuzione tra i membri,\n- reinvestimento in servizi per la comunità.\nLe quote sono impostabili liberamente dall’utente e inserite nei flussi economici della configurazione (tipicamente su base annuale)."
+  },
+  {
+    "question": "Da dove ottiene RECON i dati orari sulla velocità del vento per la simulazione eolica?",
+    "reference": "RECON acquisisce i dati orari di velocità del vento tramite API dal servizio Open-Meteo, che utilizza dataset climatici di riferimento come ERA5 ed ERA5-Land.\nQuesti dataset forniscono serie storiche orarie su lunga scala temporale (dal 1950 a oggi), utilizzate per alimentare le simulazioni eoliche."
+  },
+  {
+    "question": "Qual è il fattore di emissione utilizzato da RECON per calcolare le emissioni evitate?",
+    "reference": "Il fattore di emissione associato alla produzione di energia elettrica utilizzato in RECON è 267,9 g CO2/kWh, basato sul Rapporto ISPRA 386/2023."
+  },
+  {
+    "question": "Come è definita l'Energia Elettrica Condivisa calcolata da RECON?",
+    "reference": "L’Energia Elettrica Condivisa è definita, per ciascuna ora, come il minimo tra:\n- l’energia immessa in rete dagli impianti della configurazione,\n- l’energia prelevata dalla rete dai membri.\nQuesto criterio, coerente con la normativa (TIAD), è alla base del calcolo dell’autoconsumo diffuso e della relativa tariffa premio."
+  },
+  {
+    "question": "Come viene calcolato l'indice di autoconsumo diffuso della configurazione?",
+    "reference": "L’indice di autoconsumo diffuso è il valore percentuale dell’autoconsumo diffuso rispetto all’energia immessa in rete da tutti gli impianti di produzione che rilevano per la configurazione."
+  },
+  {
+    "question": "Cosa misura l'indice di autosufficienza energetica?",
+    "reference": "L’indice di autosufficienza energetica misura la quota percentuale del fabbisogno totale della configurazione coperta dalla produzione degli impianti.\nInclude sia:\n- l’autoconsumo fisico (in situ),\n- l’autoconsumo diffuso (energia condivisa).\nÈ quindi un indicatore sintetico della capacità della CER di soddisfare i propri consumi con energia prodotta internamente."
+  },
+  {
+    "question": "Cosa comprende la voce \"Vendita energia\" nei flussi di cassa di RECON?",
+    "reference": "In RECON La voce “Vendita energia” comprende: \n- i ricavi dalla vendita di energia immessa in rete dagli impianti di proprietà della CER/GAC e dagli impianti per i quali i produttori hanno dato mandato al Referente per il Ritiro Dedicato (RID);\n- il canone (ricavo) incassato dalla CER per gli eventuali impianti di produzione realizzati da quest’ultima presso i suoi membri (\"Acquisto a carico della CER\")."
+  },
+  {
+    "question": "Cosa includono i \"Costi amministrativi/gestionali\" nei flussi di cassa?",
+    "reference": "Comprendono tutti i costi legati alla gestione operativa e amministrativa della configurazione, tra cui:\n- costi amministrativi verso il GSE (es. Ritiro Dedicato e gestione della configurazione),\n- eventuale canone di gestione (es. Referente/ESCo),\n- costi di costituzione e registrazione della CER,\n- costi annuali di monitoraggio dei flussi energetici,\n- costi del personale e servizi esternalizzati.\nSi tratta quindi delle spese necessarie per il funzionamento continuativo della CER."
+  },
+  {
+    "question": "Qual è l'orizzonte temporale utilizzato da RECON per il calcolo del VAN?",
+    "reference": "RECON utilizza un orizzonte temporale di 20 anni per il calcolo del Valore Attuale Netto (VAN)."
+  },
+  {
+    "question": "RECON può sbagliare?",
+    "reference": "RECON produce stime basate sui dati di input e sulle ipotesi inserite.\nEssendo uno strumento di simulazione:\n- i risultati dipendono fortemente dalla qualità degli input,\n- non sostituisce uno studio di fattibilità professionale,\n- non può essere utilizzato come base ufficiale per richieste verso enti (es. incentivi)."
+  },
+  {
+    "question": "Qual è l'impatto sul TIR e sul PBT dell'aumento dei costi di investimento (CAPEX) per un impianto FV, secondo gli scenari analizzati? (stess test)",
+    "reference": "In linea con simulazioni condotte in ambito di ricerca per casi d'uso specifici, un aumento del CAPEX di 200 €/kWp comportava:\n- una riduzione del tasso interno di rendimento (TIR) di circa il 7–10%,\n- un aumento del tempo di ritorno dell’investimento (PBT) superiore a 6 mesi.\nTali risultati hanno valore indicativo e devono essere verificati caso per caso in funzione delle specifiche condizioni progettuali."
+  }
+]

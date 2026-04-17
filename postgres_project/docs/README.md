@@ -1,7 +1,7 @@
 # Postgres Project Documentation
 
 ## Panoramica
-Ambiente Docker Compose che avvia un database PostgreSQL 16 preconfigurato. Espone la porta host `5433` e persiste i dati in un volume Docker locale.
+Ambiente Docker Compose che avvia un database PostgreSQL 16 preconfigurato. Espone la porta host `5432` e persiste i dati in un volume Docker locale.
 
 ## Requisiti
 - Docker e Docker Compose installati
