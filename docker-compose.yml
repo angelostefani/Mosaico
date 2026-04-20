@@ -90,6 +90,11 @@ services:
       - UPLOAD_DIR=/app/uploads
       - SKIP_AUTH=${SKIP_AUTH}
       - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - ALLOW_EMBEDDING_FALLBACK=${ALLOW_EMBEDDING_FALLBACK:-false}
+      - HF_HOME=/model-cache/huggingface
+      - HUGGINGFACE_HUB_CACHE=/model-cache/huggingface/hub
+      - TRANSFORMERS_CACHE=/model-cache/huggingface/transformers
+      - SENTENCE_TRANSFORMERS_HOME=/model-cache/sentence_transformers
       - CHUNK_SIZE=${CHUNK_SIZE}
       - CHUNK_OVERLAP=${CHUNK_OVERLAP}
       - QDRANT_SCORE_THRESHOLD=${QDRANT_SCORE_THRESHOLD}
@@ -114,6 +119,7 @@ services:
       - ./ai_api/uploads:/app/uploads
       - ./ai_api/logs:/app/logs
       - ./ai_api/frontend:/app/frontend:ro
+      - hf_model_cache:/model-cache
     depends_on:
       postgres:
         condition: service_healthy
@@ -158,3 +164,4 @@ volumes:
     driver: local
   qdrant_storage:
   ollama_data:
+  hf_model_cache:

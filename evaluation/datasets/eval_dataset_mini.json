@@ -1,0 +1,42 @@
+[
+  {
+    "question": "Qual è il ruolo di ENEA nel settore delle energie rinnovabili e delle Comunità Energetiche?",
+    "reference": "ENEA è un ente pubblico che si occupa di ricerca, innovazione e supporto tecnico nel settore energetico.\nNel campo delle Comunità Energetiche Rinnovabili (CER), il suo ruolo è fornire supporto tecnico-scientifico: sviluppa strumenti, aiuta enti locali e stakeholder a prendere decisioni informate e affianca le istituzioni sugli aspetti tecnici e tecnologici.\nInoltre, supporta la nascita e lo sviluppo delle CER sui territori e promuove modelli di gestione replicabili, favorendo il confronto tra i diversi attori coinvolti."
+  },
+  {
+    "question": "Quali sono gli strumenti che ENEA mette a disposizione per facilitare lo sviluppo delle comunità energetiche?",
+    "reference": "ENEA mette a disposizione diversi strumenti gratuiti per supportare lo sviluppo delle Comunità Energetiche.\nTra questi ci sono strumenti digitali come RECON (simulatore energetico-economico), il Geoportale per la pianificazione territoriale e piattaforme per il monitoraggio e la gestione delle CER.\nA questi si affiancano strumenti di analisi (come ECListener), progetti pilota per testare soluzioni concrete e un Osservatorio che fornisce dati, analisi e supporto su aspetti tecnici, economici e organizzativi."
+  },
+  {
+    "question": "Cos'è il TIAD e perché è rilevante per RECON?",
+    "reference": "Il TIAD è il riferimento normativo definito da ARERA che regola l’autoconsumo diffuso.\nÈ rilevante per RECON perché ne guida i calcoli: il simulatore applica le regole del TIAD per determinare come viene valorizzata l’energia condivisa e incentivata nelle comunità energetiche.\nIn pratica, RECON utilizza il quadro regolatorio definito dal TIAD (insieme agli altri provvedimenti collegati) per fornire risultati coerenti con le regole ufficiali."
+  },
+  {
+    "question": "Chi ha sviluppato RECON?",
+    "reference": "RECON (Renewable Energy Community ecONomic simulator) è stato sviluppato da ENEA, l’Agenzia nazionale per le nuove tecnologie, l’energia e lo sviluppo economico sostenibile.\nIl simulatore è nato nell’ambito della Ricerca di Sistema Elettrico (PTR 2022–2024), in particolare nel progetto dedicato alle tecnologie per favorire l’uso efficiente dell’energia elettrica negli usi finali, finanziato dal Ministero dell’Ambiente e della Sicurezza Energetica.\nAll’interno di ENEA, lo sviluppo di RECON è stato curato dal Laboratorio Smart Cities and Communities (SCC), operante all'interno della Divisione Strumenti e Servizi per le Infrastrutture Critiche e le Comunità Energetiche Rinnovabili (ICER), appartenente al Dipartimento Tecnologie Energetiche e Fonti Rinnovabili (TERIN)."
+  },
+  {
+    "question": "Qual è l'obiettivo principale del simulatore RECON?",
+    "reference": "L’obiettivo principale di RECON è fornire uno strumento web gratuito per effettuare valutazioni preliminari energetiche, economiche e finanziarie a supporto della creazione di Comunità Energetiche Rinnovabili (CER) e gruppi di autoconsumo collettivo (GAC).\nIn pratica, aiuta enti locali e stakeholder a prendere decisioni informate e favorisce il coinvolgimento attivo dei cittadini nella transizione energetica."
+  },
+  {
+    "question": "Quali configurazioni di autoconsumo diffuso è in grado di analizzare RECON?",
+    "reference": "RECON è in grado di analizzare le principali configurazioni di autoconsumo diffuso previste dalla normativa italiana.\nIn particolare, supporta:\n- le Comunità Energetiche Rinnovabili (CER);\n- i Gruppi di Autoconsumatori di energia rinnovabile che agiscono collettivamente (GAC).\nSi tratta quindi delle configurazioni di autoconsumo diffuso regolamentate e incentivate dal quadro normativo vigente (D.lgs. 199/2021 e TIAD)."
+  },
+  {
+    "question": "Come funziona il simulatore RECON?",
+    "reference": "RECON è un’applicazione web accessibile gratuitamente che funziona a partire da un set di input inseriti dall’utente in quattro sezioni principali:\n- dati generali (configurazione, località, utenti e POD),\n- impianti di produzione (caratteristiche tecniche ed economiche),\n- membri e profili di consumo,\n- parametri tecnici, economici e finanziari.\nA partire da questi dati, il simulatore esegue un’analisi energetica ed economica (con simulazione oraria di produzione e consumi) e calcola indicatori chiave per valutare l’investimento. Tra questi: autoconsumo, autosufficienza, energia immessa in rete, emissioni evitate, incentivi, costi, ricavi e principali indicatori finanziari.\nI risultati vengono mostrati in grafici e tabelle, con la possibilità di scaricare un report PDF della simulazione."
+  },
+  {
+    "question": "Come è strutturato RECON?",
+    "reference": "RECON è strutturato in quattro sezioni principali di input:\n1. Dati generali (tipologia di configurazione, località, utenti e POD),\n2. Impianti di produzione (caratteristiche tecniche ed economiche),\n3. Membri della configurazione (tipologie di utenza e profili di consumo),\n4. Parametri (aspetti tecnici, economici e finanziari).\nDal punto di vista dell’utente, ogni sezione è composta da campi compilabili con suggerimenti (tooltip) che aiutano a capire dati e risultati."
+  },
+  {
+    "question": "RECON mi aiuta a tenere conto delle facilitazioni di legge e dei contributi statali?",
+    "reference": "Sì, RECON tiene conto delle agevolazioni di legge e dei contributi statali, ma in modo simulato e preliminare.\nNel dettaglio, il tool:\n- considera gli incentivi sull’autoconsumo diffuso (tariffa premio) e il contributo legato all’energia condivisa secondo il TIAD;\n- include anche contributi in conto capitale (es. PNRR) e detrazioni fiscali nelle valutazioni economiche.\nTuttavia, questi elementi sono trattati sulla base delle regole vigenti e con ipotesi semplificate nel tempo. RECON non verifica i requisiti reali di accesso agli incentivi e non sostituisce le verifiche ufficiali con GSE o altri enti competenti."
+  },
+  {
+    "question": "Qual è l'ultima versione di RECON e a quale contesto regolatorio italiano è aggiornata?",
+    "reference": "L’ultima versione riportata è RECON 2.2.2 (Rev. 5 agosto 2025).\nÈ aggiornata al quadro normativo italiano vigente, in particolare a:\n- D.lgs. 199/2021 (recepimento della direttiva RED II),\n- TIAD ARERA (Delibera 727/2022/R/EEL, aggiornata dalla 15/2024/R/EEL),\n- Decreto MASE 07/12/2023 n. 414 (Decreto CACER), modificato dal DM 16/05/2025 n. 127,\n- Regole Operative GSE aggiornate al 16/07/2025."
+  }
+]
