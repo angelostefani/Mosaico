@@ -39,28 +39,52 @@ def _ollama_base_url(raw_url: str) -> str:
     return raw_url.split("/api/")[0] if "/api/" in raw_url else raw_url.rstrip("/")
 
 
-def build_llm(base_url: str, model: str, timeout: int):
+def build_llm(base_url: str, model: str, timeout: int, max_tokens: int = 8192):
     try:
-        from langchain_ollama import ChatOllama
-        from ragas.llms import LangchainLLMWrapper
+        from openai import AsyncOpenAI
+        from ragas.llms import llm_factory
     except ImportError as e:
-        print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas langchain-ollama", file=sys.stderr)
+        print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas openai", file=sys.stderr)
         sys.exit(1)
 
-    llm = ChatOllama(base_url=base_url, model=model, timeout=timeout)
-    return LangchainLLMWrapper(llm)
+    client = AsyncOpenAI(base_url=f"{base_url}/v1", api_key="ollama", timeout=timeout)
+    return llm_factory(model, client=client, max_tokens=max_tokens)
 
 
 def build_embeddings(model_name: str):
     try:
-        from langchain_huggingface import HuggingFaceEmbeddings
-        from ragas.embeddings import LangchainEmbeddingsWrapper
+        from ragas.embeddings import HuggingFaceEmbeddings, BaseRagasEmbeddings
     except ImportError as e:
-        print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas langchain-huggingface", file=sys.stderr)
+        print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas sentence-transformers", file=sys.stderr)
         sys.exit(1)
 
-    emb = HuggingFaceEmbeddings(model_name=model_name)
-    return LangchainEmbeddingsWrapper(emb)
+    _inner = HuggingFaceEmbeddings(model=model_name)
+
+    # ragas.embeddings.HuggingFaceEmbeddings uses the newer BaseRagasEmbedding interface
+    # (embed_text / embed_texts), but some metrics use the Langchain-compatible
+    # BaseRagasEmbeddings interface (embed_query / embed_documents / embed_text).
+    # BaseRagasEmbeddings.embed_text delegates to embed_texts which requires run_config;
+    # override all four paths to delegate directly to _inner and avoid that dependency.
+    class _Adapter(BaseRagasEmbeddings):
+        def embed_query(self, text: str):
+            return _inner.embed_text(text)
+
+        def embed_documents(self, texts):
+            return _inner.embed_texts(texts)
+
+        async def aembed_query(self, text: str):
+            return await _inner.aembed_text(text)
+
+        async def aembed_documents(self, texts):
+            return await _inner.aembed_texts(texts)
+
+        async def embed_text(self, text: str, is_async: bool = True):
+            return await _inner.aembed_text(text)
+
+        async def embed_texts(self, texts, is_async: bool = True):
+            return await _inner.aembed_texts(texts)
+
+    return _Adapter()
 
 
 def load_csv_as_samples(path: str):
@@ -122,13 +146,11 @@ def load_csv_as_samples(path: str):
 
 def pick_metrics(metric_names: list[str], llm, embeddings):
     try:
-        from ragas.metrics import (
-            Faithfulness,
-            AnswerRelevancy,
-            ContextPrecision,
-            ContextRecall,
-            AnswerCorrectness,
-        )
+        from ragas.metrics._faithfulness import Faithfulness
+        from ragas.metrics._answer_relevance import AnswerRelevancy
+        from ragas.metrics._context_precision import ContextPrecision
+        from ragas.metrics._context_recall import ContextRecall
+        from ragas.metrics._answer_correctness import AnswerCorrectness
     except ImportError as e:
         print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas", file=sys.stderr)
         sys.exit(1)
@@ -274,6 +296,7 @@ def parse_args():
     )
     p.add_argument("--batch-size", type=int, default=10, help="Samples per evaluate() call (default: 10)")
     p.add_argument("--timeout", type=int, default=600, help="Seconds per LLM call (default: 600)")
+    p.add_argument("--max-tokens", type=int, default=8192, help="Max output tokens per LLM call (default: 8192; increase for thinking models)")
     p.add_argument("--verbose", action="store_true", help="Print per-sample scores")
     return p.parse_args()
 
@@ -305,8 +328,9 @@ def main():
     print(f"Batch size: {args.batch_size}")
     print()
 
+    print(f"Max tokens: {args.max_tokens}")
     print("Loading LLM and embeddings...")
-    llm = build_llm(base_url, model, args.timeout)
+    llm = build_llm(base_url, model, args.timeout, args.max_tokens)
     embeddings = build_embeddings(emb_model)
 
     print("Parsing CSV...")

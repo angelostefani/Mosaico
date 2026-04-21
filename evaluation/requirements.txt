@@ -1,6 +1,5 @@
 ragas>=0.2
-langchain-ollama
-langchain-huggingface
+openai
 datasets
 pandas
 requests

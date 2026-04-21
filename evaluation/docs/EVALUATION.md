@@ -70,8 +70,18 @@ python eval_batch.py \
   --url http://localhost:9000 \
   --dataset datasets/eval_dataset_mini.json \
   --username enea --collection RECON \
-  --model gpt-oss:20b \
+  --model gemma4:e4b \
   --output results/risultati_$(date +%Y%m%d).csv
+
+# API locale (Docker sul laptop)
+# POWERSHELL
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_mini.json `
+  --username enea `
+  --collection RECON `
+  --model gemma4:e4b `
+  --output ".\results\risultati_$(Get-Date -Format yyyyMMdd).csv"
 
 # API remota (server)
 python eval_batch.py \
@@ -80,7 +90,17 @@ python eval_batch.py \
   --username enea --collection RECON \
   --model gpt-oss:20b \
   --output results/risultati_server_$(date +%Y%m%d).csv
-```
+
+# POWERSHELL
+# API remota (server)
+python .\eval_batch.py `
+  --url http://192.168.118.218:9000 `
+  --dataset .\datasets\eval_dataset_mini.json `
+  --username enea `
+  --collection RECON `
+  --model gpt-oss:20b `
+  --output ".\results\risultati_server_$(Get-Date -Format yyyyMMdd).csv"
+
 
 **Parametri:**
 
@@ -120,6 +140,23 @@ python eval_ragas.py \
   --timeout 900 \
   --verbose
 ```
+
+# POWERSHELL
+python .\eval_ragas.py `
+  --input ".\results\risultati_$(Get-Date -Format yyyyMMdd).csv" `
+  --output ".\results\ragas_$(Get-Date -Format yyyyMMdd).csv" `
+  --model gpt-oss:20b `
+  --timeout 900 `
+  --verbose
+
+
+  python .\eval_ragas.py `
+  --input ".\results\risultati_$(Get-Date -Format yyyyMMdd).csv" `
+  --output ".\results\ragas_server_$(Get-Date -Format yyyyMMdd).csv" `
+  --ollama-url "http://192.168.118.218:11434/api/generate" `
+  --model gemma4:e4b `
+  --timeout 900 `
+  --verbose
 
 **Parametri:**
 
