@@ -58,3 +58,6 @@ dist-ssr/
 
 # Docker / Compose extras
 docker-compose.override.yml
+
+# Evaluation results (CSV outputs)
+evaluation/results/
