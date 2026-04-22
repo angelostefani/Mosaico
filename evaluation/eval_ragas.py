@@ -144,7 +144,7 @@ def load_csv_as_samples(path: str):
     return samples, skipped
 
 
-def pick_metrics(metric_names: list[str], llm, embeddings):
+def pick_metrics(metric_names: list[str], llm, embeddings, strictness: int = 1):
     try:
         from ragas.metrics._faithfulness import Faithfulness
         from ragas.metrics._answer_relevance import AnswerRelevancy
@@ -157,7 +157,7 @@ def pick_metrics(metric_names: list[str], llm, embeddings):
 
     registry = {
         "faithfulness": lambda: Faithfulness(llm=llm),
-        "answer_relevancy": lambda: AnswerRelevancy(llm=llm, embeddings=embeddings),
+        "answer_relevancy": lambda: AnswerRelevancy(llm=llm, embeddings=embeddings, strictness=strictness),
         "context_precision": lambda: ContextPrecision(llm=llm),
         "context_recall": lambda: ContextRecall(llm=llm),
         "answer_correctness": lambda: AnswerCorrectness(llm=llm, embeddings=embeddings),
@@ -187,7 +187,8 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
 
     # max_workers=1 prevents concurrent requests to a single Ollama instance,
     # which would cause queue buildup and cascading timeouts.
-    run_config = RunConfig(timeout=timeout, max_workers=1)
+    # log_tenacity=True surfaces retry attempts to help diagnose judge LLM failures.
+    run_config = RunConfig(timeout=timeout, max_workers=1, log_tenacity=True)
 
     results = []
     total = len(samples)
@@ -216,6 +217,7 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
                     }
                     for m in metrics:
                         row[m.name] = float("nan")
+                    row["judge_warning"] = "batch_error"
                     results.append(row)
                 continue
 
@@ -231,6 +233,15 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
                 for m in metrics:
                     col = m.name
                     row[col] = df.iloc[i].get(col, float("nan")) if i < len(df) else float("nan")
+
+                cp = row.get("context_precision", float("nan"))
+                cr = row.get("context_recall", float("nan"))
+                ff = row.get("faithfulness", 0.0) or 0.0
+                row["judge_warning"] = (
+                    "suspicious_zero"
+                    if (cp == 0.0 and cr == 0.0 and ff > 0.3)
+                    else ""
+                )
                 results.append(row)
 
                 if verbose:
@@ -245,7 +256,7 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
 
 def write_output(results: list[dict], skipped: list[dict], metric_names: list[str], output_path: str, input_path: str):
     metric_cols = [m for m in ALL_METRICS if m in metric_names]
-    fieldnames = ["case_id", "question", "reference", "response", "n_chunks"] + metric_cols + ["error_ragas"]
+    fieldnames = ["case_id", "question", "reference", "response", "n_chunks"] + metric_cols + ["error_ragas", "judge_warning"]
 
     for row in skipped:
         entry = {f: "" for f in fieldnames}
@@ -279,6 +290,10 @@ def write_output(results: list[dict], skipped: list[dict], metric_names: list[st
         else:
             print(f"  {col:<25} all NaN ({nan_count} samples)")
 
+    flagged = sum(1 for r in results if r.get("judge_warning") == "suspicious_zero")
+    if flagged:
+        print(f"\n  [WARN] {flagged} row(s) flagged 'suspicious_zero' (context_precision=0 & context_recall=0 & faithfulness>0.3 — likely judge LLM failure)")
+
 
 def parse_args():
     p = argparse.ArgumentParser(
@@ -297,6 +312,8 @@ def parse_args():
     p.add_argument("--batch-size", type=int, default=10, help="Samples per evaluate() call (default: 10)")
     p.add_argument("--timeout", type=int, default=600, help="Seconds per LLM call (default: 600)")
     p.add_argument("--max-tokens", type=int, default=8192, help="Max output tokens per LLM call (default: 8192; increase for thinking models)")
+    p.add_argument("--strictness", type=int, default=1,
+        help="Generations requested per sample for AnswerRelevancy (default: 1; ragas default: 3 — causes warnings with Ollama)")
     p.add_argument("--verbose", action="store_true", help="Print per-sample scores")
     return p.parse_args()
 
@@ -341,8 +358,8 @@ def main():
         print("[ERROR] No valid samples found in CSV.", file=sys.stderr)
         sys.exit(1)
 
-    metrics = pick_metrics(metric_names, llm, embeddings)
-    print(f"  Metrics instantiated: {[m.name for m in metrics]}")
+    metrics = pick_metrics(metric_names, llm, embeddings, strictness=args.strictness)
+    print(f"  Metrics instantiated: {[m.name for m in metrics]}  (strictness={args.strictness})")
     print()
 
     results = evaluate_in_batches(samples, metrics, args.batch_size, args.verbose, args.timeout)
