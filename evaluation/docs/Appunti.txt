@@ -1,0 +1,20 @@
+
+
+# Raccoglie risposte
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_mini.json `
+  --username enea --collection RECON `
+  --model gemma4:e4b `
+  --output ".\results\batch_full_baseline.csv"
+
+# Calcola metriche RAGAS
+python .\eval_ragas.py `
+  --input ".\results\batch_full_baseline.csv" `
+  --output ".\results\ragas_full_baseline.csv" `
+  --ollama-url "http://192.168.118.218:11434/api/generate" `
+  --model gemma4:e4b `
+  --judge-model qwen3:8b `
+  --no-think `
+  --metrics faithfulness,context_precision `
+  --timeout 900 --batch-size 5 --verbose

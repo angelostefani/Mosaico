@@ -77,7 +77,12 @@ pytest -q tests/test_app.py -k upload   # Run a specific test
 - `debug/` — Standalone debug scripts for upload, chat, and API.
 - `migrate_sqlite_to_postgres.py` — One-shot migration tool.
 
-**RAG flow:** document upload → text extraction (pdfplumber, python-docx, openpyxl) → chunking (default 500 chars, overlap 120) → embeddings (`sentence-transformers/all-MiniLM-L6-v2`) → Qdrant index → on chat, retrieve top-k chunks → Ollama LLM generates answer.
+**RAG flow (5 phases):**
+1. **Ingest** — text extraction (pdfplumber, python-docx, openpyxl); supports `.txt`, `.md`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.json`
+2. **Chunk** — sentence-aware chunking (default 600 chars, overlap 120); respects sentence boundaries
+3. **Embed & index** — `sentence-transformers/all-MiniLM-L6-v2` → Qdrant collection `{username}_{collection}`
+4. **Retrieve** — multi-vector search → hybrid reranking (60% vector + 25% fuzzy + 15% keyword) → MMR diversity → deduplication → stitching
+5. **Generate** — Ollama LLM via streaming SSE
 
 Multi-tenant isolation is achieved via Qdrant **collections** (one per namespace/user group).
 
@@ -92,9 +97,11 @@ Key variables:
 - `OLLAMA_URL`, `OLLAMA_MODEL` — LLM connection
 - `DB_ENGINE` (`sqlite` | `postgres`), `PG_*` — Database
 - `QDRANT_HOST`, `QDRANT_PORT` — Vector DB
-- `CHUNK_SIZE`, `CHUNK_OVERLAP`, `EMBEDDING_MODEL` — Ingestion tuning
-- `CHAT_RESULT_LIMIT`, `CHAT_CANDIDATES`, `CHAT_CONTEXT_CHAR_BUDGET` — Retrieval tuning
-- `ENABLE_RAG_DEBUG`, `ENABLE_RERANK`, `ENABLE_MMR`, `ENABLE_STITCH` — Feature flags
+- `CHUNK_SIZE` (default 600), `CHUNK_OVERLAP` (default 120), `EMBEDDING_MODEL` — Ingestion tuning
+- `CHAT_RESULT_LIMIT` (10), `CHAT_CANDIDATES` (50), `CHAT_CONTEXT_CHAR_BUDGET` (9000), `CHAT_HISTORY_CHAR_BUDGET` (3000) — Retrieval tuning
+- `QDRANT_SCORE_THRESHOLD` (0.42), `MMR_LAMBDA` (0.65) — Similarity/diversity thresholds
+- `ENABLE_RERANK`, `ENABLE_MMR`, `ENABLE_STITCH`, `ENABLE_MULTI_VECTOR_SEARCH` — Feature flags (all default `true`)
+- `ENABLE_CROSS_ENCODER_RERANK` (default `false`), `ENABLE_RAG_DEBUG` (default `true`) — Optional features
 - `SKIP_AUTH` — Bypass JWT auth (development only)
 - `DJANGO_SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` — Django security
 - `API_BASE`, `API_PUBLIC_BASE` — Django → FastAPI connection URLs
@@ -111,5 +118,18 @@ Key variables:
 | GET | `/conversations/{id}` | Conversation detail |
 | DELETE | `/conversations/{id}` | Delete conversation |
 | GET/PUT/DELETE | `/collection/config` | Collection settings |
+| GET | `/ollama/models` | List available Ollama models |
 | GET | `/healthz` | Full system health check |
 | GET | `/docs` | Swagger UI |
+
+## Django Pages (port 9001)
+
+| Path | Purpose |
+|------|---------|
+| `/` | Home / Dashboard |
+| `/login/` | Authentication |
+| `/upload/` | Document upload (2-panel: config + dropzone) |
+| `/chat/` | RAG chat with streaming |
+| `/uploads/` | Upload history with pagination |
+| `/collection-config/` | Collection scope/prompt customization |
+| `/public-chat/` | Anonymous chat (public mode) |

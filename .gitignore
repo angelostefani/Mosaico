@@ -61,3 +61,7 @@ docker-compose.override.yml
 
 # Evaluation results (CSV outputs)
 evaluation/results/
+
+# Paper / LaTeX
+docs/paper/
+*.tex

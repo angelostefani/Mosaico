@@ -5,11 +5,11 @@ Reads a CSV produced by eval_batch.py and computes RAGAS metrics using a local
 Ollama LLM and local HuggingFace embeddings (no OpenAI required).
 
 Usage:
-    python eval_ragas.py --input risultati01.csv
+    python eval_ragas.py --input risultati01.csv --judge-model qwen3:8b
     python eval_ragas.py --input risultati01.csv --metrics context_recall,answer_correctness --batch-size 5 --verbose
     python eval_ragas.py --input risultati01.csv --output ragas_full.csv
 
-Expected runtime with gemma3:1b: 2-4 hours for 201 samples x 5 metrics.
+Expected runtime with gemma4:e4b generator + qwen3:8b judge: ~1 hour for 100 samples x 5 metrics on H100.
 Start with --metrics context_recall,answer_correctness for a faster first run.
 
 Caveats for small local LLMs (1B params):
@@ -39,7 +39,7 @@ def _ollama_base_url(raw_url: str) -> str:
     return raw_url.split("/api/")[0] if "/api/" in raw_url else raw_url.rstrip("/")
 
 
-def build_llm(base_url: str, model: str, timeout: int, max_tokens: int = 8192):
+def build_llm(base_url: str, model: str, timeout: int, max_tokens: int = 8192, no_think: bool = False):
     try:
         from openai import AsyncOpenAI
         from ragas.llms import llm_factory
@@ -48,7 +48,10 @@ def build_llm(base_url: str, model: str, timeout: int, max_tokens: int = 8192):
         sys.exit(1)
 
     client = AsyncOpenAI(base_url=f"{base_url}/v1", api_key="ollama", timeout=timeout)
-    return llm_factory(model, client=client, max_tokens=max_tokens)
+    kwargs = {"max_tokens": max_tokens}
+    if no_think:
+        kwargs["extra_body"] = {"think": False}
+    return llm_factory(model, client=client, **kwargs)
 
 
 def build_embeddings(model_name: str):
@@ -303,6 +306,10 @@ def parse_args():
     p.add_argument("--output", default=None, help="Output CSV path (default: ragas_<timestamp>.csv)")
     p.add_argument("--ollama-url", default=None, help="Override OLLAMA_URL env var")
     p.add_argument("--model", default=None, help="Override OLLAMA_MODEL env var")
+    p.add_argument("--judge-model", default=None,
+        help="Separate Ollama model for RAGAS judging (default: same as --model)")
+    p.add_argument("--no-think", action="store_true",
+        help="Disable thinking mode for the judge model (qwen3 and similar; passes think=false)")
     p.add_argument("--embedding-model", default=None, help="HuggingFace embedding model (default: all-MiniLM-L6-v2)")
     p.add_argument(
         "--metrics",
@@ -332,6 +339,7 @@ def main():
 
     raw_url = args.ollama_url or os.environ.get("OLLAMA_URL", "http://localhost:11434/api/generate")
     model = args.model or os.environ.get("OLLAMA_MODEL", "gemma3:1b")
+    judge_model = args.judge_model or model
     emb_model = args.embedding_model or os.environ.get("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
 
     base_url = _ollama_base_url(raw_url)
@@ -339,7 +347,7 @@ def main():
 
     print(f"Input     : {input_path}")
     print(f"Output    : {output_path}")
-    print(f"Ollama    : {base_url}  model={model}")
+    print(f"Ollama    : {base_url}  model={model}  judge={judge_model}")
     print(f"Embeddings: {emb_model}")
     print(f"Metrics   : {', '.join(metric_names)}")
     print(f"Batch size: {args.batch_size}")
@@ -348,6 +356,7 @@ def main():
     print(f"Max tokens: {args.max_tokens}")
     print("Loading LLM and embeddings...")
     llm = build_llm(base_url, model, args.timeout, args.max_tokens)
+    judge_llm = build_llm(base_url, judge_model, args.timeout, args.max_tokens, no_think=args.no_think) if args.judge_model else llm
     embeddings = build_embeddings(emb_model)
 
     print("Parsing CSV...")
@@ -358,7 +367,7 @@ def main():
         print("[ERROR] No valid samples found in CSV.", file=sys.stderr)
         sys.exit(1)
 
-    metrics = pick_metrics(metric_names, llm, embeddings, strictness=args.strictness)
+    metrics = pick_metrics(metric_names, judge_llm, embeddings, strictness=args.strictness)
     print(f"  Metrics instantiated: {[m.name for m in metrics]}  (strictness={args.strictness})")
     print()
 
