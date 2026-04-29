@@ -41,17 +41,27 @@ def _ollama_base_url(raw_url: str) -> str:
 
 def build_llm(base_url: str, model: str, timeout: int, max_tokens: int = 8192, no_think: bool = False):
     try:
-        from openai import AsyncOpenAI
-        from ragas.llms import llm_factory
+        from langchain_openai import ChatOpenAI
+        from ragas.llms import LangchainLLMWrapper
     except ImportError as e:
-        print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas openai", file=sys.stderr)
+        print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas langchain-openai", file=sys.stderr)
         sys.exit(1)
 
-    client = AsyncOpenAI(base_url=f"{base_url}/v1", api_key="ollama", timeout=timeout)
-    kwargs = {"max_tokens": max_tokens}
+    # extra_body must live in model_kwargs so langchain-openai merges it into every
+    # request body — including instructor-patched calls ragas uses for JSON extraction.
+    model_kwargs = {}
     if no_think:
-        kwargs["extra_body"] = {"think": False}
-    return llm_factory(model, client=client, **kwargs)
+        model_kwargs["extra_body"] = {"think": False}
+
+    chat_model = ChatOpenAI(
+        model=model,
+        base_url=f"{base_url}/v1",
+        api_key="ollama",
+        max_tokens=max_tokens,
+        timeout=timeout,
+        model_kwargs=model_kwargs,
+    )
+    return LangchainLLMWrapper(chat_model)
 
 
 def build_embeddings(model_name: str):
@@ -145,6 +155,22 @@ def load_csv_as_samples(path: str):
             samples.append(sample)
 
     return samples, skipped
+
+
+def load_already_evaluated(output_path: str) -> tuple[set[str], list[dict]]:
+    """Se il file di output esiste, ritorna (case_id già valutati, righe esistenti)."""
+    if not Path(output_path).exists():
+        return set(), []
+    evaluated_ids: set[str] = set()
+    existing_rows: list[dict] = []
+    with open(output_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            cid = row.get("case_id", "").strip()
+            if cid:
+                evaluated_ids.add(cid)
+                existing_rows.append(dict(row))
+    return evaluated_ids, existing_rows
 
 
 def pick_metrics(metric_names: list[str], llm, embeddings, strictness: int = 1):
@@ -257,7 +283,7 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
     return results
 
 
-def write_output(results: list[dict], skipped: list[dict], metric_names: list[str], output_path: str, input_path: str):
+def write_output(results: list[dict], skipped: list[dict], metric_names: list[str], output_path: str, input_path: str, existing_rows: list[dict] | None = None):
     metric_cols = [m for m in ALL_METRICS if m in metric_names]
     fieldnames = ["case_id", "question", "reference", "response", "n_chunks"] + metric_cols + ["error_ragas", "judge_warning"]
 
@@ -271,6 +297,9 @@ def write_output(results: list[dict], skipped: list[dict], metric_names: list[st
         entry["error_ragas"] = row.get("_skip_reason", "skipped")
         results.append(entry)
 
+    if existing_rows:
+        results = list(existing_rows) + results
+
     results.sort(key=lambda r: int(r["case_id"]) if str(r["case_id"]).isdigit() else 0)
 
     with open(output_path, "w", newline="", encoding="utf-8") as f:
@@ -278,8 +307,11 @@ def write_output(results: list[dict], skipped: list[dict], metric_names: list[st
         writer.writeheader()
         writer.writerows(results)
 
+    n_resumed = len(existing_rows) if existing_rows else 0
+    n_new = len(results) - len(skipped) - n_resumed
     print(f"\nResults saved to {output_path}")
-    print(f"Input: {input_path} | Evaluated: {len(results) - len(skipped)} | Skipped: {len(skipped)}")
+    resumed_str = f" | Resumed: {n_resumed}" if n_resumed else ""
+    print(f"Input: {input_path} | Evaluated: {n_new}{resumed_str} | Skipped: {len(skipped)}")
 
     # Summary statistics
     import statistics
@@ -363,9 +395,22 @@ def main():
     samples, skipped = load_csv_as_samples(input_path)
     print(f"  {len(samples)} samples to evaluate, {len(skipped)} skipped")
 
-    if not samples:
+    evaluated_ids, existing_rows = load_already_evaluated(output_path)
+    if evaluated_ids:
+        print(f"  Resume: {len(evaluated_ids)} case(s) già in output — skipped.")
+        samples = [s for s in samples if getattr(s, "_case_id", "") not in evaluated_ids]
+        print(f"  {len(samples)} campioni rimanenti.")
+    else:
+        existing_rows = []
+
+    if not samples and not existing_rows:
         print("[ERROR] No valid samples found in CSV.", file=sys.stderr)
         sys.exit(1)
+
+    if not samples:
+        print("  Tutti i campioni già valutati — nessun nuovo lavoro da fare.")
+        write_output([], skipped, metric_names, output_path, input_path, existing_rows=existing_rows)
+        return
 
     metrics = pick_metrics(metric_names, judge_llm, embeddings, strictness=args.strictness)
     print(f"  Metrics instantiated: {[m.name for m in metrics]}  (strictness={args.strictness})")
@@ -373,7 +418,7 @@ def main():
 
     results = evaluate_in_batches(samples, metrics, args.batch_size, args.verbose, args.timeout)
 
-    write_output(results, skipped, [m.name for m in metrics], output_path, input_path)
+    write_output(results, skipped, [m.name for m in metrics], output_path, input_path, existing_rows=existing_rows)
 
 
 if __name__ == "__main__":

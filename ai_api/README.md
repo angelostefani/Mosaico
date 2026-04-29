@@ -1,5 +1,5 @@
-![Pipeline Status](https://xxx.xxx.xxx.xxx/ics-projects/ai/i-nest_api/badges/main/pipeline.svg)
-![Coverage](https://xxx.xxx.xxx.xxx/ics-projects/ai/i-nest_api/badges/main/coverage.svg)
+![Pipeline Status](https://xxx.xxx.xxx.xxx/ics-projects/ai/ai_api/badges/main/pipeline.svg)
+![Coverage](https://xxx.xxx.xxx.xxx/ics-projects/ai/ai_api/badges/main/coverage.svg)
 
 # Document QA & Chat API
 **Versione 1.4 - 31/03/2026**
@@ -65,7 +65,7 @@ API per l'upload di documenti, indicizzazione in Qdrant e interazione conversazi
 ## Installazione
 ```bash
 git clone <URL-repo>
-cd i-nest_api
+cd ai_api
 python3 -m venv .venv
 source .venv/bin/activate      # Linux/macOS
 .venv\Scripts\activate.ps1    # Windows PowerShell
@@ -254,7 +254,7 @@ Authorization: Bearer <JWT_TOKEN>
 ### GET /
 Verifica lo stato dell'app:
 ```json
-{ "message": "I-NEST_API is running!" }
+{ "message": "AI_API is running!" }
 ```
 
 ### POST /upload
@@ -526,7 +526,7 @@ ollama pull gemma3:1b
 
 ### Solo container API (Qdrant/Ollama su altri host)
 ```bash
-docker build -t i-nest_api:latest .
+docker build -t ai_api:latest .
 docker run --rm -it \
   -p 9000:9000 \
   -e QDRANT_HOST=<ip_qdrant> \
@@ -534,7 +534,7 @@ docker run --rm -it \
   -e OLLAMA_URL=http://<ip_ollama>:11434/api/generate \
   -e SKIP_AUTH=true \
   -v $(pwd)/uploads:/app/uploads \
-  i-nest_api:latest
+  ai_api:latest
 ```
 
 ---

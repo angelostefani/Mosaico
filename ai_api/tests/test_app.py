@@ -73,7 +73,7 @@ def test_extract_text_unsupported(tmp_path):
 def test_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "I-NEST_API is running!"}
+    assert response.json() == {"message": "AI_API is running!"}
 
 
 test_process_called = False

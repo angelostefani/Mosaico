@@ -1,4 +1,4 @@
-Applicazione I-NEST API
+Applicazione AI API
 
 Che cosa fa
 L'applicazione permette di caricare documenti (come PDF, Word o file di testo) e di fare domande sui loro contenuti. Per rispondere, combina l'intelligenza artificiale con un motore di ricerca interno, cosi da trovare nei documenti i passaggi utili e riassumerli in una risposta.

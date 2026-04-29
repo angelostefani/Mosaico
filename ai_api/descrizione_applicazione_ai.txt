@@ -1,4 +1,4 @@
-I-NEST API - Panoramica tecnica del flusso RAG
+AI API - Panoramica tecnica del flusso RAG
 
 Funzionalita principali
 - Ingestione documentale via endpoint FastAPI con persistenza dei metadati in SQLite.
@@ -27,4 +27,4 @@ Note architetturali
 - Suite di test pytest che copre chunking, estrazione, upload e chat con backend fittizi.
 
 Sintesi
-I-NEST API realizza una pipeline RAG modulare per ingestione documentale, indicizzazione vettoriale in Qdrant, retrieval multi-embedding e generazione controllata da prompt. E orientata a scenari enterprise grazie al supporto multi-tenant, ai controlli di stato e alla possibilita di estendere ogni livello (modelli, reranker, policy di contesto).
+AI API realizza una pipeline RAG modulare per ingestione documentale, indicizzazione vettoriale in Qdrant, retrieval multi-embedding e generazione controllata da prompt. E orientata a scenari enterprise grazie al supporto multi-tenant, ai controlli di stato e alla possibilita di estendere ogni livello (modelli, reranker, policy di contesto).

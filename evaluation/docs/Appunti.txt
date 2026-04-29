@@ -3,12 +3,12 @@
 # Raccoglie risposte
 python .\eval_batch.py `
   --url http://localhost:9000 `
-  --dataset .\datasets\eval_dataset_mini.json `
-  --username enea --collection RECON `
+  --dataset .\datasets\eval_dataset_CER.json `
+  --username enea --collection CER `
   --model gemma4:e4b `
   --output ".\results\batch_full_baseline.csv"
 
-# Calcola metriche RAGAS
+# Calcola metriche RAGAS CALLIA
 python .\eval_ragas.py `
   --input ".\results\batch_full_baseline.csv" `
   --output ".\results\ragas_full_baseline.csv" `
@@ -16,5 +16,24 @@ python .\eval_ragas.py `
   --model gemma4:e4b `
   --judge-model qwen3:8b `
   --no-think `
-  --metrics faithfulness,context_precision `
   --timeout 900 --batch-size 5 --verbose
+
+
+  # Calcola metriche RAGAS CALLIA
+python .\eval_ragas.py `
+  --input ".\results\batch_full_baseline.csv" `
+  --output ".\results\ragas_full_baseline.csv" `
+  --ollama-url "http://192.168.153.248:11434/api/generate" `
+  --model gemma4:e4b `
+  --judge-model qwen3:8b `
+  --no-think `
+  --timeout 900 --batch-size 5 --verbose
+
+
+  # Run 1: interrompere dopo il primo batch con Ctrl+C
+python eval_ragas.py --input results/batch_full_baseline.csv --output results/ragas_test_resume.csv --judge-model qwen3:8b --no-think --batch-size 5 --verbose
+
+# Run 2: verificare che stampi "Resume: N case(s) già in output"
+python eval_ragas.py --input results/batch_full_baseline.csv --output results/ragas_test_resume.csv --judge-model qwen3:8b --no-think --batch-size 5 --verbose
+
+# Verificare che il CSV finale abbia righe da entrambe le run, ordinate per case_id

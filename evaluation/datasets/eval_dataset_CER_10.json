@@ -1,0 +1,42 @@
+[
+  {
+    "question": "How does NIS 2 define a 'significant cyber threat'?",
+    "reference": "A 'significant cyber threat' means a cyber threat which, based on its technical characteristics, can be assumed to have the potential to have a severe impact on the network and information systems of an entity or the users of the entity's services by causing considerable material or non-material damage (Article 6(11))."
+  },
+  {
+    "question": "What obligations apply to TLD name registries and entities providing domain name registration services regarding registration data?",
+    "reference": "TLD name registries and entities providing domain name registration services must collect and maintain accurate and complete domain name registration data in a dedicated database, with due diligence and in accordance with Union data protection law. The database must contain information necessary to identify and contact domain name holders and points of contact, including: the domain name; the date of registration; the registrant's name, contact email address and telephone number; and the contact email address and telephone number of the point of contact administering the domain name if different. They must have policies and procedures (including verification procedures) to ensure accuracy and completeness, make non-personal registration data publicly available without undue delay after registration, and provide access to specific domain name registration data upon lawful and duly substantiated requests by legitimate access seekers within 72 hours (Article 28)."
+  },
+  {
+    "question": "What is the definition of a 'critical entity' under Directive (EU) 2022/2557?",
+    "reference": "A critical entity is a public or private entity which has been identified by a Member State in accordance with Article 6 as belonging to one of the categories set out in the third column of the table in the Annex. (Article 2, point 1)"
+  },
+  {
+    "question": "What minimum elements must each national resilience strategy contain?",
+    "reference": "Each strategy must contain at least: strategic objectives and priorities; a governance framework; a description of measures to enhance resilience; the process for identifying critical entities; measures supporting critical entities; a list of main authorities and stakeholders; a policy framework for coordination with NIS 2 competent authorities; and measures for SMEs identified as critical entities. (Article 4(2))"
+  },
+  {
+    "question": "What is a 'critical entity of particular European significance' and how is it identified?",
+    "reference": "An entity is considered a critical entity of particular European significance if it has been identified as a critical entity under Article 6(1), provides the same or similar essential services to or in six or more Member States, and has been notified as such by the Commission. (Article 17(1))"
+  },
+  {
+    "question": "What conditions apply to background checks on personnel of critical entities?",
+    "reference": "Member States must specify conditions under which critical entities may request background checks on persons holding sensitive roles, having access to premises or control systems, or being considered for such positions. Checks must be proportionate, strictly limited to what is necessary, and carried out in accordance with national and Union law including GDPR. They must at minimum verify identity and check criminal records. (Article 14)"
+  },
+  {
+    "question": "What obligations apply to providers of number-independent interpersonal communications services under NIS 2?",
+    "reference": "Number-independent interpersonal communications services as defined in Directive (EU) 2018/1972 (such as messaging services) must ensure a level of security of network and information systems appropriate to the risks posed. As the attack surface continues to expand, these services are becoming widespread attack vectors with malicious perpetrators using platforms to communicate and attract victims to open compromised web pages, increasing the likelihood of incidents involving exploitation of personal data. However, since these services normally do not exercise actual control over the transmission of signals over networks, the degree of risks posed can be considered in some respects lower than for traditional electronic communications services. The same applies to interpersonal communications services under Directive (EU) 2018/1972 which make use of numbers and do not exercise actual control over signal transmission. These services fall within the scope of NIS 2's security and reporting obligations (Article 6(37) and Recital 96)."
+  },
+  {
+    "question": "What obligation does the Directive impose on each critical entity regarding its point of contact with authorities?",
+    "reference": "Member States must ensure that each critical entity designates a liaison officer or equivalent as the point of contact with the competent authorities. (Article 13(3))"
+  },
+  {
+    "question": "What is the difference between essential and important entities under NIS2?",
+    "reference": "Essential entities are subject to comprehensive ex ante and ex post supervision. Important entities are all other entities falling within scope that do not qualify as essential, and are subject to a lighter, ex post only supervisory regime."
+  },
+  {
+    "question": "Can entities voluntarily share cybersecurity information under NIS2?",
+    "reference": "Yes. Member States must ensure that entities — including those outside the scope of the Directive — can voluntarily exchange relevant cybersecurity information such as threat intelligence, vulnerabilities, indicators of compromise and response recommendations, within cybersecurity information-sharing arrangements. Such voluntary reporting shall not result in additional obligations on the notifying entity."
+  }
+]

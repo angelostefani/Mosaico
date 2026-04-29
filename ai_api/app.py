@@ -1478,7 +1478,7 @@ async def ask_stream(
 
 @app.get("/", summary="Endpoint root di esempio")
 async def root():
-    return {"message": "I-NEST_API is running!"}
+    return {"message": "AI_API is running!"}
 
 @app.get(
     "/collection",

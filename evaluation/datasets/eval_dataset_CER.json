@@ -1,0 +1,618 @@
+[
+  {
+    "question": "What is the official title and reference number of the NIS 2 Directive?",
+    "reference": "Directive (EU) 2022/2555 of the European Parliament and of the Council of 14 December 2022 on measures for a high common level of cybersecurity across the Union, amending Regulation (EU) No 910/2014 and Directive (EU) 2018/1972, and repealing Directive (EU) 2016/1148 (NIS 2 Directive)."
+  },
+  {
+    "question": "What is the main objective of the NIS 2 Directive?",
+    "reference": "The Directive lays down measures that aim to achieve a high common level of cybersecurity across the Union, with a view to improving the functioning of the internal market. To that end, it establishes obligations for Member States to adopt national cybersecurity strategies, designate competent authorities, CSIRTs and single points of contact; sets cybersecurity risk-management measures and reporting obligations for entities listed in Annex I or II; defines rules on cybersecurity information sharing; and establishes supervisory and enforcement obligations (Article 1)."
+  },
+  {
+    "question": "Which directive does NIS 2 repeal, and from when does the repeal take effect?",
+    "reference": "NIS 2 repeals Directive (EU) 2016/1148 (the original NIS Directive) with effect from 18 October 2024 (Article 44). References to the repealed Directive are construed as references to NIS 2 in accordance with the correlation table in Annex III."
+  },
+  {
+    "question": "What is the size-cap rule used to determine the scope of NIS 2?",
+    "reference": "The Directive applies to public or private entities of a type referred to in Annex I or II that qualify as medium-sized enterprises under Article 2 of the Annex to Commission Recommendation 2003/361/EC, or exceed the ceilings for medium-sized enterprises provided for in paragraph 1 of that Article, and which provide their services or carry out their activities within the Union (Article 2(1))."
+  },
+  {
+    "question": "Under what circumstances does NIS 2 apply to entities regardless of their size?",
+    "reference": "Regardless of size, the Directive applies to: providers of public electronic communications networks or publicly available electronic communications services; trust service providers; TLD name registries and DNS service providers; entities that are the sole provider in a Member State of an essential service; entities whose disruption could significantly impact public safety, security or health; entities whose disruption could induce significant systemic risk; entities critical due to their specific importance at national or regional level; certain public administration entities; entities identified as critical under Directive (EU) 2022/2557; and entities providing domain name registration services (Article 2(2)-(4))."
+  },
+  {
+    "question": "How does NIS 2 distinguish between essential entities and important entities?",
+    "reference": "Essential entities include those of a type referred to in Annex I that exceed the ceilings for medium-sized enterprises, qualified trust service providers, TLD name registries and DNS service providers regardless of size, medium-sized providers of public electronic communications networks or services, certain public administration entities, entities identified as critical under Directive (EU) 2022/2557, and any entities Member States identify as essential. Important entities are entities of a type referred to in Annex I or II that do not qualify as essential entities under Article 3(1) (Article 3)."
+  },
+  {
+    "question": "What are the minimum cybersecurity risk-management measures required by Article 21(2)?",
+    "reference": "Measures must follow an all-hazards approach and include at least: policies on risk analysis and information system security; incident handling; business continuity (such as backup management and disaster recovery) and crisis management; supply chain security including relationships with direct suppliers and service providers; security in network and information systems acquisition, development and maintenance, including vulnerability handling and disclosure; policies and procedures to assess the effectiveness of cybersecurity risk-management measures; basic cyber hygiene practices and cybersecurity training; policies and procedures regarding the use of cryptography and, where appropriate, encryption; human resources security, access control policies and asset management; and the use of multi-factor authentication or continuous authentication solutions, secured voice, video and text communications, and secured emergency communication systems within the entity, where appropriate."
+  },
+  {
+    "question": "What is the multi-stage incident reporting timeline under NIS 2?",
+    "reference": "Under Article 23(4), entities must submit: (a) an early warning without undue delay and in any event within 24 hours of becoming aware of the significant incident, indicating where applicable whether the incident is suspected to be caused by unlawful or malicious acts or could have a cross-border impact; (b) an incident notification within 72 hours of becoming aware, including an initial assessment, severity, impact and indicators of compromise where available; (c) an intermediate report on relevant status updates upon request; and (d) a final report not later than one month after the incident notification, including a detailed description, root cause, mitigation measures and cross-border impact. If the incident is still ongoing at the time of the final report, a progress report is provided then and a final report within one month of handling the incident. Trust service providers must notify within 24 hours of significant incidents impacting their trust services."
+  },
+  {
+    "question": "When is an incident considered significant under NIS 2?",
+    "reference": "An incident is considered significant if: (a) it has caused or is capable of causing severe operational disruption of the services or financial loss for the entity concerned; or (b) it has affected or is capable of affecting other natural or legal persons by causing considerable material or non-material damage (Article 23(3))."
+  },
+  {
+    "question": "What are the maximum administrative fines for essential entities and important entities under NIS 2?",
+    "reference": "For infringements of Articles 21 or 23, essential entities are subject to administrative fines of a maximum of at least EUR 10,000,000 or a maximum of at least 2% of the total worldwide annual turnover in the preceding financial year of the undertaking, whichever is higher. Important entities are subject to administrative fines of a maximum of at least EUR 7,000,000 or a maximum of at least 1.4% of the total worldwide annual turnover in the preceding financial year, whichever is higher (Article 34(4) and (5))."
+  },
+  {
+    "question": "What is the role of management bodies in essential and important entities under Article 20?",
+    "reference": "Member States must ensure that the management bodies of essential and important entities approve the cybersecurity risk-management measures taken to comply with Article 21, oversee their implementation, and can be held liable for infringements of Article 21 by the entities. Members of management bodies are required to follow training, and entities are encouraged to offer similar training to employees, so they gain sufficient knowledge and skills to identify risks and assess cybersecurity risk-management practices and their impact on services."
+  },
+  {
+    "question": "What is EU-CyCLONe and what are its tasks?",
+    "reference": "EU-CyCLONe is the European cyber crisis liaison organisation network, established to support the coordinated management of large-scale cybersecurity incidents and crises at operational level and to ensure regular exchange of relevant information among Member States and Union institutions, bodies, offices and agencies. Its tasks include: increasing preparedness for managing large-scale cybersecurity incidents and crises; developing shared situational awareness; assessing consequences and impact and proposing mitigation measures; coordinating management of large-scale incidents and crises and supporting political-level decision-making; and discussing national large-scale incident and crisis response plans upon request (Article 16)."
+  },
+  {
+    "question": "How does NIS 2 define a 'significant cyber threat'?",
+    "reference": "A 'significant cyber threat' means a cyber threat which, based on its technical characteristics, can be assumed to have the potential to have a severe impact on the network and information systems of an entity or the users of the entity's services by causing considerable material or non-material damage (Article 6(11))."
+  },
+  {
+    "question": "What is a 'near miss' according to NIS 2?",
+    "reference": "A 'near miss' means an event that could have compromised the availability, authenticity, integrity or confidentiality of stored, transmitted or processed data or of the services offered by, or accessible via, network and information systems, but that was successfully prevented from materialising or that did not materialise (Article 6(5))."
+  },
+  {
+    "question": "What jurisdiction rules apply to DNS service providers, cloud computing service providers, and other cross-border digital entities?",
+    "reference": "DNS service providers, TLD name registries, entities providing domain name registration services, cloud computing service providers, data centre service providers, content delivery network providers, managed service providers, managed security service providers, and providers of online marketplaces, online search engines and social networking services platforms fall under the jurisdiction of the Member State where they have their main establishment in the Union. The main establishment is considered to be where decisions related to cybersecurity risk-management measures are predominantly taken; if that cannot be determined or such decisions are not taken in the Union, it is the Member State where cybersecurity operations are carried out; failing that, the Member State where the entity has the establishment with the highest number of employees in the Union (Article 26)."
+  },
+  {
+    "question": "What requirement does NIS 2 impose on non-EU entities offering digital services in the Union?",
+    "reference": "If an entity referred to in Article 26(1)(b) (such as DNS service providers, cloud service providers, etc.) is not established in the Union but offers services within the Union, it shall designate a representative in the Union. The representative must be established in one of the Member States where the services are offered, and the entity shall be considered to fall under the jurisdiction of the Member State where the representative is established. In the absence of a designated representative, any Member State in which the entity provides services may take legal actions against the entity for infringement of the Directive (Article 26(3))."
+  },
+  {
+    "question": "What sectors are listed as 'sectors of high criticality' in Annex I of NIS 2?",
+    "reference": "Annex I lists the following sectors of high criticality: Energy (electricity, district heating and cooling, oil, gas, hydrogen); Transport (air, rail, water, road); Banking; Financial market infrastructures; Health; Drinking water; Waste water; Digital infrastructure; ICT service management (business-to-business); Public administration; and Space."
+  },
+  {
+    "question": "What sectors are listed in Annex II as 'other critical sectors' under NIS 2?",
+    "reference": "Annex II lists: Postal and courier services; Waste management; Manufacture, production and distribution of chemicals; Production, processing and distribution of food; Manufacturing (including medical devices and in vitro diagnostic medical devices, computer/electronic/optical products, electrical equipment, machinery and equipment n.e.c., motor vehicles, trailers and semi-trailers, and other transport equipment); Digital providers (online marketplaces, online search engines, social networking services platforms); and Research."
+  },
+  {
+    "question": "What are the requirements for the European vulnerability database maintained by ENISA?",
+    "reference": "ENISA shall develop and maintain, after consulting the Cooperation Group, a European vulnerability database, establishing appropriate information systems, policies and procedures, and adopting necessary technical and organisational measures to ensure security and integrity. The database is intended to enable entities (whether or not within the scope of the Directive) and their suppliers to disclose and register, on a voluntary basis, publicly known vulnerabilities in ICT products or ICT services. The database shall include: information describing the vulnerability; the affected ICT products or services and the severity of the vulnerability in terms of circumstances under which it may be exploited; and the availability of related patches, or guidance on mitigation in the absence of patches (Article 12(2))."
+  },
+  {
+    "question": "What is the supervisory regime difference between essential entities and important entities?",
+    "reference": "Essential entities are subject to a comprehensive ex ante and ex post supervisory regime, including on-site inspections and off-site supervision, regular and targeted security audits, ad hoc audits, security scans, requests for information, requests to access data, and requests for evidence of implementation of cybersecurity policies. Important entities are subject to a lighter, ex post only supervisory regime triggered by evidence, indication or information suggesting potential infringements, with measures including on-site inspections and off-site ex post supervision, targeted security audits, security scans, requests for information, requests to access data, and requests for evidence of implementation (Articles 32 and 33; Recital 122)."
+  },
+  {
+    "question": "What enforcement powers do competent authorities have over essential entities when other measures have been ineffective?",
+    "reference": "When enforcement measures under Article 32(4)(a)-(d) and (f) are ineffective, competent authorities have the power to establish a deadline for the entity to remedy deficiencies. If action is not taken within that deadline, authorities may: (a) suspend temporarily, or request a certification or authorisation body or court to suspend temporarily, a certification or authorisation concerning part or all of the relevant services or activities; and (b) request the relevant bodies, courts or tribunals to prohibit temporarily any natural person responsible for discharging managerial responsibilities at chief executive officer or legal representative level from exercising managerial functions in that entity. These suspensions or prohibitions apply only until the entity remedies the deficiencies, and do not apply to public administration entities (Article 32(5))."
+  },
+  {
+    "question": "What is the deadline for Member States to transpose NIS 2 into national law?",
+    "reference": "By 17 October 2024, Member States shall adopt and publish the measures necessary to comply with the Directive and shall immediately inform the Commission thereof. They shall apply those measures from 18 October 2024 (Article 41)."
+  },
+  {
+    "question": "How does NIS 2 relate to sector-specific Union legal acts (the lex specialis principle)?",
+    "reference": "Where sector-specific Union legal acts require essential or important entities to adopt cybersecurity risk-management measures or to notify significant incidents, and where those requirements are at least equivalent in effect to the obligations laid down in NIS 2, the relevant provisions of NIS 2 (including supervision and enforcement under Chapter VII) do not apply to such entities. Where sector-specific Union legal acts do not cover all entities in a specific sector falling within the scope of NIS 2, the relevant provisions of NIS 2 continue to apply to entities not covered by those acts. Requirements are considered equivalent in effect when cybersecurity risk-management measures are at least equivalent to those in Article 21(1) and (2), or when the sector-specific act provides immediate access to incident notifications and equivalent reporting obligations to those in Article 23(1)-(6) (Article 4)."
+  },
+  {
+    "question": "What obligations apply to TLD name registries and entities providing domain name registration services regarding registration data?",
+    "reference": "TLD name registries and entities providing domain name registration services must collect and maintain accurate and complete domain name registration data in a dedicated database, with due diligence and in accordance with Union data protection law. The database must contain information necessary to identify and contact domain name holders and points of contact, including: the domain name; the date of registration; the registrant's name, contact email address and telephone number; and the contact email address and telephone number of the point of contact administering the domain name if different. They must have policies and procedures (including verification procedures) to ensure accuracy and completeness, make non-personal registration data publicly available without undue delay after registration, and provide access to specific domain name registration data upon lawful and duly substantiated requests by legitimate access seekers within 72 hours (Article 28)."
+  },
+  {
+    "question": "By when must Member States establish a list of essential and important entities under NIS 2?",
+    "reference": "By 17 April 2025, Member States shall establish a list of essential and important entities as well as entities providing domain name registration services. This list shall be reviewed and, where appropriate, updated on a regular basis and at least every two years thereafter. Entities are required to submit at least the following information: name of the entity; address and up-to-date contact details (including email addresses, IP ranges and telephone numbers); the relevant sector and subsector referred to in Annex I or II where applicable; and a list of Member States where they provide services falling within the scope of the Directive. Any changes must be notified without delay and in any event within two weeks of the change (Article 3(3) and (4))."
+  },
+  {
+    "question": "What is the primary objective of Directive (EU) 2022/2557?",
+    "reference": "The Directive aims to enhance the resilience of critical entities in the internal market by laying down harmonised minimum rules and assisting them through coherent and dedicated support and supervision measures, ensuring that essential services are provided in an unobstructed manner. (Recital 1; Article 1)"
+  },
+  {
+    "question": "Which earlier Directive does Directive (EU) 2022/2557 repeal?",
+    "reference": "Directive (EU) 2022/2557 repeals Council Directive 2008/114/EC with effect from 18 October 2024. (Article 27)"
+  },
+  {
+    "question": "How is 'resilience' defined in the context of this Directive?",
+    "reference": "Resilience means a critical entity's ability to prevent, protect against, respond to, resist, mitigate, absorb, accommodate and recover from an incident. (Article 2, point 2)"
+  },
+  {
+    "question": "What is the definition of a 'critical entity' under Directive (EU) 2022/2557?",
+    "reference": "A critical entity is a public or private entity which has been identified by a Member State in accordance with Article 6 as belonging to one of the categories set out in the third column of the table in the Annex. (Article 2, point 1)"
+  },
+  {
+    "question": "What is an 'incident' as defined in Directive (EU) 2022/2557?",
+    "reference": "An incident is an event which has the potential to significantly disrupt, or that disrupts, the provision of an essential service, including when it affects the national systems that safeguard the rule of law. (Article 2, point 3)"
+  },
+  {
+    "question": "What is the definition of 'critical infrastructure' under this Directive?",
+    "reference": "Critical infrastructure means an asset, a facility, equipment, a network or a system, or a part thereof, which is necessary for the provision of an essential service. (Article 2, point 4)"
+  },
+  {
+    "question": "What sectors are covered by the Directive?",
+    "reference": "The Directive covers 11 sectors: Energy, Transport, Banking, Financial market infrastructure, Health, Drinking water, Waste water, Digital infrastructure, Public administration, Space, and Production/processing/distribution of food. (Annex)"
+  },
+  {
+    "question": "By what date must Member States adopt the strategy for enhancing the resilience of critical entities?",
+    "reference": "Each Member State must adopt its strategy for enhancing the resilience of critical entities by 17 January 2026. (Article 4(1))"
+  },
+  {
+    "question": "What minimum elements must each national resilience strategy contain?",
+    "reference": "Each strategy must contain at least: strategic objectives and priorities; a governance framework; a description of measures to enhance resilience; the process for identifying critical entities; measures supporting critical entities; a list of main authorities and stakeholders; a policy framework for coordination with NIS 2 competent authorities; and measures for SMEs identified as critical entities. (Article 4(2))"
+  },
+  {
+    "question": "By what date must Member States identify their critical entities?",
+    "reference": "By 17 July 2026, each Member State must identify the critical entities for the sectors and subsectors set out in the Annex. (Article 6(1))"
+  },
+  {
+    "question": "What criteria must be applied when identifying critical entities?",
+    "reference": "When identifying critical entities, Member States must verify that: (a) the entity provides one or more essential services; (b) the entity operates and its critical infrastructure is located on the Member State's territory; and (c) an incident would have significant disruptive effects on the provision of essential services. (Article 6(2))"
+  },
+  {
+    "question": "What factors are considered when determining the significance of a disruptive effect?",
+    "reference": "The significance of a disruptive effect is determined by considering: the number of users relying on the service; cross-sector dependencies; the impact on economic/societal activities, environment, and public health; the entity's market share; the geographical area affected; and the importance of maintaining a sufficient level of the service. (Article 7(1))"
+  },
+  {
+    "question": "How often must critical entities carry out their own risk assessments?",
+    "reference": "Critical entities must carry out a risk assessment whenever necessary in view of their particular circumstances and, in any event, at least every four years, starting within nine months of receiving the notification of their identification as critical entities. (Article 12(1))"
+  },
+  {
+    "question": "What resilience measures must critical entities take under Article 13?",
+    "reference": "Critical entities must take appropriate and proportionate technical, security and organisational measures to: prevent incidents; ensure physical protection of premises; respond to and recover from incidents; ensure business continuity; manage employee security; and raise awareness among relevant personnel. (Article 13(1))"
+  },
+  {
+    "question": "What are the rules regarding incident notification by critical entities?",
+    "reference": "Critical entities must notify the competent authority without undue delay of incidents that significantly disrupt or could significantly disrupt essential services. Unless operationally unable, an initial notification must be submitted no later than 24 hours after becoming aware of the incident, followed by a detailed report within one month. (Article 15(1))"
+  },
+  {
+    "question": "What is a 'critical entity of particular European significance' and how is it identified?",
+    "reference": "An entity is considered a critical entity of particular European significance if it has been identified as a critical entity under Article 6(1), provides the same or similar essential services to or in six or more Member States, and has been notified as such by the Commission. (Article 17(1))"
+  },
+  {
+    "question": "What are advisory missions and who organises them?",
+    "reference": "Advisory missions are assessments organised by the Commission to evaluate measures taken by critical entities of particular European significance to meet their obligations under Chapter III. They can be organised at the request of the identifying Member State or, with that State's agreement, on the Commission's own initiative or at the request of other Member States. (Article 18(1-2))"
+  },
+  {
+    "question": "What is the Critical Entities Resilience Group and what are its tasks?",
+    "reference": "The Critical Entities Resilience Group is a Commission expert group established to support the Commission and facilitate cooperation and information exchange among Member States. Its tasks include analysing strategies, facilitating exchange of best practices, contributing to Union-level resilience documents, analysing incident notification summaries, and exchanging information on innovation and research. (Article 19)"
+  },
+  {
+    "question": "What supervisory and enforcement powers do competent authorities have under the Directive?",
+    "reference": "Competent authorities have the power to conduct on-site inspections and off-site supervision, order audits, require critical entities to provide information and evidence of compliance, and issue orders to remedy identified infringements within a reasonable time limit. (Article 21)"
+  },
+  {
+    "question": "What conditions apply to background checks on personnel of critical entities?",
+    "reference": "Member States must specify conditions under which critical entities may request background checks on persons holding sensitive roles, having access to premises or control systems, or being considered for such positions. Checks must be proportionate, strictly limited to what is necessary, and carried out in accordance with national and Union law including GDPR. They must at minimum verify identity and check criminal records. (Article 14)"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 relate to the NIS 2 Directive (EU) 2022/2555?",
+    "reference": "The two Directives are complementary. Cybersecurity matters are addressed by NIS 2, while CER addresses physical resilience. Member States must ensure coordinated implementation. Competent authorities under both Directives must cooperate and exchange information on risks, threats and incidents. (Article 1(2); Recital 9; Article 9(6))"
+  },
+  {
+    "question": "Are entities in the banking, financial market infrastructure and digital infrastructure sectors subject to the full obligations of the Directive?",
+    "reference": "No. Article 11 and Chapters III, IV and VI do not apply to critical entities in the banking (point 3), financial market infrastructure (point 4) and digital infrastructure (point 8) sectors, as their resilience is already comprehensively covered by other Union legal acts. However, they are still identified as critical entities and the strategies, risk assessments and support measures of Chapter II apply. (Article 8; Recitals 20–21)"
+  },
+  {
+    "question": "What obligation do Member States have regarding the transposition of the Directive?",
+    "reference": "Member States must adopt and publish the measures necessary to comply with the Directive by 17 October 2024 and apply those measures from 18 October 2024. (Article 26(1))"
+  },
+  {
+    "question": "What penalties are required for infringements of national measures adopted pursuant to the Directive?",
+    "reference": "Member States must lay down rules on penalties applicable to infringements of national measures adopted pursuant to the Directive. The penalties must be effective, proportionate and dissuasive. Member States must notify the Commission of those rules by 17 October 2024. (Article 22)"
+  },
+  {
+    "question": "What categories of entities in the food sector can be identified as critical entities?",
+    "reference": "Only food businesses, whether for profit or not and whether public or private, that are engaged exclusively in logistics and wholesale distribution and large-scale industrial production and processing with a significant market share at national level can be identified as critical entities in the food sector. (Annex, sector 11; Recital 5)"
+  },
+  {
+    "question": "What is the definition of 'network and information system' under NIS 2?",
+    "reference": "Network and information system means: (a) an electronic communications network as defined in Article 2, point (1), of Directive (EU) 2018/1972; (b) any device or group of interconnected or related devices, one or more of which, pursuant to a programme, carry out automatic processing of digital data; or (c) digital data stored, processed, retrieved or transmitted by elements covered under points (a) and (b) for the purposes of their operation, use, protection and maintenance (Article 6(1))."
+  },
+  {
+    "question": "How does NIS 2 define 'cybersecurity' and what is its relationship to related concepts?",
+    "reference": "Cybersecurity is defined as cybersecurity as defined in Article 2, point (1), of Regulation (EU) 2019/881. The Directive also defines related concepts: 'cyber threat' (a cyber threat as defined in Article 2, point (8), of Regulation (EU) 2019/881), 'significant cyber threat' (a cyber threat which can be assumed to have potential to have severe impact by causing considerable material or non-material damage), and 'vulnerability' (a weakness, susceptibility or flaw of ICT products or ICT services that can be exploited by a cyber threat) (Article 6(3), (10), (11), (15))."
+  },
+  {
+    "question": "What is the definition of 'large-scale cybersecurity incident' in NIS 2?",
+    "reference": "A 'large-scale cybersecurity incident' means an incident which causes a level of disruption that exceeds a Member State's capacity to respond to it or which has a significant impact on at least two Member States (Article 6(7)). This definition aligns with Commission Recommendation (EU) 2017/1584 and is used to trigger coordinated crisis response mechanisms through EU-CyCLONe."
+  },
+  {
+    "question": "What are the requirements for essential entities in terms of cybersecurity risk-management measures under Article 21?",
+    "reference": "Member States must ensure that essential and important entities take appropriate and proportionate technical, operational and organisational measures to manage risks posed to the security of network and information systems, considering the state-of-the-art, relevant European and international standards, and the cost of implementation. Due account must be taken of the degree of the entity's exposure to risks, size, and likelihood and severity of incidents, including their societal and economic impact. Measures must include: risk analysis and information system security policies; incident handling; business continuity and crisis management; supply chain security; security in systems acquisition and development; assessment policies; cyber hygiene practices and training; cryptography and encryption policies; human resources security; and multi-factor or continuous authentication solutions (Article 21(1) and (2))."
+  },
+  {
+    "question": "What special role do supply chain security measures play in NIS 2 compliance?",
+    "reference": "Entities must assess and take into account the overall quality and resilience of products and services, cybersecurity risk-management measures embedded in them, and cybersecurity practices of their suppliers and service providers, including their secure development procedures. Entities should incorporate cybersecurity risk-management measures into contractual arrangements with direct suppliers and service providers, and may consider risks stemming from other levels of suppliers and service providers. When considering appropriate measures regarding supply chain security, entities must take into account vulnerabilities specific to each direct supplier and service provider, and results of coordinated security risk assessments of critical supply chains carried out in accordance with Article 22(1) (Article 21(2)(d) and (3))."
+  },
+  {
+    "question": "What is the role of the Cooperation Group in coordinated security risk assessments of critical supply chains?",
+    "reference": "The Cooperation Group, in cooperation with the Commission and ENISA, may carry out coordinated security risk assessments of specific critical ICT services, ICT systems or ICT products supply chains, taking into account technical and, where relevant, non-technical risk factors. The Commission, after consulting the Cooperation Group and ENISA, and where necessary relevant stakeholders, identifies the specific critical ICT services, ICT systems or ICT products that may be subject to the coordinated security risk assessment. These assessments are to identify measures, mitigation plans and best practices to counter critical dependencies, potential single points of failure, threats, vulnerabilities and other risks associated with the supply chain (Article 22 and Recital 90)."
+  },
+  {
+    "question": "What are the technical capabilities that CSIRTs must possess under Article 11?",
+    "reference": "Member States must ensure that their CSIRTs jointly have the technical capabilities necessary to carry out the tasks specified in Article 11(3). These tasks include: monitoring and analysing cyber threats, vulnerabilities and incidents at national level and providing real-time or near real-time monitoring assistance upon request; providing early warnings, alerts and dissemination of information to essential and important entities on cyber threats and vulnerabilities; responding to incidents and providing assistance; collecting and analysing forensic data and providing dynamic risk analysis; providing proactive scanning of network and information systems upon request to detect vulnerabilities with significant impact; participating in the CSIRTs network and providing mutual assistance; acting as coordinator for coordinated vulnerability disclosure where applicable; and contributing to deployment of secure information-sharing tools. Member States must ensure sufficient resources are allocated to their CSIRTs to ensure adequate staffing levels for developing these technical capabilities (Article 11(2) and (3))."
+  },
+  {
+    "question": "What are the specific requirements placed on CSIRTs regarding organizational and physical infrastructure?",
+    "reference": "CSIRTs must comply with the following requirements: (a) ensure a high level of availability of communication channels by avoiding single points of failure and having several means for contacting and being contacted at all times, clearly specifying communication channels and making them known to constituency and cooperative partners; (b) ensure their premises and supporting information systems are located at secure sites; (c) be equipped with an appropriate system for managing and routing requests to facilitate effective and efficient handovers; (d) ensure the confidentiality and trustworthiness of their operations; (e) be adequately staffed to ensure availability of services at all times with appropriate training; and (f) be equipped with redundant systems and backup working space to ensure continuity of services (Article 11(1))."
+  },
+  {
+    "question": "What does Article 20 require regarding governance and management body responsibilities in essential and important entities?",
+    "reference": "Member States must ensure that the management bodies of essential and important entities approve the cybersecurity risk-management measures taken to comply with Article 21, oversee their implementation, and can be held liable for infringements of Article 21 by the entities. This does not prejudice national law regarding the liability rules applicable to public institutions and the liability of public servants and elected or appointed officials. Additionally, management bodies members must be required to follow training, and entities are encouraged to offer similar training to employees on a regular basis, enabling them to gain sufficient knowledge and skills to identify risks, assess cybersecurity risk-management practices and their impact on services (Article 20)."
+  },
+  {
+    "question": "How does NIS 2 address the notification of cyber threats to service recipients?",
+    "reference": "Where applicable, member States must ensure that essential and important entities communicate, without undue delay, to the recipients of their services that are potentially affected by a significant cyber threat any measures or remedies that those recipients are able to take in response to that threat. Where appropriate, the entities shall also inform those recipients of the significant cyber threat itself. Such information about significant cyber threats must be free of charge and drafted in easily comprehensible language. The requirement to inform service recipients is met on a best efforts basis but does not discharge entities from their obligation to take, at their own expense, appropriate and immediate measures to prevent or remedy any such threats and restore the normal security level of the service (Article 23(2) and Recital 103)."
+  },
+  {
+    "question": "What is the role of the single point of contact under NIS 2?",
+    "reference": "Each Member State must designate or establish a single point of contact responsible for coordinating issues related to the security of network and information systems and cross-border cooperation at Union level. The single point of contact exercises a liaison function to ensure: (a) cross-border cooperation of its Member State's authorities with relevant authorities of other Member States and, where appropriate, with the Commission and ENISA; and (b) cross-sectoral cooperation with other competent authorities within its Member State. The single point of contact must ensure effective cross-border cooperation, forward notifications of significant incidents with cross-border impact to single points of contact of other affected Member States upon request, and enable smooth cross-sectoral cooperation at national level. Single points of contact could also be addressees of relevant information about incidents concerning financial entities from competent authorities under Regulation (EU) 2022/2554 to forward appropriately to CSIRTs or competent authorities under NIS 2 (Article 8(3), (4) and Recital 40)."
+  },
+  {
+    "question": "What are the peer review mechanisms established under Article 19?",
+    "reference": "The Cooperation Group establishes peer review methodology with the assistance of the Commission and ENISA. Participation is voluntary. Peer reviews are carried out by cybersecurity experts designated by at least two Member States different from the one being reviewed. They cover: the level of implementation of cybersecurity risk-management measures and reporting obligations; capabilities and effectiveness of competent authorities; operational capabilities of CSIRTs; level of implementation of mutual assistance; level of implementation of cybersecurity information-sharing arrangements; and specific issues of cross-border or cross-sector nature. The methodology includes objective, non-discriminatory, fair and transparent criteria. Member States may conduct self-assessments prior to peer reviews. Peer reviews entail physical or virtual on-site visits and off-site information exchanges. Experts must not disclose sensitive or confidential information obtained during the peer review. Once reviewed, the same aspects shall not be subject to further peer review for two years unless otherwise requested or agreed (Article 19)."
+  },
+  {
+    "question": "How does NIS 2 handle the processing of personal data in the context of cybersecurity information sharing?",
+    "reference": "Processing of personal data by essential and important entities to the extent necessary and proportionate for ensuring security of network and information systems could be lawful based on legal obligation compliance under Article 6(1)(c) of Regulation (EU) 2016/679, or legitimate interests under Article 6(1)(f). Processing could require certain categories of personal data such as IP addresses, URLs, domain names, email addresses, and time stamps. Processing by competent authorities, single points of contact and CSIRTs could constitute a legal obligation or task in public interest under Article 6(1)(c) or (e) of Regulation (EU) 2016/679, or pursue legitimate interests of essential and important entities under Article 6(1)(f). National law may allow competent authorities, single points of contact and CSIRTs to process special categories of personal data under Article 9 of Regulation (EU) 2016/679, with suitable and specific measures to safeguard fundamental rights, including technical limitations on data re-use and state-of-the-art security and privacy-preserving measures such as pseudonymisation or encryption (Article 2(14) and Recital 121)."
+  },
+  {
+    "question": "What are the key differences between supervisory measures for essential entities and important entities?",
+    "reference": "Essential entities are subject to comprehensive ex ante and ex post supervisory regimes involving: on-site inspections and off-site supervision including random checks; regular and targeted security audits carried out by independent bodies or competent authorities; ad hoc audits justified by significant incidents or infringements; security scans based on risk assessment criteria; requests for information on cybersecurity policies and Article 27 compliance; requests to access data, documents and information; and requests for evidence of implementation. Important entities are subject to a lighter, ex post only, supervisory regime triggered by evidence, indication or information suggesting potential infringements. Important entities do not need to systematically document compliance and competent authorities do not have a general obligation to supervise those entities. When applying supervisory powers, competent authorities must state the purpose of requests and specify information requested. Results of any targeted security audit by an independent body are made available to the competent authority; costs are paid by the entity except in duly substantiated cases where the authority decides otherwise (Articles 32 and 33)."
+  },
+  {
+    "question": "What enforcement powers can competent authorities exercise against important entities?",
+    "reference": "When provided with evidence, indication or information that an important entity does not comply with NIS 2, particularly Articles 21 and 23, competent authorities must take action through ex post supervisory measures that are effective, proportionate and dissuasive. Enforcement powers include: (a) issuing warnings about infringements; (b) adopting binding instructions or orders requiring remedy of deficiencies or infringements; (c) ordering cessation of infringing conduct and desisting from repetition; (d) ordering compliance with Article 21 or Article 23 obligations in a specified manner and period; (e) ordering notification to service recipients of significant cyber threats and protective measures; (f) ordering implementation of recommendations from security audits within reasonable deadlines; (g) ordering public disclosure of aspects of infringements in a specified manner; and (h) imposing or requesting imposition of administrative fines. The principles regarding defence rights, circumstances consideration, and detailed reasoning from Article 32(7) and (8) apply mutatis mutandis (Article 33)."
+  },
+  {
+    "question": "What is the procedure for mutual assistance between competent authorities of different Member States?",
+    "reference": "Where an entity provides services in more than one Member State or has network and information systems located in different Member States, competent authorities must cooperate and assist each other as necessary. Cooperation must include: (a) competent authorities applying supervisory or enforcement measures informing and consulting other affected Member States' competent authorities via single points of contact; (b) a competent authority may request another to take supervisory or enforcement measures; and (c) a competent authority receiving a substantiated request must provide proportionate mutual assistance to implement supervisory or enforcement measures effectively, efficiently and consistently. Mutual assistance may cover information requests and supervisory measures including on-site inspections, off-site supervision, or targeted security audits. A competent authority may refuse assistance only if established that it lacks competence, the assistance is disproportionate, or disclosure would be contrary to the Member State's essential interests in national security, public security or defence. Before refusing, consultation with other competent authorities and potentially the Commission and ENISA is required. Where appropriate and with common agreement, competent authorities may carry out joint supervisory actions (Article 37)."
+  },
+  {
+    "question": "What is meant by 'cloud computing service' under NIS 2 and what are its key characteristics?",
+    "reference": "Cloud computing service means a digital service that enables on-demand administration and broad remote access to a scalable and elastic pool of shareable computing resources, including where such resources are distributed across several locations. Computing resources include networks, servers or other infrastructure, operating systems, software, storage, applications and services. Service models include Infrastructure as a Service (IaaS), Platform as a Service (PaaS), Software as a Service (SaaS) and Network as a Service (NaaS). Deployment models include private, community, public and hybrid cloud. On-demand administration refers to the capability of the cloud computing user to unilaterally self-provision computing capabilities such as server time or network storage without human interaction by the service provider. Broad remote access means cloud capabilities are provided over the network and accessed through mechanisms promoting heterogeneous thin or thick client platforms, including mobile phones, tablets, laptops and workstations. Scalable refers to computing resources that are flexibly allocated by the provider irrespective of geographical location. Elastic pool describes computing resources provided and released according to demand. Shareable describes computing resources provided to multiple users who share common access though processing is separate for each user. Distributed describes computing resources located on different networked computers or devices communicating by message passing (Article 6(30) and Recital 33)."
+  },
+  {
+    "question": "How does NIS 2 address data centre services and distinguish them from cloud computing?",
+    "reference": "Data centre service means a service encompassing structures or groups of structures dedicated to the centralised accommodation, interconnection and operation of IT and network equipment providing data storage, processing and transport services together with all facilities and infrastructures for power distribution and environmental control. Services offered by data centre service providers may not always be provided in the form of cloud computing service. Accordingly, data centres may not always constitute a part of cloud computing infrastructure. NIS 2 covers providers of data centre services that are not cloud computing services to manage all risks posed to the security of network and information systems. The term 'data centre service' does not apply to in-house corporate data centres owned and operated by the entity concerned for its own purposes (Article 6(31) and Recital 35)."
+  },
+  {
+    "question": "What obligations apply to providers of number-independent interpersonal communications services under NIS 2?",
+    "reference": "Number-independent interpersonal communications services as defined in Directive (EU) 2018/1972 (such as messaging services) must ensure a level of security of network and information systems appropriate to the risks posed. As the attack surface continues to expand, these services are becoming widespread attack vectors with malicious perpetrators using platforms to communicate and attract victims to open compromised web pages, increasing the likelihood of incidents involving exploitation of personal data. However, since these services normally do not exercise actual control over the transmission of signals over networks, the degree of risks posed can be considered in some respects lower than for traditional electronic communications services. The same applies to interpersonal communications services under Directive (EU) 2018/1972 which make use of numbers and do not exercise actual control over signal transmission. These services fall within the scope of NIS 2's security and reporting obligations (Article 6(37) and Recital 96)."
+  },
+  {
+    "question": "What specific role do DNS service providers and TLD name registries play in maintaining internet security under NIS 2?",
+    "reference": "Upholding and preserving a reliable, resilient and secure domain name system (DNS) are key factors in maintaining the integrity of the internet and are essential for its continuous and stable operation, on which the digital economy and society depend. Therefore, NIS 2 applies to top-level-domain (TLD) name registries and DNS service providers (understood as entities providing publicly available recursive domain name resolution services for internet end-users or authoritative domain name resolution services for third-party usage). NIS 2 does not apply to root name servers. DNS service providers are classified as essential entities regardless of their size, along with qualified trust service providers and TLD name registries. They fall under the jurisdiction of the Member State where they have their main establishment in the Union. Entities falling within this category must maintain accurate and complete domain name registration data in dedicated databases and provide access to specific domain name registration data upon lawful requests by legitimate access seekers within 72 hours (Articles 3, 26, 28 and Recital 32)."
+  },
+  {
+    "question": "What are the requirements for content delivery network providers under NIS 2?",
+    "reference": "Content delivery network providers are defined as networks of geographically distributed servers for the purpose of ensuring high availability, accessibility or fast delivery of digital content and services to internet users on behalf of content and service providers (Article 6(32)). These providers fall within the digital infrastructure sector (Annex I, point 8) and are subject to the cybersecurity obligations of NIS 2 if they qualify as essential or important entities. They fall under the jurisdiction of the Member State where they have their main establishment in the Union. If not established in the Union but offering services within it, they must designate a representative in the Union. They are required to submit information to competent authorities including entity name, relevant sector and subsector, address and contact details, Member States where services are provided, and IP ranges. This information is forwarded to ENISA to maintain a registry of such cross-border entities (Articles 27, 26(3))."
+  },
+  {
+    "question": "How does NIS 2 address managed security service providers and what are their specific obligations?",
+    "reference": "Managed security service providers are managed service providers that carry out or provide assistance for activities relating to cybersecurity risk management. Among service providers, managed security service providers in areas such as incident response, penetration testing, security audits and consultancy play a particularly important role in assisting entities in preventing, detecting, responding to or recovering from incidents. However, they have themselves been targets of cyberattacks and, because of their close integration in the operations of entities, pose a particular risk. Essential and important entities must therefore exercise increased diligence in selecting a managed security service provider. Competent authorities, in the context of their supervisory tasks, may benefit from cybersecurity services such as security audits, penetration testing or incident responses. Managed security service providers are classified as essential entities if they meet the size-cap criteria and operate in the ICT service management sector (Annex I, point 9), or important entities if they do not exceed those thresholds (Articles 6(40), 39(40), and Recitals 86-87)."
+  },
+  {
+    "question": "What is the definition and role of a 'representative' for entities not established in the Union under NIS 2?",
+    "reference": "A 'representative' means a natural or legal person established in the Union explicitly designated to act on behalf of a DNS service provider, TLD name registry, entity providing domain name registration services, cloud computing service provider, data centre service provider, content delivery network provider, managed service provider, managed security service provider, or provider of an online marketplace, online search engine or social networking services platform that is not established in the Union. The representative may be addressed by a competent authority or a CSIRT in the place of the entity itself regarding the obligations of that entity under NIS 2. The representative must be explicitly designated by a written mandate of the entity to act on its behalf with regard to its obligations laid down in NIS 2, including incident reporting. Where such an entity is not established in the Union but offers services within it, it shall designate a representative in the Union. To determine whether an entity is offering services within the Union, it is ascertained whether the entity is planning to offer services to persons in one or more Member States. The mere accessibility in the Union of the entity's website or use of a language generally used in the third country where the entity is established is insufficient; factors such as the use of a language or currency generally used in Member States with the possibility of ordering services in that language, or mentioning customers or users in the Union could make it apparent that the entity is planning to offer services within the Union (Article 6(34) and Recital 116)."
+  },
+  {
+    "question": "What are the key components of a national cybersecurity strategy under Article 7?",
+    "reference": "Each Member State must adopt a national cybersecurity strategy providing for strategic objectives, resources required to achieve them, and appropriate policy and regulatory measures to achieve and maintain a high level of cybersecurity. The strategy must include: (a) objectives and priorities covering particularly the sectors in Annexes I and II; (b) a governance framework to achieve objectives and priorities, including policies referred to in paragraph 2; (c) a governance framework clarifying roles and responsibilities of relevant stakeholders at national level, underpinning cooperation and coordination at national level between competent authorities, single points of contact, and CSIRTs, as well as coordination and cooperation between those bodies and competent authorities under sector-specific Union legal acts; (d) a mechanism to identify relevant assets and an assessment of risks in that Member State; (e) measures ensuring preparedness for, responsiveness to and recovery from incidents, including public-private cooperation; (f) a list of various authorities and stakeholders involved in implementation; (g) a policy framework for enhanced coordination between competent authorities under NIS 2 and competent authorities under Directive (EU) 2022/2557; and (h) a plan including necessary measures to enhance the general level of cybersecurity awareness among citizens (Article 7(1))."
+  },
+  {
+    "question": "What specific policies must Member States include in their national cybersecurity strategies under Article 7(2)?",
+    "reference": "As part of the national cybersecurity strategy, Member States must in particular adopt policies addressing: (a) cybersecurity in the supply chain for ICT products and services used by entities; (b) inclusion and specification of cybersecurity requirements for ICT products and services in public procurement, including cybersecurity certification, encryption and open-source cybersecurity products; (c) vulnerability management encompassing promotion and facilitation of coordinated vulnerability disclosure; (d) sustaining general availability, integrity and confidentiality of the public core of the open internet, including where relevant the cybersecurity of undersea communications cables; (e) promoting development and integration of advanced technologies aiming to implement state-of-the-art cybersecurity risk-management measures; (f) promoting and developing education and training on cybersecurity, cybersecurity skills, awareness raising and research and development initiatives, as well as guidance on good cyber hygiene practices and controls aimed at citizens, stakeholders and entities; (g) supporting academic and research institutions to develop, enhance and promote deployment of cybersecurity tools and secure network infrastructure; (h) including relevant procedures and appropriate information-sharing tools to support voluntary cybersecurity information sharing between entities in accordance with Union law; (i) strengthening cyber resilience and cyber hygiene baseline of small and medium-sized enterprises, in particular those excluded from NIS 2's scope, by providing easily accessible guidance and assistance; and (j) promoting active cyber protection as part of a wider defensive strategy (Article 7(2))."
+  },
+  {
+    "question": "What is the significance of coordinated vulnerability disclosure under Article 12?",
+    "reference": "Each Member State must designate one of its CSIRTs as a coordinator for coordinated vulnerability disclosure purposes. The CSIRT designated as coordinator acts as a trusted intermediary, facilitating where necessary the interaction between the natural or legal person reporting a vulnerability and the manufacturer or provider of the potentially vulnerable ICT products or services, upon request of either party. The tasks of the CSIRT designated as coordinator include: identifying and contacting entities concerned; assisting natural or legal persons reporting a vulnerability; and negotiating disclosure timelines and managing vulnerabilities affecting multiple entities. Member States must ensure that natural or legal persons are able to report, anonymously where they request, a vulnerability to the CSIRT designated as coordinator. The CSIRT designated as coordinator must ensure diligent follow-up action regarding the reported vulnerability and ensure the anonymity of the reporting person. Where a reported vulnerability could have significant impact on entities in more than one Member State, CSIRTs designated as coordinators shall, where appropriate, cooperate within the CSIRTs network. Coordinated vulnerability disclosure specifies a structured process through which vulnerabilities are reported to the manufacturer or provider in a manner allowing it to diagnose and remedy the vulnerability before detailed information is disclosed to third parties or to the public (Articles 12(1) and Recital 58)."
+  },
+  {
+    "question": "What is the role of ENISA's European vulnerability database and how should it operate?",
+    "reference": "ENISA shall develop and maintain, after consulting the Cooperation Group, a European vulnerability database. ENISA must establish and maintain appropriate information systems, policies and procedures, and adopt necessary technical and organisational measures to ensure security and integrity of the European vulnerability database, with a view to enabling entities (regardless of whether they fall within NIS 2's scope) and their suppliers of network and information systems to disclose and register, on a voluntary basis, publicly known vulnerabilities in ICT products or ICT services. All stakeholders are provided access to information about vulnerabilities contained in the database. The database must include: (a) information describing the vulnerability; (b) the affected ICT products or services and the severity of the vulnerability in terms of circumstances under which it may be exploited; and (c) the availability of related patches and, in the absence of available patches, guidance provided by competent authorities or CSIRTs addressed to users of vulnerable ICT products and services as to how risks resulting from disclosed vulnerabilities can be mitigated. ENISA should establish an appropriate procedure regarding the publication process to give entities time to take mitigating measures and employ state-of-the-art cybersecurity risk-management measures as well as machine-readable datasets and corresponding interfaces. To encourage a culture of disclosure, disclosure should have no detrimental effects on the reporting natural or legal person (Article 12(2) and Recitals 62-63)."
+  },
+  {
+    "question": "What was the main shortcoming of Council Directive 2008/114/EC that led to its replacement by Directive (EU) 2022/2557?",
+    "reference": "The evaluation of Directive 2008/114/EC conducted in 2019 found that, due to the increasingly interconnected and cross-border nature of operations using critical infrastructure, protective measures relating to individual assets alone were insufficient to prevent all disruptions. The approach needed to shift towards better accounting for risks and ensuring the resilience of critical entities as a whole. (Recital 2)"
+  },
+  {
+    "question": "Does Directive (EU) 2022/2557 apply to infrastructure owned or operated by the Union as part of its space programme?",
+    "reference": "No. The space sector falls within the scope of the Directive only with respect to ground-based infrastructure owned, managed and operated by Member States or private parties. Infrastructure owned, managed or operated by or on behalf of the Union as part of its space programme does not fall within the scope of the Directive. (Recital 5)"
+  },
+  {
+    "question": "What types of threats must Member State risk assessments account for?",
+    "reference": "Member State risk assessments must account for relevant natural and man-made risks, including those of a cross-sectoral or cross-border nature, accidents, natural disasters, public health emergencies such as pandemics, hybrid threats and other antagonistic threats, including terrorist offences as provided for in Directive (EU) 2017/541. (Article 5(1), second subparagraph)"
+  },
+  {
+    "question": "What cross-sector dependency information must Member States consider when conducting their risk assessments?",
+    "reference": "Member States must consider the relevant risks arising from the extent to which sectors depend on one another, including on entities located in other Member States and third countries, and the impact that a significant disruption in one sector may have on other sectors, including significant risks to citizens and the internal market. (Article 5(2)(c))"
+  },
+  {
+    "question": "Within what timeframe must a Member State provide the Commission with information following a Member State risk assessment?",
+    "reference": "Within three months of carrying out a Member State risk assessment, a Member State must provide the Commission with relevant information on the types of risks identified and the outcomes of that assessment, per sector and subsector set out in the Annex. (Article 5(4))"
+  },
+  {
+    "question": "How must Member States notify critical entities once they have been identified as such?",
+    "reference": "Member States must ensure that identified critical entities are notified within one month of their identification. The notification must inform them of their obligations under Chapters III and IV and the date from which those obligations apply. Critical entities in the banking, financial market infrastructure and digital infrastructure sectors must be informed that they have no obligations under Chapters III and IV, unless national measures provide otherwise. (Article 6(3))"
+  },
+  {
+    "question": "From what date does Chapter III apply to a newly identified critical entity?",
+    "reference": "Chapter III applies to a critical entity from 10 months after the date of the notification of its identification as a critical entity. (Article 6(3), second subparagraph)"
+  },
+  {
+    "question": "How frequently must Member States review the list of identified critical entities?",
+    "reference": "Member States must review and, where appropriate, update the list of identified critical entities whenever necessary and at least every four years. (Article 6(5))"
+  },
+  {
+    "question": "What happens when an entity is no longer identified as a critical entity following a list update?",
+    "reference": "Member States must ensure that entities no longer identified as critical entities are notified in due time and informed that they are no longer subject to the obligations under Chapter III from the date of receipt of that notification. (Article 6(5))"
+  },
+  {
+    "question": "What information must Member States submit to the Commission after identifying critical entities under Article 6?",
+    "reference": "Member States must submit without undue delay: a list of any additional essential services not already covered by the Commission's delegated list; the number of critical entities identified per sector, subsector and essential service; and any thresholds applied when determining the significance of a disruptive effect. (Article 7(2))"
+  },
+  {
+    "question": "What is the role of the single point of contact designated by each Member State?",
+    "reference": "The single point of contact exercises a liaison function to ensure cross-border cooperation with single points of contact of other Member States and with the Critical Entities Resilience Group. It may also liaise with the Commission and ensure cooperation with third countries. (Article 9(2))"
+  },
+  {
+    "question": "What summary reports must single points of contact submit to the Commission and the Critical Entities Resilience Group?",
+    "reference": "By 17 July 2028, and every two years thereafter, single points of contact must submit a summary report on the notifications they have received, including the number of notifications, the nature of notified incidents and the actions taken pursuant to Article 15(3). (Article 9(3))"
+  },
+  {
+    "question": "What obligations does the Directive place on Member States to support critical entities financially?",
+    "reference": "Without prejudice to applicable State aid rules, Member States may provide financial resources to critical entities where necessary and justified by public interest objectives. Member States must also inform critical entities of financial resources available at Union level. (Article 10(1); Article 20(3))"
+  },
+  {
+    "question": "In what circumstances should Member States consult one another regarding critical entities under Article 11?",
+    "reference": "Member States should consult one another regarding critical entities that use critical infrastructure physically connected between two or more Member States, that belong to connected corporate structures with critical entities in other Member States, or that have been identified as critical in one Member State but provide essential services to or in other Member States. (Article 11(1))"
+  },
+  {
+    "question": "Can a critical entity use risk assessments carried out under other legal acts to satisfy the requirements of Article 12?",
+    "reference": "Yes. Where a critical entity has carried out risk assessments or drawn up documents pursuant to obligations under other legal acts that are relevant for its critical entity risk assessment, it may use those assessments and documents to meet the requirements of Article 12. A competent authority may also declare an existing risk assessment as compliant in whole or in part. (Article 12(2), third subparagraph)"
+  },
+  {
+    "question": "What must a critical entity's resilience plan contain and can existing documents substitute for it?",
+    "reference": "The resilience plan must describe the technical, security and organisational measures taken pursuant to Article 13(1) with sufficient detail to achieve effectiveness and accountability. Where a critical entity has already taken measures and drawn up documents under other legal acts relevant for resilience, it may use those to meet the requirements, and a competent authority may declare them compliant in whole or in part. (Article 13(2))"
+  },
+  {
+    "question": "What obligation does the Directive impose on each critical entity regarding its point of contact with authorities?",
+    "reference": "Member States must ensure that each critical entity designates a liaison officer or equivalent as the point of contact with the competent authorities. (Article 13(3))"
+  },
+  {
+    "question": "What information must an initial incident notification include and what is its purpose?",
+    "reference": "The initial notification should include only the information strictly necessary to make the competent authority aware of the incident and allow the critical entity to seek assistance if required. It should indicate, where possible, the presumed cause of the incident. Member States must ensure that this requirement does not divert resources from incident handling. (Recital 33; Article 15(1-2))"
+  },
+  {
+    "question": "Under what circumstances must competent authorities notify the Commission of an incident?",
+    "reference": "Where an incident has or might have a significant impact on the continuity of the provision of essential services to or in six or more Member States, the competent authorities of the affected Member States must notify the Commission of that incident. (Article 15(1), fourth subparagraph)"
+  },
+  {
+    "question": "What follow-up obligations does a competent authority have after receiving an incident notification?",
+    "reference": "As soon as possible following a notification, the competent authority must provide the critical entity with relevant follow-up information, including information that could support its effective response to the incident. Member States must also inform the public where it would be in the public interest to do so. (Article 15(4))"
+  },
+  {
+    "question": "What are the composition and appointment rules for advisory missions to critical entities of particular European significance?",
+    "reference": "Advisory missions consist of experts from the Member State where the critical entity is located, experts from Member States to or in which the essential service is provided, and Commission representatives. The Commission selects and appoints members based on professional capacity, ensuring geographically balanced representation. Members must hold valid security clearance where necessary. The Commission bears the costs. (Article 18(5))"
+  },
+  {
+    "question": "What procedural constraints apply to the conduct of advisory missions?",
+    "reference": "Advisory missions must be conducted in compliance with applicable national law of the Member State in which they take place, with respect for that Member State's responsibility for national security and the protection of its security interests. They take place subject to detailed national rules, for instance on conditions to access premises or documents and on judicial redress. (Article 18(8); Recital 36)"
+  },
+  {
+    "question": "What delegated power is conferred on the Commission under Article 5(1) and for how long?",
+    "reference": "The Commission is empowered to adopt a delegated act to supplement the Directive by establishing a non-exhaustive list of essential services in the sectors and subsectors set out in the Annex. This power is conferred for a period of five years from 16 January 2023 and may be revoked at any time by the European Parliament or the Council. (Article 5(1); Article 23(2-3))"
+  },
+  {
+    "question": "What is the minimum harmonisation approach of Directive (EU) 2022/2557 and what flexibility does it leave to Member States?",
+    "reference": "The Directive establishes harmonised minimum rules but does not preclude Member States from adopting or maintaining provisions of national law to achieve a higher level of resilience for critical entities, provided such provisions are consistent with Member States' obligations under Union law. (Article 3; Recital 7)"
+  },
+  {
+    "question": "By what date must the Commission submit its first report to the European Parliament and the Council reviewing the functioning of the Directive?",
+    "reference": "By 17 July 2027, the Commission must submit a report assessing the extent to which each Member State has taken the necessary measures to comply with the Directive. The first periodic review report assessing the added value and impact of the Directive must be submitted by 17 June 2029. (Article 25)"
+  },
+  {
+    "question": "What is the main focus of the NIS2 Directive (EU) 2022/2555?",
+    "reference": "The NIS2 Directive focuses on cybersecurity of network and information systems across the EU, establishing risk-management measures and incident reporting obligations for essential and important entities."
+  },
+  {
+    "question": "What is the main focus of the CER Directive (EU) 2022/2557?",
+    "reference": "The CER Directive focuses on the physical resilience of critical entities providing essential services in the EU, requiring Member States to identify critical entities and ensure they adopt appropriate resilience measures."
+  },
+  {
+    "question": "How do the NIS2 and CER Directives complement each other?",
+    "reference": "The two Directives are complementary: NIS2 covers cybersecurity while CER covers physical resilience. Entities identified as critical under CER are automatically treated as essential entities under NIS2, and competent authorities under both Directives must cooperate and exchange information."
+  },
+  {
+    "question": "Which sectors fall within the scope of the CER Directive?",
+    "reference": "The CER Directive covers 11 sectors listed in its Annex: Energy, Transport, Banking, Financial market infrastructure, Health, Drinking water, Waste water, Digital infrastructure, Public administration, Space, and Production, processing and distribution of food."
+  },
+  {
+    "question": "What is the deadline for Member States to transpose the NIS2 Directive into national law?",
+    "reference": "Member States must adopt and publish the necessary national measures by 17 October 2024, with application from 18 October 2024."
+  },
+  {
+    "question": "What is the deadline for Member States to adopt a national strategy and complete a risk assessment under the CER Directive?",
+    "reference": "Each Member State must adopt a national strategy for enhancing the resilience of critical entities and complete its Member State risk assessment by 17 January 2026. By 17 July 2026, they must also identify the critical entities in the sectors listed in the Annex."
+  },
+  {
+    "question": "What is the difference between essential and important entities under NIS2?",
+    "reference": "Essential entities are subject to comprehensive ex ante and ex post supervision. Important entities are all other entities falling within scope that do not qualify as essential, and are subject to a lighter, ex post only supervisory regime."
+  },
+  {
+    "question": "How is a critical entity identified under the CER Directive?",
+    "reference": "A Member State identifies an entity as critical if it provides one or more essential services, operates on its territory, and an incident would have a significant disruptive effect on the provision of those services. Criteria include the number of users affected, economic and social impact, market share, and the geographic area affected."
+  },
+  {
+    "question": "How often must the list of essential and important entities be reviewed under NIS2?",
+    "reference": "The list of essential and important entities must be reviewed at least every two years."
+  },
+  {
+    "question": "How often must the list of critical entities be reviewed under the CER Directive?",
+    "reference": "The list of critical entities must be reviewed at least every four years, and whenever necessary."
+  },
+  {
+    "question": "Which entities are excluded from the scope of the NIS2 Directive?",
+    "reference": "Public administration entities carrying out activities predominantly in the areas of national security, public security, defence or law enforcement are excluded. The Directive does not apply to Member States' diplomatic and consular missions in third countries."
+  },
+  {
+    "question": "Which entities are excluded from the scope of the CER Directive?",
+    "reference": "Public administration entities operating predominantly in the areas of national security, public security, defence or law enforcement are excluded. Member States may also decide not to apply part of the obligations to critical entities whose activities are predominantly related to those areas."
+  },
+  {
+    "question": "Are financial entities fully subject to NIS2 obligations?",
+    "reference": "No. Financial entities covered by Regulation (EU) 2022/2554 (DORA) are not subject to the cybersecurity risk-management and reporting obligations under NIS2, as DORA provides equivalent sector-specific requirements. However, information exchange between the financial sector and NIS2 authorities is maintained."
+  },
+  {
+    "question": "Do banks and financial infrastructure entities have reduced obligations under the CER Directive?",
+    "reference": "Yes. Critical entities in the banking, financial market infrastructure and digital infrastructure sectors are not subject to the obligations of Chapters III, IV and VI of the CER Directive, as they are already covered by equivalent sector-specific legislation (DORA, NIS2). However, they must still be identified by Member States, and Chapter II of the Directive applies to them."
+  },
+  {
+    "question": "What cybersecurity risk-management measures must entities take under NIS2?",
+    "reference": "Entities must take appropriate and proportionate technical, operational and organisational measures based on an all-hazards approach, including risk analysis, incident handling, business continuity, supply chain security, vulnerability management, cyber hygiene, cryptography policies, human resources security, access control, and multi-factor authentication where appropriate."
+  },
+  {
+    "question": "Who is responsible for approving cybersecurity measures within an entity under NIS2?",
+    "reference": "The management body of the entity must approve the cybersecurity risk-management measures, oversee their implementation and can be held liable for infringements. Management body members are required to follow cybersecurity training."
+  },
+  {
+    "question": "What resilience measures must critical entities take under the CER Directive?",
+    "reference": "Critical entities must take appropriate and proportionate technical, security and organisational measures to prevent incidents (including climate adaptation), ensure physical protection, respond to and recover from incidents, ensure business continuity with alternative supply chains, manage employee security (including background checks), and raise awareness through training and exercises."
+  },
+  {
+    "question": "What is a resilience plan under the CER Directive?",
+    "reference": "Every critical entity must have in place and apply a resilience plan or equivalent documents describing the measures it has taken. Documents already produced for other regulatory obligations may be reused if they cover the requirements of the Directive."
+  },
+  {
+    "question": "When must an entity report a significant cybersecurity incident under NIS2?",
+    "reference": "Entities must report using a multi-stage approach: an early warning within 24 hours; an incident notification within 72 hours; intermediate status reports upon request; and a final report within one month of the incident notification. For trust service providers, the initial notification deadline is 24 hours."
+  },
+  {
+    "question": "When must a critical entity notify an incident under the CER Directive?",
+    "reference": "Without undue delay, for incidents that significantly disrupt or have the potential to significantly disrupt the provision of essential services. An initial notification must be submitted no later than 24 hours after becoming aware of the incident, unless operationally unable to do so."
+  },
+  {
+    "question": "Is a follow-up report required after the initial incident notification under CER?",
+    "reference": "Yes. Where relevant, a detailed report must be submitted no later than one month after the incident, complementing the initial notification with a more complete overview."
+  },
+  {
+    "question": "What parameters are used to assess the significance of a disruption under the CER Directive?",
+    "reference": "The number and proportion of users affected, the duration of the disruption, and the geographical area affected, including whether that area is geographically isolated."
+  },
+  {
+    "question": "What governance bodies must Member States designate or establish under NIS2?",
+    "reference": "Each Member State must designate or establish: one or more competent authorities for cybersecurity supervision; a single point of contact for cross-border cooperation; one or more cyber crisis management authorities for large-scale incidents; and one or more CSIRTs (Computer Security Incident Response Teams)."
+  },
+  {
+    "question": "What must the national cybersecurity strategy contain under NIS2?",
+    "reference": "At least: strategic objectives and priorities covering Annex I and II sectors; a governance framework; a framework clarifying roles and responsibilities of stakeholders; a mechanism to identify assets and assess risks; measures for preparedness, responsiveness and recovery; a list of authorities involved; a policy framework for coordination with CER authorities; and a plan to raise cybersecurity awareness among citizens."
+  },
+  {
+    "question": "What must the national strategy for critical entity resilience contain under the CER Directive?",
+    "reference": "At least: strategic objectives and priorities; a governance framework; a description of measures and the risk assessment process; the process for identifying critical entities; support mechanisms (including for SMEs); and a coordination framework with NIS2 competent authorities."
+  },
+  {
+    "question": "What is the Cooperation Group under NIS2?",
+    "reference": "A Commission expert group composed of representatives of Member States, the Commission and ENISA, established to support strategic cooperation and exchange of information among Member States. It provides guidance on transposition, exchanges best practices, conducts coordinated security risk assessments of critical supply chains, and produces biennial work programmes."
+  },
+  {
+    "question": "What is the Critical Entities Resilience Group under the CER Directive?",
+    "reference": "A Commission expert group composed of Member State representatives that supports the Commission, facilitates cooperation between Member States and promotes the exchange of best practices. It meets at least once a year with the NIS2 Cooperation Group."
+  },
+  {
+    "question": "What is the CSIRTs network under NIS2?",
+    "reference": "A network of national CSIRTs and CERT-EU, with ENISA as secretariat, established to develop confidence and trust and promote swift operational cooperation. Its tasks include exchanging information on threats, vulnerabilities and incidents, providing mutual assistance, coordinating responses to cross-border incidents, and supporting coordinated vulnerability disclosure."
+  },
+  {
+    "question": "What is EU-CyCLONe?",
+    "reference": "The European Cyber Crisis Liaison Organisation Network, composed of Member States' cyber crisis management authorities and the Commission. It supports the coordinated management of large-scale cybersecurity incidents and crises at operational level, acts as intermediary between technical and political levels, and reports every 18 months to the European Parliament and the Council."
+  },
+  {
+    "question": "What is the role of ENISA under NIS2?",
+    "reference": "ENISA provides the secretariat of the CSIRTs network and EU-CyCLONe, maintains the European vulnerability database, creates and maintains a registry of certain cross-border entities, develops guidelines and technical guidance, assists Member States in developing CSIRTs, publishes a biennial report on the state of cybersecurity in the Union, and supports the coordinated vulnerability disclosure framework."
+  },
+  {
+    "question": "What is the 'single point of contact' under the CER Directive?",
+    "reference": "An authority designated by each Member State to act as a liaison for cross-border cooperation. It coordinates communications with the single points of contact of other Member States and with the Critical Entities Resilience Group."
+  },
+  {
+    "question": "How does supervision differ between essential and important entities under NIS2?",
+    "reference": "Essential entities are subject to comprehensive ex ante and ex post supervision, including on-site inspections, regular and targeted security audits, security scans and information requests. Important entities are subject to a lighter ex post supervisory regime: supervision is triggered by evidence of potential non-compliance, not conducted proactively."
+  },
+  {
+    "question": "What enforcement powers do competent authorities have under NIS2?",
+    "reference": "Authorities may issue warnings, adopt binding instructions to remedy deficiencies, order cessation of infringing conduct, designate a monitoring officer, and impose administrative fines. As a last resort for essential entities, they may also request temporary suspension of certifications or authorisations, or a temporary prohibition on a senior manager exercising managerial functions."
+  },
+  {
+    "question": "What are the maximum administrative fines under NIS2?",
+    "reference": "For essential entities: at least EUR 10,000,000 or at least 2% of the total worldwide annual turnover of the undertaking concerned, whichever is higher. For important entities: at least EUR 7,000,000 or at least 1.4% of the total worldwide annual turnover, whichever is higher."
+  },
+  {
+    "question": "How is compliance with CER obligations supervised?",
+    "reference": "National competent authorities may conduct on-site inspections, off-site supervision, request information and evidence (including independent audits at the entity's expense), and issue remediation orders. These powers must be exercised in an objective, transparent and proportionate manner."
+  },
+  {
+    "question": "Are penalties foreseen for non-compliant critical entities under the CER Directive?",
+    "reference": "Yes. Member States must lay down rules on penalties that are effective, proportionate and dissuasive. These rules had to be notified to the Commission by 17 October 2024."
+  },
+  {
+    "question": "What rights do entities have during supervisory proceedings under NIS2?",
+    "reference": "Entities have the right to be heard, the right of defence, the right to protection of trade and business secrets, and the right to an effective remedy before an independent court. Competent authorities must state detailed reasoning for their enforcement measures and notify entities of preliminary findings, allowing a reasonable time for observations."
+  },
+  {
+    "question": "What is a critical entity of 'particular European significance' under the CER Directive?",
+    "reference": "An entity already identified as critical that provides the same or similar essential services to or in six or more Member States and has been formally notified as such by the Commission."
+  },
+  {
+    "question": "What additional obligations apply to critical entities of particular European significance?",
+    "reference": "They must inform their competent authority that they provide services to six or more Member States. The Commission may then organise an advisory mission to assess their resilience measures, and they must provide the advisory mission with access to all relevant information, systems and facilities."
+  },
+  {
+    "question": "What are advisory missions under the CER Directive?",
+    "reference": "Missions organised by the Commission to assess the resilience measures of critical entities of particular European significance. They are composed of experts from the relevant Member States and the Commission. The mission reports its findings within three months of completion, after which the Commission issues an opinion on the entity's compliance."
+  },
+  {
+    "question": "What is 'coordinated vulnerability disclosure' under NIS2?",
+    "reference": "A structured process through which vulnerabilities in ICT products or services are reported to the manufacturer or provider in a manner allowing diagnosis and remediation before public disclosure. Each Member State must designate one of its CSIRTs as coordinator, acting as a trusted intermediary between the reporting party and the affected manufacturer or provider."
+  },
+  {
+    "question": "What is the European vulnerability database under NIS2?",
+    "reference": "A database developed and maintained by ENISA, allowing entities and their suppliers to voluntarily disclose and register publicly known vulnerabilities in ICT products or services. It includes information describing the vulnerability, affected products and severity, and guidance on available patches or mitigating measures."
+  },
+  {
+    "question": "Can entities voluntarily share cybersecurity information under NIS2?",
+    "reference": "Yes. Member States must ensure that entities — including those outside the scope of the Directive — can voluntarily exchange relevant cybersecurity information such as threat intelligence, vulnerabilities, indicators of compromise and response recommendations, within cybersecurity information-sharing arrangements. Such voluntary reporting shall not result in additional obligations on the notifying entity."
+  },
+  {
+    "question": "Are entities required to address supply chain risks under NIS2?",
+    "reference": "Yes. Entities must assess the vulnerabilities specific to each direct supplier and service provider, and consider the overall quality of products and cybersecurity practices throughout their supply chains. They must also take into account the results of coordinated security risk assessments of critical supply chains carried out at Union level by the Cooperation Group."
+  },
+  {
+    "question": "When will the Commission carry out its first review of the NIS2 Directive?",
+    "reference": "By 17 October 2027, and every 36 months thereafter, the Commission must review the functioning of the Directive and report to the European Parliament and to the Council, assessing the relevance of entity sizes, sectors and types covered in light of cybersecurity developments."
+  },
+  {
+    "question": "When will the Commission carry out its first review of the CER Directive?",
+    "reference": "The Commission must submit a compliance assessment report to the European Parliament and the Council by 17 July 2027, and a broader review of the Directive's functioning by 17 June 2029."
+  },
+  {
+    "question": "Can Member States apply stricter national rules than those required by NIS2?",
+    "reference": "Yes. The Directive establishes minimum harmonisation. Member States may adopt or maintain provisions ensuring a higher level of cybersecurity, provided they are consistent with Union law."
+  },
+  {
+    "question": "Can Member States apply stricter national rules than those required by the CER Directive?",
+    "reference": "Yes. The Directive establishes minimum harmonisation. Member States may adopt or maintain national provisions to achieve a higher level of resilience, provided they are consistent with Union law."
+  },
+  {
+    "question": "What must a critical entity do after being notified of its identification under the CER Directive?",
+    "reference": "Within 9 months of notification, it must carry out its own risk assessment. Chapter III obligations (resilience measures) apply from 10 months after the notification. It must also designate a liaison officer as its point of contact with the competent authorities."
+  },
+  {
+    "question": "What happens if a cybersecurity incident under NIS2 affects multiple Member States?",
+    "reference": "The CSIRT, competent authority or single point of contact must inform the other affected Member States and ENISA without undue delay. The single point of contact submits to ENISA every three months a summary report of aggregated and anonymised data on significant incidents, threats and near misses notified."
+  },
+  {
+    "question": "What happens if an incident under the CER Directive impacts six or more Member States?",
+    "reference": "The competent authorities of the affected Member States must notify the Commission. The single point of contact also informs the single points of contact of the other Member States concerned."
+  },
+  {
+    "question": "Can existing risk assessments or measures carried out for other regulatory purposes satisfy CER requirements?",
+    "reference": "Yes. Where a critical entity has already carried out risk assessments or taken measures pursuant to other legal obligations, it may use those to meet CER requirements. The competent authority may also formally declare existing assessments or measures as compliant, in whole or in part."
+  }
+]
