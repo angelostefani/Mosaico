@@ -8,6 +8,16 @@ python .\eval_batch.py `
   --model gemma4:e4b `
   --output ".\results\batch_full_baseline.csv"
 
+  python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_CER_50.json `
+  --username enea --collection CER `
+  --model gemma4:e4b `
+  --output ".\results\batch_no_hybrid_reranking.csv"
+
+
+
+#######################################################
 # Calcola metriche RAGAS CALLIA
 python .\eval_ragas.py `
   --input ".\results\batch_full_baseline.csv" `

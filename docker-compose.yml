@@ -138,8 +138,8 @@ services:
       - DJANGO_DEBUG=${DJANGO_DEBUG}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
-      - API_BASE=http://api:9000
-      - API_PUBLIC_BASE=http://localhost:9000
+      - API_BASE=${API_BASE}
+      - API_PUBLIC_BASE=${API_PUBLIC_BASE}
       - FAKE_TOKEN=${FAKE_TOKEN}
       - LOG_LEVEL=${LOG_LEVEL}
       - LOG_DIR=${LOG_DIR}

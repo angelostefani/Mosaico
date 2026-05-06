@@ -176,7 +176,7 @@ SIMPLE_JWT = {
 
 # Base URL dell'API REST esterna
 # In container Docker su Windows/Mac, usare host.docker.internal per raggiungere la macchina host
-API_BASE = os.getenv('API_BASE', 'http://192.168.118.218:9000')
+API_BASE = os.getenv('API_BASE', 'http://127.0.0.1:9000')
 # URL raggiungibile dal browser (client-side JS). Default = API_BASE se non specificato.
 API_PUBLIC_BASE = os.getenv('API_PUBLIC_BASE', API_BASE)
 FAKE_TOKEN = os.getenv('FAKE_TOKEN', 'dev-token')
