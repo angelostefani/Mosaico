@@ -91,6 +91,7 @@ CHAT_HISTORY_CHAR_BUDGET = int(os.getenv("CHAT_HISTORY_CHAR_BUDGET", 3000))
 MMR_LAMBDA = float(os.getenv("MMR_LAMBDA", "0.65"))
 ENABLE_CROSS_ENCODER_RERANK = os.getenv('ENABLE_CROSS_ENCODER_RERANK', 'false').lower() in ('1', 'true', 'yes')
 CROSS_ENCODER_MODEL = os.getenv('CROSS_ENCODER_MODEL', 'cross-encoder/ms-marco-MiniLM-L-6-v2')
+CROSS_ENCODER_TOP_K = int(os.getenv('CROSS_ENCODER_TOP_K', 30))
 CONVERSATION_PREVIEW_CHARS = int(os.getenv("CONVERSATION_PREVIEW_CHARS", 120))
 MAX_CONVERSATION_LIST = int(os.getenv("MAX_CONVERSATION_LIST", 50))
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -1977,38 +1978,41 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
 
 def rerank_results(question: str, results: list) -> List[Tuple[float, Any]]:
     import math
-    scored: List[Tuple[float, Any]] = []
 
-    # Cross-encoder reranking semantico (se abilitato)
+    # Stage 3a: hybrid reranker su tutti i candidati (sempre eseguito)
+    hybrid_scored: List[Tuple[float, Any]] = []
+    for r in results:
+        payload = _payload_of_generic(r)
+        text = payload.get("text_chunk", "") or ""
+        vector_score = getattr(r, "score", 0.0) or 0.0
+        text_sim = _similarity(question, text)
+        kw_overlap = _keyword_overlap(question, text)
+        combined = 0.60 * vector_score + 0.25 * text_sim + 0.15 * kw_overlap
+        hybrid_scored.append((combined, r))
+    hybrid_scored.sort(reverse=True, key=lambda x: x[0])
+
+    # Stage 3b: cross-encoder sul top-K' (cascata)
     if ENABLE_CROSS_ENCODER_RERANK:
         cross_encoder = _cross_encoder_holder.get()
         if cross_encoder is not None:
             try:
-                pairs = [(question, (_payload_of_generic(r).get("text_chunk") or "")[:512]) for r in results]
+                top_k = min(CROSS_ENCODER_TOP_K, len(hybrid_scored))
+                top_pool = [r for _, r in hybrid_scored[:top_k]]
+                pairs = [(question, (_payload_of_generic(r).get("text_chunk") or "")[:512])
+                         for r in top_pool]
                 ce_scores = cross_encoder.predict(pairs)
-                for r, ce_score in zip(results, ce_scores):
+                ce_scored: List[Tuple[float, Any]] = []
+                for r, ce_score in zip(top_pool, ce_scores):
                     vector_score = getattr(r, "score", 0.0) or 0.0
                     ce_normalized = 1.0 / (1.0 + math.exp(-float(ce_score)))
                     combined = 0.50 * vector_score + 0.50 * ce_normalized
-                    scored.append((combined, r))
+                    ce_scored.append((combined, r))
+                ce_scored.sort(reverse=True, key=lambda x: x[0])
+                return ce_scored + hybrid_scored[top_k:]
             except Exception as ce_err:
-                logger.warning("[rerank] cross-encoder fallito, fallback a rerank classico: %s", ce_err)
-                scored = []
+                logger.warning("[rerank] cross-encoder fallito, fallback a hybrid: %s", ce_err)
 
-    # Fallback: rerank classico (vector + text_sim + keyword)
-    if not scored:
-        for r in results:
-            payload = _payload_of_generic(r)
-            text = payload.get("text_chunk", "") or ""
-            vector_score = getattr(r, "score", 0.0) or 0.0
-            text_sim = _similarity(question, text)
-            kw_overlap = _keyword_overlap(question, text)
-            combined = 0.60 * vector_score + 0.25 * text_sim + 0.15 * kw_overlap
-            scored.append((combined, r))
-
-    # ordina per rilevanza pura
-    scored.sort(reverse=True, key=lambda x: x[0])
-    return scored
+    return hybrid_scored
 
 
 def apply_mmr(scored_results: List[Tuple[float, Any]], top_k: int) -> List[Any]:
@@ -2865,6 +2869,7 @@ async def healthz():
             "qdrant_port": QDRANT_PORT,
             "ollama_url": OLLAMA_URL,
             "ollama_model": OLLAMA_MODEL,
+            "ollama_timeout": OLLAMA_TIMEOUT,
             "embedding_model": EMBEDDING_MODEL,
             "allow_embedding_fallback": ALLOW_EMBEDDING_FALLBACK,
             "chunk_size": CHUNK_SIZE,
@@ -2872,10 +2877,22 @@ async def healthz():
             "qdrant_score_threshold": QDRANT_SCORE_THRESHOLD,
             "enable_rag_debug": ENABLE_RAG_DEBUG,
             "enable_rerank": ENABLE_RERANK,
-            "chat_result_limit": CHAT_RESULT_LIMIT,
+            "enable_mmr": ENABLE_MMR,
+            "enable_stitch": ENABLE_STITCH,
             "enable_multi_vector_search": ENABLE_MULTI_VECTOR_SEARCH,
+            "mmr_lambda": MMR_LAMBDA,
+            "chat_result_limit": CHAT_RESULT_LIMIT,
+            "chat_candidates": CHAT_CANDIDATES,
+            "chat_context_char_budget": CHAT_CONTEXT_CHAR_BUDGET,
+            "chat_history_char_budget": CHAT_HISTORY_CHAR_BUDGET,
+            "chat_history_prompt_limit": CHAT_HISTORY_PROMPT_LIMIT,
             "chat_expansion_limit": CHAT_EXPANSION_LIMIT,
             "chat_expansion_candidates": CHAT_EXPANSION_CANDIDATES,
+            "enable_cross_encoder_rerank": ENABLE_CROSS_ENCODER_RERANK,
+            "cross_encoder_model": CROSS_ENCODER_MODEL,
+            "cross_encoder_top_k": CROSS_ENCODER_TOP_K,
+            "skip_auth": SKIP_AUTH,
+            "cors_origins": CORS_ORIGINS,
         },
     }
 

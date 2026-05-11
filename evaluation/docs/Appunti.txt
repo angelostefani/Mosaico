@@ -1,27 +1,67 @@
 
+.venv312\Scripts\activate
 
 # Raccoglie risposte
 python .\eval_batch.py `
   --url http://localhost:9000 `
-  --dataset .\datasets\eval_dataset_CER.json `
+  --dataset .\datasets\eval_dataset_CER_50.json `
   --username enea --collection CER `
   --model gemma4:e4b `
-  --output ".\results\batch_full_baseline.csv"
+  --output ".\results\batch_full_baseline_50.csv"
+
+# Raccoglie risposte
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_CER_50.json `
+  --username enea --collection CER `
+  --model gemma4:e4b `
+  --output ".\results\batch_no_multivector_search_50.csv"
+
+# Raccoglie risposte
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_CER_50.json `
+  --username enea --collection CER `
+  --model gemma4:e4b `
+  --output ".\results\batch_no_hybrid_reranking_50.csv"
+
+# Raccoglie risposte
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_CER_50.json `
+  --username enea --collection CER `
+  --model gemma4:e4b `
+  --output ".\results\batch_no_mmr_diversity_50.csv"
+
+# Raccoglie risposte
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_CER_50.json `
+  --username enea --collection CER `
+  --model gemma4:e4b `
+  --output ".\results\batch_no_chunk_stiching_50.csv"
+
+  # Raccoglie risposte
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_CER_50.json `
+  --username enea --collection CER `
+  --model gemma4:e4b `
+  --output ".\results\batch_retrival_only_50.csv"
 
   python .\eval_batch.py `
   --url http://localhost:9000 `
   --dataset .\datasets\eval_dataset_CER_50.json `
   --username enea --collection CER `
   --model gemma4:e4b `
-  --output ".\results\batch_no_hybrid_reranking.csv"
+  --output ".\results\batch_minimal_vector_search_only_50.csv"
 
+  ##############################################
 
-
-#######################################################
 # Calcola metriche RAGAS CALLIA
 python .\eval_ragas.py `
-  --input ".\results\batch_full_baseline.csv" `
-  --output ".\results\ragas_full_baseline.csv" `
+  --input ".\results\batch_full_baseline_50.csv" `
+  --output ".\results\ragas_full_baseline_50.csv" `
   --ollama-url "http://192.168.118.218:11434/api/generate" `
   --model gemma4:e4b `
   --judge-model qwen3:8b `
@@ -29,7 +69,7 @@ python .\eval_ragas.py `
   --timeout 900 --batch-size 5 --verbose
 
 
-  # Calcola metriche RAGAS CALLIA
+  # Calcola metriche RAGAS PYTHIA
 python .\eval_ragas.py `
   --input ".\results\batch_full_baseline.csv" `
   --output ".\results\ragas_full_baseline.csv" `
@@ -47,3 +87,40 @@ python eval_ragas.py --input results/batch_full_baseline.csv --output results/ra
 python eval_ragas.py --input results/batch_full_baseline.csv --output results/ragas_test_resume.csv --judge-model qwen3:8b --no-think --batch-size 5 --verbose
 
 # Verificare che il CSV finale abbia righe da entrambe le run, ordinate per case_id
+
+
+.venv312\Scripts\activate
+python .\eval_ragas.py `
+  --input ".\results\batch_full_baseline_50.csv" `
+  --output ".\results\ragas_full_baseline_50.csv" `
+  --ollama-url "http://192.168.118.218:11434/api/generate" `
+  --model gemma4:e4b `
+  --judge-model qwen3:8b `
+  --no-think `
+  --timeout 900 --batch-size 5 --verbose
+
+  .venv312\Scripts\activate
+python .\eval_ragas.py `
+  --input ".\results\batch_no_multivector_search_50.csv" `
+  --output ".\results\ragas_no_multivector_search_50.csv" `
+  --ollama-url "http://192.168.118.218:11434/api/generate" `
+  --model gemma4:e4b `
+  --judge-model qwen3:8b `
+  --no-think `
+  --timeout 900 --batch-size 5 --verbose
+  
+
+
+
+
+
+
+####################RECON#############
+  python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_RECON.json `
+  --username enea --collection RECON `
+  --model gemma4:e4b `
+  --output ".\results\batch_RECON_full_baseline_multilingual_v2.csv"
+
+  ######################################
