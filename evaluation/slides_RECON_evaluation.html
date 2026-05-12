@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valutazione RAG Mosaico — Dataset RECON</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:    #003366;
+    --blue2:   #0055A4;
+    --blue3:   #E8EFF8;
+    --green:   #28A745;
+    --red:     #DC3545;
+    --orange:  #FD7E14;
+    --gray:    #F5F7FA;
+    --gray2:   #6C757D;
+    --white:   #FFFFFF;
+    --text:    #1A1A2E;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #111;
+    overflow: hidden;
+  }
+
+  /* ── slide container ─────────────────────────────────────── */
+  #deck {
+    position: relative;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── header strip ────────────────────────────────────────── */
+  .slide-header {
+    background: var(--blue);
+    color: var(--white);
+    padding: 18px 40px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .slide-header .badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: rgba(255,255,255,0.18);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .slide-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  /* ── body ────────────────────────────────────────────────── */
+  .slide-body {
+    flex: 1;
+    padding: 28px 40px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--gray);
+  }
+
+  /* ── footer ──────────────────────────────────────────────── */
+  .slide-footer {
+    background: var(--blue);
+    color: rgba(255,255,255,0.55);
+    font-size: 11px;
+    padding: 6px 40px;
+    display: flex;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  /* ── cover slide ─────────────────────────────────────────── */
+  #slide-0 {
+    background: var(--blue);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+  #slide-0 .cover-logo {
+    font-size: 13px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  #slide-0 h1 {
+    font-size: 34px;
+    color: var(--white);
+    line-height: 1.25;
+    max-width: 700px;
+    margin-bottom: 12px;
+  }
+  #slide-0 h1 span { color: #7FBFFF; }
+  #slide-0 .cover-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 36px;
+  }
+  #slide-0 .cover-meta {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+  }
+  #slide-0 .cover-meta div {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 24px;
+    color: var(--white);
+    font-size: 13px;
+  }
+  #slide-0 .cover-meta div strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  /* ── typography ──────────────────────────────────────────── */
+  h3 { font-size: 16px; color: var(--blue); margin-bottom: 6px; }
+  p  { font-size: 14px; color: var(--text); line-height: 1.55; }
+  ul { padding-left: 18px; }
+  ul li { font-size: 14px; color: var(--text); margin-bottom: 5px; line-height: 1.5; }
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--blue3);
+    color: var(--blue);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── cards row ───────────────────────────────────────────── */
+  .cards {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 160px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .card .card-icon { font-size: 22px; margin-bottom: 6px; }
+  .card .card-label { font-size: 11px; color: var(--gray2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .card .card-value { font-size: 26px; font-weight: 700; color: var(--blue); }
+  .card .card-sub   { font-size: 12px; color: var(--gray2); margin-top: 2px; }
+
+  /* ── stat badge ──────────────────────────────────────────── */
+  .stat-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat {
+    background: var(--white);
+    border-left: 4px solid var(--blue2);
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    flex: 1;
+    min-width: 130px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+  .stat strong { display: block; font-size: 20px; color: var(--blue); }
+  .stat.green { border-color: var(--green); }
+  .stat.red   { border-color: var(--red);   }
+  .stat.orange{ border-color: var(--orange);}
+
+  /* ── table ───────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  th {
+    background: var(--blue);
+    color: var(--white);
+    padding: 9px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  td {
+    padding: 8px 14px;
+    border-bottom: 1px solid #EDF0F5;
+    color: var(--text);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #FAFBFD; }
+
+  /* ── pill / chip ─────────────────────────────────────────── */
+  .pill {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .pill.green  { background: #D4EDDA; color: #155724; }
+  .pill.red    { background: #F8D7DA; color: #721C24; }
+  .pill.orange { background: #FFECD2; color: #7A3300; }
+  .pill.blue   { background: #D0E4FF; color: #003366; }
+
+  /* ── feature list ────────────────────────────────────────── */
+  .feat-list { display: flex; flex-direction: column; gap: 8px; }
+  .feat {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 11px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+  .feat .feat-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .feat .feat-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .feat .feat-text strong { color: var(--blue); }
+
+  /* ── QA box ──────────────────────────────────────────────── */
+  .qa-box {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 14px 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .qa-box .qa-q {
+    color: var(--blue2);
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .qa-box .qa-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--gray2);
+    margin-top: 8px;
+    margin-bottom: 2px;
+  }
+  .qa-box .qa-ref  { color: #444; font-style: italic; }
+  .qa-box .qa-resp { color: var(--text); }
+
+  /* ── two-col ─────────────────────────────────────────────── */
+  .two-col { display: flex; gap: 16px; }
+  .two-col > * { flex: 1; }
+
+  /* ── section label ───────────────────────────────────────── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray2);
+    margin-bottom: 6px;
+  }
+
+  /* ── source chips ────────────────────────────────────────── */
+  .src-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .src-chip {
+    background: var(--white);
+    border: 1px solid #DDE3EE;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .src-chip .src-type {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .src-chip .src-type.man   { background: #D0E4FF; color: #003366; }
+  .src-chip .src-type.art   { background: #D4EDDA; color: #155724; }
+  .src-chip .src-type.news  { background: #FFECD2; color: #7A3300; }
+  .src-chip .src-type.pres  { background: #F3E5FF; color: #4B0082; }
+
+  /* ── navigation ──────────────────────────────────────────── */
+  #nav {
+    position: fixed;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 999;
+  }
+  .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    border: none;
+    outline: none;
+  }
+  .dot.active { background: var(--white); transform: scale(1.3); }
+  .nav-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: var(--white);
+    font-size: 18px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    outline: none;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+
+  /* ── print ───────────────────────────────────────────────── */
+  @media print {
+    html, body { overflow: visible; background: white; }
+    #deck { height: auto; overflow: visible; }
+    #nav { display: none; }
+    .slide {
+      position: relative; opacity: 1; pointer-events: all;
+      height: 100vh; page-break-after: always; break-after: page;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 0 — Cover -->
+  <div class="slide active" id="slide-0">
+    <div class="cover-logo">Mosaico · RAG Evaluation</div>
+    <h1>Valutazione Sistema RAG<br><span>Dataset RECON</span></h1>
+    <div class="cover-sub">Pipeline ibrida · Embedding multilingue · Cross-encoder</div>
+    <div class="cover-meta">
+      <div><strong>50</strong>Domande valutate</div>
+      <div><strong>9</strong>Fonti documentali</div>
+      <div><strong>0</strong>Errori di esecuzione</div>
+      <div><strong>12 mag 2026</strong>Data valutazione</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 1 — Obiettivo -->
+  <div class="slide" id="slide-1">
+    <div class="slide-header">
+      <span class="badge">01</span>
+      <h2>Obiettivo della valutazione</h2>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <h3>Cosa è stato valutato</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat">
+              <span class="feat-icon">🎯</span>
+              <div class="feat-text">Capacità del sistema RAG <strong>Mosaico</strong> di rispondere a domande tecniche sul simulatore RECON e sulle Comunità Energetiche Rinnovabili (CER)</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">📊</span>
+              <div class="feat-text">Valutazione su <strong>50 Q&amp;A in italiano</strong> con reference answer definita da esperti di dominio ENEA</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">⚗️</span>
+              <div class="feat-text">Configurazione <strong>full pipeline</strong>: tutte le feature avanzate di retrieval attive</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">🔬</span>
+              <div class="feat-text">Inclusione di <strong>3 domande "stress test"</strong> per verificare la gestione di quesiti fuori contesto o con dati non disponibili</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Perché questo dataset</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat">
+              <span class="feat-icon">📄</span>
+              <div class="feat-text">RECON è il caso d'uso principale del knowledge base caricato su Mosaico per il progetto ENEA</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">🌍</span>
+              <div class="feat-text">Domande in italiano su fonte primariamente italiana → valida il modello di embedding <strong>multilingue</strong></div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">⚖️</span>
+              <div class="feat-text">Mix di domande fattuali, procedurali, normative ed edge-case → coverage ampio della knowledge base</div>
+            </div>
+          </div>
+          <div style="margin-top:12px; background:var(--white); border-radius:8px; padding:12px 16px; box-shadow:0 1px 4px rgba(0,0,0,0.08)">
+            <div class="section-label">Passo successivo</div>
+            <p>Calcolo automatico delle metriche <strong>RAGAS</strong> (faithfulness, answer relevancy, context precision/recall, answer correctness) con giudice LLM separato.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>1 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 2 — Dataset -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <span class="badge">02</span>
+      <h2>Dataset RECON — 50 domande in italiano</h2>
+    </div>
+    <div class="slide-body">
+      <div class="stat-row">
+        <div class="stat green"><strong>50</strong>Domande totali</div>
+        <div class="stat"><strong>3</strong>Stress test</div>
+        <div class="stat"><strong>5</strong>Categorie tematiche</div>
+        <div class="stat blue"><strong>100%</strong>Lingua italiana</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <h3>Categorie di domande</h3>
+          <table>
+            <thead><tr><th>Categoria</th><th>Esempi</th><th>#</th></tr></thead>
+            <tbody>
+              <tr><td>Conoscenza generale ENEA/RECON</td><td>Chi ha sviluppato RECON? Qual è l'obiettivo?</td><td>~12</td></tr>
+              <tr><td>Tecnica / metodologica</td><td>Come viene calcolata la produzione FV? Fattore emissione CO₂?</td><td>~15</td></tr>
+              <tr><td>Normativa / incentivi</td><td>TIAD, PNRR, tariffa premio, cumulabilità</td><td>~10</td></tr>
+              <tr><td>Operativa / utente</td><td>Dati input, gestione prosumer, profili consumo</td><td>~10</td></tr>
+              <tr><td>Stress test</td><td>Dati non presenti nei documenti, scenari specifici di ricerca</td><td>3</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Stress test inclusi</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat">
+              <span class="feat-icon">⚠️</span>
+              <div class="feat-text"><strong>#14 — Dati non disponibili:</strong> "Quanti progetti realizzati grazie a RECON?" — dato non presente in nessuna fonte</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">⚠️</span>
+              <div class="feat-text"><strong>#30 — Fuori contesto:</strong> "Come si comporta RECON rispetto agli obiettivi sociali delle CER?" — risposta parziale attesa</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">⚠️</span>
+              <div class="feat-text"><strong>#50 — Dato di ricerca specifico:</strong> "Impatto CAPEX su TIR/PBT?" — valori numerici da simulazioni non riportate nei documenti principali</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>2 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 3 — Fonti -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <span class="badge">03</span>
+      <h2>Fonti documentali — Knowledge Base RECON</h2>
+    </div>
+    <div class="slide-body">
+      <p>9 documenti indicizzati nella collection <code>RECON</code> su Qdrant. Ogni risposta è generata a partire da 10 chunk recuperati da questa base documentale.</p>
+      <div class="src-grid" style="margin-top:4px">
+        <div class="src-chip"><span class="src-type man">Manuale</span>Manuale_RECON.pdf</div>
+        <div class="src-chip"><span class="src-type pres">Presentazione</span>Presentazione_RECON.pdf</div>
+        <div class="src-chip"><span class="src-type art">Articolo</span>Articolo1_electronics-14-02027.pdf</div>
+        <div class="src-chip"><span class="src-type art">Articolo</span>Articolo2_SS25_IECON2024.pdf</div>
+        <div class="src-chip"><span class="src-type art">Articolo</span>Articolo3_buildings-13-02940.pdf</div>
+        <div class="src-chip"><span class="src-type news">Notizia</span>Notizia_ENEA_03-02-25.pdf</div>
+        <div class="src-chip"><span class="src-type news">Notizia</span>Notizia_Ingegno_29-04-24.pdf</div>
+        <div class="src-chip"><span class="src-type news">Notizia</span>Notizia_Qualenergia_18-02-25.pdf</div>
+        <div class="src-chip"><span class="src-type news">Notizia</span>Notizia_Qualenergia_07-05-21.pdf</div>
+      </div>
+      <div class="two-col" style="margin-top:4px">
+        <div class="card">
+          <div class="card-icon">📘</div>
+          <div class="card-label">Fonte primaria</div>
+          <div class="card-value" style="font-size:16px">Manuale RECON v2.2.2</div>
+          <div class="card-sub">Guida tecnica completa — fonte più citata dal retriever</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔬</div>
+          <div class="card-label">Articoli scientifici</div>
+          <div class="card-value">3</div>
+          <div class="card-sub">Electronics, IECON2024, Buildings — metodologia e validazione</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📰</div>
+          <div class="card-label">Notizie / comunicati</div>
+          <div class="card-value">4</div>
+          <div class="card-sub">ENEA, Ingegno, Qualenergia — contesto e diffusione</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🗂️</div>
+          <div class="card-label">Presentazione</div>
+          <div class="card-value">1</div>
+          <div class="card-sub">Introduzione e panoramica dello strumento</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>3 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 4 — Config -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <span class="badge">04</span>
+      <h2>Configurazione del sistema</h2>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <h3>Modelli</h3>
+          <table style="margin-top:8px">
+            <thead><tr><th>Componente</th><th>Valore</th></tr></thead>
+            <tbody>
+              <tr><td>Modello generativo</td><td><code>gemma4:26b</code> (Ollama)</td></tr>
+              <tr><td>Embedding</td><td><code>intfloat/multilingual-e5-base</code></td></tr>
+              <tr><td>Cross-encoder</td><td><code>BAAI/bge-reranker-v2-m3</code></td></tr>
+              <tr><td>Cross-encoder top-k</td><td><code>30</code></td></tr>
+            </tbody>
+          </table>
+          <h3 style="margin-top:16px">Parametri di retrieval</h3>
+          <table style="margin-top:8px">
+            <thead><tr><th>Parametro</th><th>Valore</th></tr></thead>
+            <tbody>
+              <tr><td>Chunk size / overlap</td><td><code>1000</code> / <code>220</code> char</td></tr>
+              <tr><td>Candidati iniziali</td><td><code>120</code></td></tr>
+              <tr><td>Chunk restituiti</td><td><code>10</code></td></tr>
+              <tr><td>Score threshold Qdrant</td><td><code>0.20</code></td></tr>
+              <tr><td>MMR lambda</td><td><code>0.60</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Parametri di generazione</h3>
+          <table style="margin-top:8px">
+            <thead><tr><th>Parametro</th><th>Valore</th></tr></thead>
+            <tbody>
+              <tr><td>Context budget</td><td><code>10 000</code> char</td></tr>
+              <tr><td>History budget</td><td><code>0</code> char (disabilitato)</td></tr>
+              <tr><td>Timeout richiesta</td><td><code>180 s</code></td></tr>
+            </tbody>
+          </table>
+          <h3 style="margin-top:16px">Infrastruttura</h3>
+          <table style="margin-top:8px">
+            <thead><tr><th>Servizio</th><th>Dettaglio</th></tr></thead>
+            <tbody>
+              <tr><td>LLM (Ollama)</td><td>Server remoto <code>[nascosto]</code></td></tr>
+              <tr><td>Vector DB</td><td>Qdrant (Docker)</td></tr>
+              <tr><td>DB persistenza</td><td>PostgreSQL (Docker)</td></tr>
+              <tr><td>API RAG</td><td>FastAPI — porta <code>9000</code></td></tr>
+              <tr><td>Auth</td><td><code>SKIP_AUTH=true</code> (dev)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>4 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 5 — Pipeline -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <span class="badge">05</span>
+      <h2>Pipeline RAG — Feature attive</h2>
+    </div>
+    <div class="slide-body">
+      <p style="margin-bottom:4px">Configurazione <strong>full pipeline</strong>: tutti i componenti avanzati sono abilitati simultaneamente.</p>
+      <div class="feat-list">
+        <div class="feat">
+          <span class="feat-icon">✅</span>
+          <div class="feat-text">
+            <strong>Multi-Vector Search</strong> — ricerca simultanea su più rappresentazioni vettoriali dello stesso chunk; aumenta il recall su domande con phrasing diverso dalla fonte
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">✅</span>
+          <div class="feat-text">
+            <strong>Hybrid Reranking</strong> — fusione pesata: 60% similarità vettoriale + 25% fuzzy match + 15% keyword match; bilancia semantica e presenza lessicale esatta
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">✅</span>
+          <div class="feat-text">
+            <strong>MMR Diversity</strong> (λ = 0.60) — Maximal Marginal Relevance: riduce chunk ridondanti nel contesto passato al LLM, aumentando la copertura informativa
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">✅</span>
+          <div class="feat-text">
+            <strong>Chunk Stitching</strong> — ricostruzione del contesto testuale attorno ai chunk recuperati; evita troncature a metà frase e migliora la coerenza del contesto
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-icon">✅</span>
+          <div class="feat-text">
+            <strong>Cross-Encoder Reranking</strong> (<code>BAAI/bge-reranker-v2-m3</code>, top-k 30) — riordina i candidati con un modello bi-encoder question↔chunk; massima precisione nel ranking finale
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--blue3); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--blue)">
+        <strong>Flusso:</strong> Query → Multi-vector (120 candidati) → Hybrid reranking → MMR diversity → Stitching → Cross-encoder (top 30 → top 10) → LLM generazione
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>5 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 6 — Risultati -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <span class="badge">06</span>
+      <h2>Risultati — Panoramica aggregata</h2>
+    </div>
+    <div class="slide-body">
+      <div class="stat-row">
+        <div class="stat green"><strong>50 / 50</strong>Risposte generate</div>
+        <div class="stat green"><strong>0</strong>Errori di esecuzione</div>
+        <div class="stat"><strong>10</strong>Chunk per query (fisso)</div>
+        <div class="stat"><strong>9</strong>Fonti distinte usate</div>
+        <div class="stat blue"><strong>100%</strong>Completamento</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <h3>Qualità risposte — analisi manuale</h3>
+          <table style="margin-top:8px">
+            <thead><tr><th>Categoria</th><th>Esito</th><th>#</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Risposta corretta / coerente con reference</td>
+                <td><span class="pill green">Corretto</span></td>
+                <td>~44</td>
+              </tr>
+              <tr>
+                <td>Stress test — rifiuto corretto ("non disponibile")</td>
+                <td><span class="pill green">Corretto</span></td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Stress test — risposta parziale / generica</td>
+                <td><span class="pill orange">Parziale</span></td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Dato specifico non recuperato (non stress test)</td>
+                <td><span class="pill red">Gap</span></td>
+                <td>~3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Note metodologiche</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat">
+              <span class="feat-icon">ℹ️</span>
+              <div class="feat-text">L'analisi qualitativa è basata su <strong>ispezione manuale</strong> di un campione rappresentativo. Le metriche automatiche RAGAS sono in fase di calcolo.</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">ℹ️</span>
+              <div class="feat-text">I 10 chunk uniformi per query sono il risultato del parametro <code>CHAT_RESULT_LIMIT=10</code> — tutti i casi rispettano il limite.</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">ℹ️</span>
+              <div class="feat-text">Nessuna query ha scatenato il fallback di timeout (120 s per domanda).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>6 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 7 — Esempi positivi -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <span class="badge">07</span>
+      <h2>Analisi qualitativa — Esempi positivi</h2>
+    </div>
+    <div class="slide-body">
+      <div class="qa-box">
+        <div class="qa-q">Q (case 4) — Chi ha sviluppato RECON?</div>
+        <div class="qa-label">Reference</div>
+        <div class="qa-ref">RECON è stato sviluppato da ENEA … nell'ambito della Ricerca di Sistema Elettrico (PTR 2022–2024) … curato dal Laboratorio Smart Cities and Communities (SCC) … Dipartimento TERIN.</div>
+        <div class="qa-label">Risposta sistema</div>
+        <div class="qa-resp">ENEA (Agenzia nazionale per le nuove tecnologie, l'energia e lo sviluppo economico sostenibile) ha sviluppato il simulatore RECON. <span class="pill green">Corretto</span></div>
+      </div>
+      <div class="qa-box">
+        <div class="qa-q">Q (case 20) — Requisiti di localizzazione per accedere al Contributo PNRR per CER e GAC?</div>
+        <div class="qa-label">Reference</div>
+        <div class="qa-ref">L'impianto deve essere installato in un Comune con meno di 50.000 abitanti.</div>
+        <div class="qa-label">Risposta sistema</div>
+        <div class="qa-resp">Per accedere al Contributo PNRR per CER e GAC, l'impianto deve essere installato in un comune con meno di 50.000 abitanti. <span class="pill green">Corretto · Risposta precisa</span></div>
+      </div>
+      <div class="qa-box">
+        <div class="qa-q">Q (case 3) — Cos'è il TIAD e perché è rilevante per RECON?</div>
+        <div class="qa-label">Risposta sistema (sintesi)</div>
+        <div class="qa-resp">Il TIAD è il Testo Integrato sull'Autoconsumo diffuso dell'Autorità ARERA. È rilevante per RECON perché costituisce uno dei riferimenti del quadro legislativo e regolatorio italiano che l'applicativo utilizza per le valutazioni preliminari … <span class="pill green">Corretto</span></div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>7 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 8 — Stress test -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <span class="badge">08</span>
+      <h2>Gestione degli Stress Test</h2>
+    </div>
+    <div class="slide-body">
+      <div class="qa-box">
+        <div class="qa-q">Q (case 14) — "Quanti progetti sono stati realizzati grazie a RECON?" <span class="pill orange">Stress test — dato non presente</span></div>
+        <div class="qa-label">Risposta sistema</div>
+        <div class="qa-resp">"Il contesto non fornisce informazioni sul numero di progetti che sono stati realizzati grazie a RECON fino ad oggi."
+          <span class="pill green" style="margin-left:8px">Comportamento corretto — nessuna allucinazione</span>
+        </div>
+        <div class="qa-label">Commento</div>
+        <div class="qa-ref">Reference attesa: ~7.400 utenti registrati, ma nessun conteggio progetti. Il sistema rifiuta correttamente di inventare un numero.</div>
+      </div>
+      <div class="qa-box">
+        <div class="qa-q">Q (case 50) — "Impatto del CAPEX su TIR e PBT?" <span class="pill orange">Stress test — dato da ricerca specifica</span></div>
+        <div class="qa-label">Risposta sistema</div>
+        <div class="qa-resp">"… il TIR viene calcolato a partire dai flussi di cassa attualizzati… non fornisce alcuna informazione specifica sull'impatto di un aumento dei costi di investimento."
+          <span class="pill green" style="margin-left:8px">Corretto — non inventa i valori (-7/-10% TIR, +6 mesi PBT)</span>
+        </div>
+      </div>
+      <div class="qa-box">
+        <div class="qa-q">Q (case 30) — "Obiettivi sociali delle CER oltre il profitto?" <span class="pill orange">Stress test — risposta parziale attesa</span></div>
+        <div class="qa-label">Risposta sistema</div>
+        <div class="qa-resp">Fornisce una risposta articolata su obiettivi ambientali e sociali generici, ma meno focalizzata sul dettaglio specifico di RECON (simulazione ricavi per servizi collettivi).
+          <span class="pill orange" style="margin-left:8px">Parziale — plausibile ma non ancorata alla reference</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>8 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 9 — Caso critico -->
+  <div class="slide" id="slide-9">
+    <div class="slide-header">
+      <span class="badge">09</span>
+      <h2>Caso critico — Gap di recupero</h2>
+    </div>
+    <div class="slide-body">
+      <div class="qa-box" style="border-left:4px solid var(--red); border-radius:0 8px 8px 0;">
+        <div class="qa-q">Q (case 42) — "Qual è il fattore di emissione utilizzato da RECON per calcolare le emissioni evitate?" <span class="pill red">Gap di retrieval</span></div>
+        <div class="qa-label">Reference</div>
+        <div class="qa-ref">Il fattore di emissione associato alla produzione di energia elettrica utilizzato in RECON è <strong>267,9 g CO₂/kWh</strong>, basato sul Rapporto ISPRA 386/2023.</div>
+        <div class="qa-label">Risposta sistema</div>
+        <div class="qa-resp">"Il contesto non specifica quale sia il fattore di emissione utilizzato da RECON per calcolare le emissioni evitate, ma conferma che il simulatore calcola i benefici ambientali in termini di riduzione delle emissioni di CO₂."</div>
+      </div>
+      <div class="two-col" style="margin-top:4px">
+        <div>
+          <h3>Analisi del problema</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat">
+              <span class="feat-icon">🔍</span>
+              <div class="feat-text">Il valore <strong>267,9 g CO₂/kWh</strong> è presente nel Manuale RECON v2.2.2, ma probabilmente in un chunk non recuperato tra i top-10</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">📉</span>
+              <div class="feat-text">Il dato è molto specifico (numerico, con unità di misura) in un documento denso: la query semantica potrebbe non matcharlo con score sufficiente</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">✓</span>
+              <div class="feat-text">Il sistema non allucinatina — risponde correttamente che il dato non è nel contesto ricevuto, ma il contesto era incompleto</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Possibili azioni correttive</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat">
+              <span class="feat-icon">⚙️</span>
+              <div class="feat-text">Aumentare <code>CHAT_CANDIDATES</code> (es. 150→200) per allargare il pool prima del reranking</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">📦</span>
+              <div class="feat-text">Ridurre <code>CHUNK_SIZE</code> per isolare meglio dati numerici specifici in chunk dedicati</div>
+            </div>
+            <div class="feat">
+              <span class="feat-icon">🔎</span>
+              <div class="feat-text">Analisi del fattore di emissione nell'ablation study (metric context recall)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>9 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 10 — Prossimi passi -->
+  <div class="slide" id="slide-10">
+    <div class="slide-header">
+      <span class="badge">10</span>
+      <h2>Prossimi passi</h2>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <h3>Fase 1 — Metriche RAGAS automatiche</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat"><span class="feat-icon">📐</span><div class="feat-text"><strong>Faithfulness</strong> — la risposta è ancorata ai chunk recuperati?</div></div>
+            <div class="feat"><span class="feat-icon">📐</span><div class="feat-text"><strong>Answer Relevancy</strong> — la risposta è pertinente alla domanda?</div></div>
+            <div class="feat"><span class="feat-icon">📐</span><div class="feat-text"><strong>Context Precision</strong> — i chunk recuperati sono rilevanti?</div></div>
+            <div class="feat"><span class="feat-icon">📐</span><div class="feat-text"><strong>Context Recall</strong> — i chunk coprono la reference answer?</div></div>
+            <div class="feat"><span class="feat-icon">📐</span><div class="feat-text"><strong>Answer Correctness</strong> — la risposta corrisponde alla reference?</div></div>
+          </div>
+          <div style="margin-top:10px; background:var(--white); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--gray2)">
+            Giudice LLM separato: <code>qwen3:8b</code> · ~90 min su 50 Q&amp;A
+          </div>
+        </div>
+        <div>
+          <h3>Fase 2 — Ablation Study (6 configurazioni)</h3>
+          <table style="margin-top:8px; font-size:12px">
+            <thead><tr><th>Config</th><th>Rerank</th><th>MMR</th><th>Stitch</th><th>MultiVec</th></tr></thead>
+            <tbody>
+              <tr><td>Full pipeline ✓</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>−rerank</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>−MMR</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>−stitch</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td></tr>
+              <tr><td>−multi-vector</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+              <tr><td>Baseline (tutto off)</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px; background:var(--white); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--gray2)">
+            Fase 3 opzionale: model comparison (<code>gemma4:26b</code> vs altri modelli)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>10 / 11</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SLIDE 11 — Conclusioni -->
+  <div class="slide" id="slide-11">
+    <div class="slide-header">
+      <span class="badge">11</span>
+      <h2>Conclusioni</h2>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <h3>Punti di forza</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat"><span class="feat-icon">✅</span><div class="feat-text"><strong>Robustezza operativa</strong> — 50/50 risposte generate, 0 errori, nessun timeout</div></div>
+            <div class="feat"><span class="feat-icon">✅</span><div class="feat-text"><strong>Gestione stress test</strong> — il sistema non allucinazione su dati non presenti nel contesto</div></div>
+            <div class="feat"><span class="feat-icon">✅</span><div class="feat-text"><strong>Copertura dominio</strong> — risposte corrette su normativa (TIAD, PNRR), tecnica (FV, eolico) e metodologia</div></div>
+            <div class="feat"><span class="feat-icon">✅</span><div class="feat-text"><strong>Pipeline ibrida</strong> — cross-encoder + MMR + stitching garantiscono contesto ricco e diversificato</div></div>
+          </div>
+        </div>
+        <div>
+          <h3>Aree di miglioramento</h3>
+          <div class="feat-list" style="margin-top:8px">
+            <div class="feat"><span class="feat-icon">⚠️</span><div class="feat-text"><strong>Dati numerici specifici</strong> — valori precisi (es. 267,9 g CO₂/kWh) possono sfuggire al retriever: da analizzare con context recall RAGAS</div></div>
+            <div class="feat"><span class="feat-icon">⚠️</span><div class="feat-text"><strong>Chunk size</strong> — chunk da 1000 char possono diluire dati puntuali; sperimentare chunk più piccoli (600-800 char) sull'ablation study</div></div>
+            <div class="feat"><span class="feat-icon">📋</span><div class="feat-text"><strong>Metriche automatiche</strong> — la valutazione qualitativa va completata con RAGAS per avere score oggettivi e confrontabili tra configurazioni</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--blue); color:var(--white); border-radius:8px; padding:14px 20px; font-size:14px; margin-top:4px">
+        <strong>Sintesi:</strong> Il sistema RAG Mosaico in configurazione full pipeline dimostra affidabilità operativa completa e buona qualità delle risposte sul dominio RECON.
+        I prossimi passi (RAGAS + ablation study) permetteranno di quantificare il contributo di ciascun componente e identificare le ottimizzazioni prioritarie.
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Mosaico · Valutazione RAG · Dataset RECON</span>
+      <span>11 / 11</span>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ── navigation dots + arrows ──────────────────────────────────────── -->
+<div id="nav">
+  <button class="nav-btn" id="btn-prev" title="Precedente (←)">&#8592;</button>
+  <div id="dots"></div>
+  <button class="nav-btn" id="btn-next" title="Successivo (→)">&#8594;</button>
+</div>
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsEl = document.getElementById('dots');
+  let current = 0;
+
+  /* build dots */
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.title = 'Slide ' + (i + 1);
+    d.addEventListener('click', () => go(i));
+    dotsEl.appendChild(d);
+  });
+
+  function go(n) {
+    slides[current].classList.remove('active');
+    dotsEl.children[current].classList.remove('active');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dotsEl.children[current].classList.add('active');
+  }
+
+  document.getElementById('btn-prev').addEventListener('click', () => go(current - 1));
+  document.getElementById('btn-next').addEventListener('click', () => go(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown'  || e.key === ' ')  go(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                       go(current - 1);
+    if (e.key === 'Home')  go(0);
+    if (e.key === 'End')   go(slides.length - 1);
+  });
+
+  /* swipe support */
+  let startX = 0;
+  document.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) go(current + (dx < 0 ? 1 : -1));
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
