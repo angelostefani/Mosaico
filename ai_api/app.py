@@ -1976,8 +1976,13 @@ def stitch_chunks(results: List[Any], char_budget: int, max_run_len: int = 3) ->
     return stitched
 
 
-def rerank_results(question: str, results: list) -> List[Tuple[float, Any]]:
+def rerank_results(
+    question: str,
+    results: list,
+    ce_latency_out: Optional[list] = None,
+) -> List[Tuple[float, Any]]:
     import math
+    import time
 
     # Stage 3a: hybrid reranker su tutti i candidati (sempre eseguito)
     hybrid_scored: List[Tuple[float, Any]] = []
@@ -2000,7 +2005,10 @@ def rerank_results(question: str, results: list) -> List[Tuple[float, Any]]:
                 top_pool = [r for _, r in hybrid_scored[:top_k]]
                 pairs = [(question, (_payload_of_generic(r).get("text_chunk") or "")[:512])
                          for r in top_pool]
+                _ce_t0 = time.perf_counter()
                 ce_scores = cross_encoder.predict(pairs)
+                if ce_latency_out is not None:
+                    ce_latency_out.append(round((time.perf_counter() - _ce_t0) * 1000, 1))
                 ce_scored: List[Tuple[float, Any]] = []
                 for r, ce_score in zip(top_pool, ce_scores):
                     vector_score = getattr(r, "score", 0.0) or 0.0
@@ -2364,11 +2372,15 @@ async def evaluation(
     username_val = _resolve_username(username, token_payload)
     coll = _build_collection_name(username_val, collection)
 
+    import time as _time
+
     client = init_qdrant_client()
     if not client.collection_exists(coll):
         raise HTTPException(status_code=404, detail=f"Collection '{coll}' non trovata.")
     coll_config = get_collection_config(coll)
     collection_scope = coll_config.get("scope_prompt") if coll_config else None
+
+    _retrieval_t0 = _time.perf_counter()
 
     try:
         primary_results = await run_in_threadpool(
@@ -2411,13 +2423,16 @@ async def evaluation(
             "retrieved_sources": [],
             "response": "Nessun contesto rilevante.",
             "reference": reference,
+            "retrieval_latency_ms": round((_time.perf_counter() - _retrieval_t0) * 1000, 1),
+            "ce_latency_ms": None,
         })
 
     pool_k = max(CHAT_RESULT_LIMIT * 2, CHAT_RESULT_LIMIT)
     pool = filtered_results[:pool_k]
 
+    _ce_latency_out: list = []
     if ENABLE_RERANK:
-        reranked_scored = rerank_results(question, pool)
+        reranked_scored = rerank_results(question, pool, ce_latency_out=_ce_latency_out)
     else:
         reranked_scored = [(float(getattr(r, "score", 0.0) or 0.0), r) for r in pool]
 
@@ -2474,6 +2489,8 @@ async def evaluation(
         "retrieved_sources": retrieved_sources,
         "response": answer,
         "reference": reference,
+        "retrieval_latency_ms": round((_time.perf_counter() - _retrieval_t0) * 1000, 1),
+        "ce_latency_ms": _ce_latency_out[0] if _ce_latency_out else None,
     })
 
 

@@ -85,6 +85,8 @@ def main():
         "n_chunks",
         "retrieved_sources",
         "retrieved_contexts",
+        "retrieval_latency_ms",
+        "ce_latency_ms",
         "error",
     ]
 
@@ -117,6 +119,8 @@ def main():
                 "n_chunks": len(contexts),
                 "retrieved_sources": " | ".join(sources),
                 "retrieved_contexts": " ||| ".join(contexts),
+                "retrieval_latency_ms": result.get("retrieval_latency_ms", ""),
+                "ce_latency_ms": result.get("ce_latency_ms", ""),
                 "error": "",
             }
             print(f"OK  ({len(contexts)} chunks)")
@@ -130,6 +134,8 @@ def main():
                 "n_chunks": 0,
                 "retrieved_sources": "",
                 "retrieved_contexts": "",
+                "retrieval_latency_ms": "",
+                "ce_latency_ms": "",
                 "error": str(exc),
             }
             print(f"FAIL — {exc}")
