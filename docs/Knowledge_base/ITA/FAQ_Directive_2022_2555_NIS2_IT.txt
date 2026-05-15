@@ -1,0 +1,355 @@
+FAQ - DIRETTIVA (UE) 2022/2555 - SICUREZZA INFORMATICA (DIRETTIVA NIS 2)
+========================================================================
+
+
+--- SEZIONE 1: COS'È LA DIRETTIVA E PERCHÉ ESISTE ---
+
+D: Qual è l'obiettivo principale della Direttiva (UE) 2022/2555?
+R: La Direttiva mira a conseguire un livello comune elevato di sicurezza informatica
+   nell'Unione, al fine di migliorare il funzionamento del mercato interno. Stabilisce
+   obblighi per gli Stati membri in materia di adozione di strategie nazionali per la
+   sicurezza informatica, misure di gestione dei rischi e obblighi di segnalazione per
+   i soggetti essenziali e importanti, norme sullo scambio di informazioni, nonché obblighi
+   di supervisione e applicazione.
+
+D: Cosa ha spinto l'UE ad adottare questa nuova Direttiva?
+R: La precedente Direttiva (UE) 2016/1148 (NIS1) presentava carenze intrinseche che
+   impedivano una risposta efficace alle sfide in materia di sicurezza informatica attuali
+   ed emergenti. Il suo riesame ha evidenziato notevoli divergenze di recepimento tra gli
+   Stati membri — in particolare per quanto riguarda l'ambito di applicazione, gli obblighi
+   di sicurezza, la segnalazione degli incidenti, la supervisione e l'applicazione —
+   frammentando il mercato interno e creando livelli disomogenei di resilienza informatica.
+
+D: Questa Direttiva abroga normative precedenti?
+R: Sì. La Direttiva (UE) 2022/2555 abroga la Direttiva (UE) 2016/1148 con effetto dal
+   18 ottobre 2024. Sopprime altresì l'articolo 19 del Regolamento (UE) n. 910/2014 e
+   gli articoli 40 e 41 della Direttiva (UE) 2018/1972 con effetto dalla stessa data.
+
+
+--- SEZIONE 2: DEFINIZIONI CHIAVE ---
+
+D: Cosa si intende per «incidente» ai sensi di questa Direttiva?
+R: Un evento che compromette la disponibilità, l'autenticità, l'integrità o la riservatezza
+   dei dati memorizzati, trasmessi o trattati, o dei servizi offerti dai sistemi informatici
+   e di rete o accessibili tramite essi.
+
+D: Cosa si intende per «incidente significativo»?
+R: Un incidente che ha causato o è in grado di causare una grave perturbazione operativa
+   dei servizi o perdite finanziarie per il soggetto interessato, ovvero che ha interessato
+   o è in grado di interessare altre persone fisiche o giuridiche causando danni materiali
+   o immateriali considerevoli.
+
+D: Cosa si intende per «incidente informatico su vasta scala»?
+R: Un incidente che provoca un livello di perturbazione che supera la capacità di risposta
+   di uno Stato membro, o che ha un impatto significativo su almeno due Stati membri.
+
+D: Cosa si intende per «minaccia informatica»?
+R: Qualsiasi circostanza, evento o azione potenziale che potrebbe danneggiare, perturbare
+   o incidere negativamente sui sistemi informatici e di rete, sui relativi utenti o su
+   altre persone (come definito con riferimento al Regolamento (UE) 2019/881,
+   il Cybersecurity Act).
+
+D: Cosa si intende per «vulnerabilità»?
+R: Un punto debole, una suscettibilità o un difetto di prodotti o servizi TIC che può
+   essere sfruttato da una minaccia informatica.
+
+D: Come si definisce il «rischio»?
+R: Il potenziale di perdita o perturbazione causato da un incidente, espresso come
+   combinazione della portata di tale perdita o perturbazione e della probabilità che
+   l'incidente si verifichi.
+
+D: Cosa si intende per «quasi-incidente»?
+R: Un evento che avrebbe potuto compromettere la disponibilità, l'autenticità, l'integrità
+   o la riservatezza dei dati o dei servizi offerti tramite sistemi informatici e di rete,
+   ma che è stato impedito o che non si è materializzato.
+
+
+--- SEZIONE 3: SETTORI E SOGGETTI NELL'AMBITO DI APPLICAZIONE ---
+
+D: Quali settori rientrano nell'ambito di applicazione della Direttiva?
+R: La Direttiva copre due livelli di settori:
+   Allegato I — Settori ad alta criticità (11 settori):
+    1.  Energia
+    2.  Trasporti
+    3.  Settore bancario
+    4.  Infrastrutture dei mercati finanziari
+    5.  Sanità
+    6.  Acqua potabile
+    7.  Acque reflue
+    8.  Infrastrutture digitali
+    9.  Gestione dei servizi TIC (business-to-business)
+    10. Pubblica amministrazione
+    11. Spazio
+   Allegato II — Altri settori critici (7 settori):
+    1.  Servizi postali e di corriere
+    2.  Gestione dei rifiuti
+    3.  Fabbricazione, produzione e distribuzione di sostanze chimiche
+    4.  Produzione, trasformazione e distribuzione di alimenti
+    5.  Fabbricazione (dispositivi medici, elettronica, macchinari, veicoli, ecc.)
+    6.  Fornitori di servizi digitali (mercati online, motori di ricerca, social network)
+    7.  Ricerca
+
+D: Qual è la soglia dimensionale per rientrare nell'ambito di applicazione?
+R: In linea generale, la Direttiva si applica ai soggetti che si qualificano come
+   medie imprese (50 o più dipendenti e fatturato annuo o totale di bilancio superiore
+   a 10 milioni di EUR) o che superano tali soglie. Alcune categorie di soggetti sono incluse
+   indipendentemente dalle dimensioni, come i prestatori di servizi fiduciari, i registri
+   dei nomi di dominio di primo livello, i fornitori di servizi DNS, i fornitori di reti
+   pubbliche di comunicazione elettronica e i fornitori unici di servizi essenziali in
+   uno Stato membro.
+
+D: Qual è la differenza tra «soggetti essenziali» e «soggetti importanti»?
+R: I soggetti essenziali sono i grandi soggetti nei settori dell'Allegato I, nonché
+   categorie specifiche indipendentemente dalle dimensioni (prestatori di servizi fiduciari
+   qualificati, registri dei TLD, fornitori di servizi DNS, fornitori di reti pubbliche di
+   comunicazione elettronica, pubbliche amministrazioni centrali e soggetti identificati
+   come critici ai sensi della Direttiva (UE) 2022/2557). I soggetti importanti sono
+   tutti gli altri soggetti che rientrano nell'ambito di applicazione ma non si qualificano
+   come essenziali. La distinzione incide sul regime di supervisione: i soggetti essenziali
+   sono soggetti a supervisione preventiva e successiva; i soggetti importanti a un regime
+   più leggero, solo successivo.
+
+D: Chi è escluso dall'ambito di applicazione della Direttiva?
+R: Sono esclusi i soggetti della pubblica amministrazione che svolgono attività
+   prevalentemente nei settori della sicurezza nazionale, della pubblica sicurezza, della
+   difesa o dell'attività di contrasto. Gli Stati membri possono anche esentare soggetti
+   specifici operanti in tali settori. La Direttiva non si applica alle missioni diplomatiche
+   e consolari degli Stati membri nei paesi terzi.
+
+D: La Direttiva riguarda la resilienza fisica?
+R: No. La resilienza fisica dei soggetti critici è disciplinata dalla Direttiva CER
+   (UE) 2022/2557. La NIS2 si concentra sulla sicurezza informatica. Le due Direttive
+   sono complementari: i soggetti identificati come critici ai sensi della Direttiva CER
+   sono automaticamente trattati come soggetti essenziali ai sensi della NIS2, e le autorità
+   competenti nell'ambito di entrambe le Direttive devono cooperare e scambiarsi informazioni.
+
+D: I soggetti finanziari sono soggetti ai pieni obblighi NIS2?
+R: No. I soggetti finanziari disciplinati dal Regolamento (UE) 2022/2554 (DORA) non sono
+   soggetti agli obblighi di gestione dei rischi di sicurezza informatica e di segnalazione
+   previsti dalla NIS2, poiché DORA fornisce requisiti settoriali equivalenti. Tuttavia,
+   lo scambio di informazioni tra il settore finanziario e le autorità NIS2 è mantenuto.
+
+
+--- SEZIONE 4: OBBLIGHI DEGLI STATI MEMBRI ---
+
+D: Cosa devono fare gli Stati membri per recepire la Direttiva?
+R: Gli Stati membri devono adottare e pubblicare le necessarie misure nazionali entro il
+   17 ottobre 2024, con applicazione dal 18 ottobre 2024. Entro il 17 aprile 2025 devono
+   inoltre istituire un elenco di soggetti essenziali e importanti, riesaminato almeno
+   ogni due anni.
+
+D: Cosa deve contenere la strategia nazionale per la sicurezza informatica?
+R: Come minimo: obiettivi strategici e priorità riguardanti i settori degli Allegati I e II;
+   un quadro di governance; un quadro che chiarisca i ruoli e le responsabilità dei
+   portatori di interessi; un meccanismo per identificare gli asset e valutare i rischi;
+   misure di preparazione, risposta e ripristino; l'elenco delle autorità coinvolte; un
+   quadro politico per il coordinamento con le autorità CER; e un piano per accrescere
+   la consapevolezza dei cittadini in materia di sicurezza informatica.
+
+D: Quali organi di governance devono designare o istituire gli Stati membri?
+R: Ciascuno Stato membro deve designare o istituire: una o più autorità competenti per
+   la supervisione della sicurezza informatica; un punto di contatto unico per la
+   cooperazione transfrontaliera; una o più autorità di gestione delle crisi informatiche
+   per gli incidenti su vasta scala; e uno o più CSIRT (Computer Security Incident
+   Response Team).
+
+D: Con quale frequenza deve essere riesaminato l'elenco dei soggetti essenziali e importanti?
+R: Almeno ogni due anni. Entro il 17 aprile 2025, gli Stati membri devono notificare alla
+   Commissione il numero di soggetti essenziali e importanti per settore, aggiornando
+   tali informazioni ogni due anni.
+
+D: Gli Stati membri possono applicare norme nazionali più rigorose?
+R: Sì. La Direttiva stabilisce un'armonizzazione minima. Gli Stati membri possono adottare
+   o mantenere disposizioni che garantiscano un livello di sicurezza informatica più elevato,
+   purché compatibili con il diritto dell'Unione.
+
+
+--- SEZIONE 5: OBBLIGHI DEI SOGGETTI ESSENZIALI E IMPORTANTI ---
+
+D: Quali misure di gestione dei rischi di sicurezza informatica devono adottare i soggetti?
+R: Misure tecniche, operative e organizzative adeguate e proporzionate, basate su un
+   approccio multirischio, che comprendano almeno:
+   - Analisi dei rischi e politiche di sicurezza dei sistemi informatici;
+   - Procedure di gestione degli incidenti;
+   - Continuità operativa, gestione dei backup, ripristino in caso di disastro e
+     gestione delle crisi;
+   - Sicurezza della catena di approvvigionamento, compresi i rapporti con i fornitori
+     diretti e i fornitori di servizi;
+   - Sicurezza nell'acquisizione, nello sviluppo e nella manutenzione di reti e sistemi
+     informatici, compresa la gestione e la divulgazione delle vulnerabilità;
+   - Politiche per valutare l'efficacia delle misure di sicurezza informatica;
+   - Pratiche di igiene informatica di base e formazione sulla sicurezza informatica;
+   - Politiche sull'uso della crittografia e, ove opportuno, della cifratura;
+   - Sicurezza delle risorse umane, politiche di controllo degli accessi e gestione degli asset;
+   - Soluzioni di autenticazione a più fattori o di autenticazione continua, ove opportuno.
+
+D: Chi è responsabile dell'approvazione e della supervisione delle misure di sicurezza
+   informatica all'interno di un soggetto?
+R: L'organo di gestione del soggetto deve approvare le misure di gestione dei rischi di
+   sicurezza informatica, supervisionarne l'attuazione e può essere ritenuto responsabile
+   per le violazioni. I membri dell'organo di gestione sono tenuti a seguire una formazione
+   sulla sicurezza informatica; i soggetti sono incoraggiati a offrire una formazione analoga
+   a tutti i dipendenti.
+
+D: Le misure esistenti possono soddisfare i requisiti NIS2?
+R: Sì. Laddove atti giuridici settoriali dell'Unione prevedano misure di gestione dei rischi
+   di sicurezza informatica o obblighi di segnalazione equivalenti, si applicano tali
+   disposizioni in luogo dei corrispondenti obblighi NIS2. I soggetti soggetti a DORA o
+   a normative settoriali equivalenti possono già adempiere ai propri obblighi nell'ambito
+   di tali strumenti.
+
+D: I soggetti sono tenuti ad affrontare i rischi della catena di approvvigionamento?
+R: Sì. I soggetti devono valutare le vulnerabilità specifiche di ciascun fornitore diretto e
+   fornitore di servizi, nonché la qualità complessiva dei prodotti e le pratiche di sicurezza
+   informatica lungo le rispettive catene di approvvigionamento. Devono altresì tenere conto
+   dei risultati delle valutazioni coordinate dei rischi di sicurezza delle catene di
+   approvvigionamento critiche effettuate a livello dell'Unione dal Gruppo di cooperazione.
+
+
+--- SEZIONE 6: OBBLIGHI DI SEGNALAZIONE DEGLI INCIDENTI ---
+
+D: Quando un soggetto deve segnalare un incidente significativo?
+R: Senza indebito ritardo, seguendo un approccio a più fasi:
+   - Entro 24 ore dalla presa di conoscenza: una prima segnalazione, con l'indicazione
+     se si sospetta che l'incidente sia causato da atti illeciti o abbia probabilmente
+     un impatto transfrontaliero;
+   - Entro 72 ore dalla presa di conoscenza: una notifica dell'incidente con una
+     valutazione iniziale, la gravità e l'impatto, e gli indicatori di compromissione
+     ove disponibili;
+   - Su richiesta: relazioni intermedie sullo stato di avanzamento;
+   - Entro un mese dalla notifica dell'incidente: una relazione finale con descrizione
+     dettagliata, causa principale, misure di attenuazione applicate e impatto
+     transfrontaliero.
+   Per i prestatori di servizi fiduciari, il termine per la notifica iniziale è di 24 ore
+   (non 72 ore).
+
+D: I soggetti devono informare anche i destinatari dei servizi?
+R: Sì, ove opportuno. I soggetti devono comunicare senza indebito ritardo ai destinatari
+   dei servizi potenzialmente interessati qualsiasi minaccia informatica significativa e le
+   misure o i rimedi che possono adottare. Qualora la minaccia rischi di materializzarsi,
+   i soggetti devono altresì informare i destinatari della minaccia stessa. Tali comunicazioni
+   devono essere gratuite e formulate in modo chiaro.
+
+D: Cosa accade dopo la ricezione della prima segnalazione?
+R: Il CSIRT o l'autorità competente deve fornire un riscontro iniziale al soggetto notificante,
+   compresa la guida sulle possibili misure di attenuazione, entro 24 ore dalla ricezione
+   della prima segnalazione. Su richiesta è disponibile ulteriore supporto tecnico. Se si
+   sospetta che l'incidente abbia natura penale, verranno fornite anche indicazioni sulla
+   segnalazione alle autorità di contrasto.
+
+D: Cosa accade se un incidente interessa più Stati membri?
+R: Il CSIRT, l'autorità competente o il punto di contatto unico deve informare senza
+   indebito ritardo gli altri Stati membri interessati e l'ENISA. Il punto di contatto
+   unico trasmette all'ENISA ogni tre mesi una relazione di sintesi con dati aggregati
+   e anonimizzati sugli incidenti significativi, le minacce e i quasi-incidenti notificati.
+
+
+--- SEZIONE 7: GOVERNANCE E COORDINAMENTO ---
+
+D: Cos'è il «Gruppo di cooperazione»?
+R: Un gruppo di esperti della Commissione composto da rappresentanti degli Stati membri,
+   della Commissione e dell'ENISA, istituito per supportare la cooperazione strategica e
+   lo scambio di informazioni tra gli Stati membri. Tra i suoi compiti: fornire orientamenti
+   sul recepimento; scambiare buone pratiche; condurre valutazioni coordinate dei rischi di
+   sicurezza delle catene di approvvigionamento critiche; e elaborare programmi di lavoro
+   biennali. Si riunisce almeno una volta l'anno con il Gruppo per la resilienza dei soggetti
+   critici istituito dalla Direttiva CER.
+
+D: Cos'è la «rete dei CSIRT»?
+R: Una rete di CSIRT nazionali e del CERT-UE, con l'ENISA nel ruolo di segretariato,
+   istituita per sviluppare la fiducia e promuovere la cooperazione operativa rapida. Tra
+   i suoi compiti: scambiare informazioni su minacce, vulnerabilità e incidenti; fornire
+   assistenza reciproca; coordinare le risposte agli incidenti transfrontalieri; e supportare
+   la divulgazione coordinata delle vulnerabilità.
+
+D: Cos'è EU-CyCLONe?
+R: La Rete europea di collegamento per le crisi informatiche, composta dalle autorità di
+   gestione delle crisi informatiche degli Stati membri e dalla Commissione. Supporta la
+   gestione coordinata di incidenti e crisi informatiche su vasta scala a livello operativo,
+   funge da intermediario tra i livelli tecnico e politico, e riferisce ogni 18 mesi al
+   Parlamento europeo e al Consiglio.
+
+D: Come si coordina questa Direttiva con la Direttiva CER?
+R: Le due Direttive sono complementari. I soggetti identificati come critici ai sensi della
+   Direttiva CER sono trattati come soggetti essenziali ai sensi della NIS2. Le autorità
+   competenti nell'ambito di entrambe le Direttive devono cooperare regolarmente
+   sull'identificazione dei soggetti critici, sui rischi informatici e non informatici, sugli
+   incidenti e sulle attività di supervisione. Devono adoperarsi per armonizzare i modelli
+   di notifica e i processi di supervisione al fine di ridurre al minimo gli oneri
+   amministrativi.
+
+D: Qual è il ruolo dell'ENISA ai sensi di questa Direttiva?
+R: L'ENISA fornisce il segretariato della rete dei CSIRT e di EU-CyCLONe, gestisce la
+   banca dati europea delle vulnerabilità, crea e mantiene un registro di determinati
+   soggetti transfrontalieri, elabora linee guida e orientamenti tecnici, assiste gli Stati
+   membri nello sviluppo dei CSIRT, pubblica una relazione biennale sullo stato della
+   sicurezza informatica nell'Unione e supporta il quadro per la divulgazione coordinata
+   delle vulnerabilità.
+
+
+--- SEZIONE 8: GESTIONE DELLE VULNERABILITÀ E CONDIVISIONE DELLE INFORMAZIONI ---
+
+D: Cos'è la «divulgazione coordinata delle vulnerabilità»?
+R: Un processo strutturato attraverso il quale le vulnerabilità nei prodotti o servizi TIC
+   vengono segnalate al produttore o fornitore in modo da consentire la diagnosi e la
+   correzione prima della divulgazione pubblica. Ciascuno Stato membro deve designare
+   uno dei propri CSIRT come coordinatore, che funge da intermediario di fiducia tra
+   la parte segnalante e il produttore o fornitore interessato.
+
+D: Cos'è la banca dati europea delle vulnerabilità?
+R: Una banca dati sviluppata e gestita dall'ENISA che consente ai soggetti e ai loro
+   fornitori di divulgare e registrare volontariamente le vulnerabilità pubblicamente note
+   nei prodotti o servizi TIC. Include informazioni che descrivono la vulnerabilità, i prodotti
+   interessati e la gravità, nonché orientamenti sulle patch disponibili o sulle misure di
+   attenuazione. Tutte le parti interessate vi hanno accesso.
+
+D: I soggetti possono condividere volontariamente informazioni sulla sicurezza informatica?
+R: Sì. Gli Stati membri devono garantire che i soggetti — compresi quelli esclusi dall'ambito
+   di applicazione della Direttiva — possano scambiarsi volontariamente informazioni
+   pertinenti sulla sicurezza informatica, quali informazioni sulle minacce, vulnerabilità,
+   indicatori di compromissione e raccomandazioni di risposta, nell'ambito di dispositivi
+   di condivisione di informazioni sulla sicurezza informatica. Tale segnalazione volontaria
+   non deve comportare obblighi aggiuntivi per il soggetto notificante.
+
+
+--- SEZIONE 9: SUPERVISIONE, APPLICAZIONE E SANZIONI ---
+
+D: In cosa differisce la supervisione tra soggetti essenziali e importanti?
+R: I soggetti essenziali sono soggetti a supervisione preventiva e successiva globale,
+   compresi ispezioni in loco, audit di sicurezza regolari e mirati, scansioni di sicurezza
+   e richieste di informazioni. I soggetti importanti sono soggetti a un regime di
+   supervisione successiva più leggero: la supervisione è attivata da prove di potenziale
+   non conformità, non svolta in modo proattivo.
+
+D: Quali poteri di applicazione hanno le autorità competenti?
+R: Le autorità possono emettere avvertimenti, adottare istruzioni vincolanti per rimediare
+   alle carenze, ordinare la cessazione del comportamento in violazione, designare un
+   responsabile del monitoraggio e comminare sanzioni amministrative pecuniarie. Come
+   ultima istanza, per i soggetti essenziali possono altresì richiedere la sospensione
+   temporanea di certificazioni o autorizzazioni, o un divieto temporaneo per un dirigente
+   di esercitare funzioni manageriali.
+
+D: Quali sono le sanzioni amministrative pecuniarie massime?
+R: Per i soggetti essenziali: almeno 10 000 000 EUR o almeno il 2 % del fatturato mondiale
+   annuo totale dell'impresa interessata, se superiore.
+   Per i soggetti importanti: almeno 7 000 000 EUR o almeno l'1,4 % del fatturato mondiale
+   annuo totale dell'impresa interessata, se superiore.
+
+D: Quali diritti hanno i soggetti nel corso dei procedimenti di vigilanza?
+R: Il diritto di essere sentiti, il diritto alla difesa, il diritto alla protezione dei segreti
+   commerciali e aziendali, e il diritto a un ricorso effettivo dinanzi a un giudice
+   indipendente. Le autorità competenti devono motivare dettagliatamente le proprie misure
+   esecutive e notificare ai soggetti le risultanze preliminari, concedendo un termine
+   ragionevole per le osservazioni.
+
+D: Quando la Commissione effettuerà il primo riesame della Direttiva?
+R: Entro il 17 ottobre 2027, e ogni 36 mesi successivi, la Commissione deve riesaminare
+   il funzionamento della Direttiva e riferire al Parlamento europeo e al Consiglio,
+   valutando la pertinenza delle dimensioni, dei settori e dei tipi di soggetti disciplinati
+   alla luce degli sviluppi in materia di sicurezza informatica.
+
+
+========================================================================
+Fonte: Direttiva (UE) 2022/2555 del Parlamento europeo e del Consiglio
+del 14 dicembre 2022 - GU L 333/80 del 27.12.2022
+========================================================================

@@ -1,0 +1,602 @@
+[
+  {
+    "question": "Under Directive (EU) 2022/2557, what are the three cumulative conditions that must be met for an entity to be identified as a critical entity by a Member State?",
+    "reference": "A Member State must identify an entity as critical if it meets all three of the following conditions: (i) it provides one or more essential services; (ii) it operates on the territory of that Member State; and (iii) an incident would have a significant disruptive effect on the provision of those essential services. All three conditions must be satisfied simultaneously.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 treat entities in the banking and financial market infrastructure sectors differently from other critical entities?",
+    "reference": "Critical entities in the banking (point 3 of the Annex), financial market infrastructure (point 4) and digital infrastructure (point 8) sectors are not subject to the obligations of Chapters III, IV and VI of the Directive — which cover resilience measures, entity risk assessments, and incident notification — because they are already subject to equivalent sector-specific legislation such as DORA and NIS2. However, Member States must still identify these entities as critical, and Chapter II of the Directive (national strategies and risk assessments) continues to apply to them.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the relationship between an entity's identification as critical under Directive (EU) 2022/2557 and its classification under the NIS2 Directive (EU) 2022/2555?",
+    "reference": "Entities identified as critical under Directive (EU) 2022/2557 are automatically treated as essential entities under Directive (EU) 2022/2555 (NIS2), regardless of whether they would otherwise meet the size or sector thresholds for essential entity status. The two Directives are designed as complementary instruments: CER addresses physical resilience while NIS2 addresses cybersecurity. Competent authorities under both Directives must cooperate and exchange information, and Member States must ensure coordinated implementation to avoid duplication and excessive burden.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What obligations must a critical entity fulfil within the first ten months of being notified of its identification under Directive (EU) 2022/2557?",
+    "reference": "Within nine months of notification, the critical entity must carry out its own risk assessment. The Chapter III resilience obligations — covering the adoption of resilience measures and the drawing up of a resilience plan — apply from ten months after the notification. The entity must also designate a liaison officer as its point of contact with the competent authority.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what parameters must be used to assess whether an incident has had a significant disruptive effect for the purposes of incident notification?",
+    "reference": "The significance of a disruption is assessed against three parameters: (i) the number and proportion of users affected by the disruption of the essential service; (ii) the duration of the disruption; and (iii) the geographical area affected, including whether that area is geographically isolated.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is a critical entity of 'particular European significance' under Directive (EU) 2022/2557, and what specific obligations arise from that designation?",
+    "reference": "A critical entity of particular European significance is one that has already been identified as critical by a Member State and provides the same or similar essential services to or in six or more Member States, and has been formally notified as such by the Commission. Such an entity must inform its competent authority of the cross-border service provision. The Commission may then organise an advisory mission — composed of experts from the relevant Member States and the Commission — to assess the entity's resilience measures. The entity must provide the mission with full access to all relevant information, systems and facilities, after which the Commission issues an opinion on the entity's compliance.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 define 'resilience', and how does this definition differ from a simple business continuity concept?",
+    "reference": "Directive (EU) 2022/2557 defines resilience as a critical entity's ability to prevent, protect against, respond to, resist, mitigate, absorb, accommodate and recover from an incident. This is broader than business continuity because it encompasses the full lifecycle from prevention and protection through resistance and absorption to accommodation and recovery, rather than focusing only on maintaining or restoring operations after disruption.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the minimum elements that the national strategy for enhancing the resilience of critical entities must contain under Directive (EU) 2022/2557?",
+    "reference": "The national strategy must contain at least: strategic objectives and priorities; a governance framework describing the roles and responsibilities of authorities involved; a description of measures necessary to enhance overall resilience and the risk assessment process; the process for identifying critical entities; support mechanisms for critical entities including for SMEs; the framework for coordination with NIS2 competent authorities; and a description of existing policies regarding the identification of European critical infrastructures.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the governance functions of the Critical Entities Resilience Group established by Directive (EU) 2022/2557, and how does it interact with the NIS2 Cooperation Group?",
+    "reference": "The Critical Entities Resilience Group is a Commission expert group composed of Member State representatives. It supports the Commission in carrying out its tasks, facilitates cooperation and information exchange between Member States, assists the Commission in drawing up guidelines and promoting the sharing of best practices among Member States and critical entities. The Group meets at least once a year with the NIS2 Cooperation Group to ensure coordinated implementation of both Directives on physical and cyber resilience.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the timeline obligations for Member States regarding national strategy adoption and entity identification under Directive (EU) 2022/2557?",
+    "reference": "Member States had to adopt the Directive into national law by 17 October 2024, with the measures applying from 18 October 2024. Each Member State must adopt a national strategy for enhancing the resilience of critical entities and complete its Member State risk assessment by 17 January 2026. By 17 July 2026, Member States must identify the critical entities in the sectors listed in the Annex. The list of critical entities must be reviewed at least every four years.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 handle cross-border incidents that affect six or more Member States?",
+    "reference": "When an incident has an impact on or in six or more Member States, the competent authorities of the affected Member States must notify the Commission. The single point of contact of the Member State where the incident occurred or has an impact also informs the single points of contact of the other Member States concerned without undue delay. This cross-border notification mechanism is designed to trigger coordinated response at Union level.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What supervisory powers do national competent authorities hold over critical entities under Directive (EU) 2022/2557, and what procedural rights do entities have during supervisory proceedings?",
+    "reference": "National competent authorities have powers to: conduct on-site inspections and off-site supervision; request information and evidentiary documents; request independent audits at the critical entity's expense; and issue remediation orders. These powers must be exercised in an objective, transparent and proportionate manner. During supervisory proceedings, critical entities have the right to be heard, the right of defence, the right to protection of trade and business secrets, and the right to an effective remedy before an independent court.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 require Member States to provide support to critical entities, and what specific mechanisms are envisaged for smaller operators?",
+    "reference": "Member States must provide support to critical entities in enhancing their resilience, which may include: guidance documents and methodologies; financial support; training; and technical assistance. The national strategy must also describe specific support mechanisms for small and medium-sized enterprises. States must ensure that critical entities have access to relevant information on risks and that they receive appropriate assistance to carry out their resilience measures.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What does the concept of 'all-hazards approach' mean in the context of resilience measures required by Directive (EU) 2022/2557?",
+    "reference": "An all-hazards approach requires critical entities to assess and address all types of hazards — natural, technological, and human-induced (including acts of terrorism) — using a common set of management arrangements, rather than planning separately for individual threat categories. The resilience measures adopted by critical entities under the Directive must address this full range of risks, including climate adaptation, physical protection, employee security, and supply chain resilience, without restricting analysis to a predefined set of scenarios.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What minimum resilience measures does Directive (EU) 2022/2557 require critical entities to implement, and how are these measures to be calibrated?",
+    "reference": "Critical entities must take appropriate and proportionate technical, security and organisational measures that encompass at least: prevention of incidents, including climate adaptation; adequate physical protection of premises and infrastructure (perimeters, fences, barriers, monitoring); response to, resistance against, and mitigation of the consequences of incidents; recovery from incidents including business continuity plans and alternative supply chains; adequate employee security management including background checks on persons in sensitive roles; and awareness-raising through training and exercises. Measures must be proportionate to the risk identified in the entity's own risk assessment.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "When must a critical entity under Directive (EU) 2022/2557 submit its initial incident notification, and what information must it contain?",
+    "reference": "A critical entity must submit an initial incident notification without undue delay after becoming aware of the incident and no later than 24 hours after that point, unless operationally unable to do so. The notification must contain all available information necessary to enable the competent authority to understand the nature, cause and possible consequences of the incident, including any cross-border impact. If a more detailed report is warranted, a follow-up report must be submitted no later than one month after the incident.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does the principle of minimum harmonisation apply in the context of Directive (EU) 2022/2557, and what are its practical implications for Member States?",
+    "reference": "Directive (EU) 2022/2557 establishes minimum harmonisation standards, meaning that Member States are free to adopt or maintain national provisions that achieve a higher level of resilience for critical entities, provided those provisions are consistent with Union law. In practice, this means Member States may extend the scope of the Directive to additional sectors, impose stricter obligations on identified critical entities, or introduce more stringent incident notification requirements, as long as they do not undermine Union-level consistency or create unjustified barriers.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the criteria for assessing the significance of a disruptive effect when identifying critical entities under Directive (EU) 2022/2557?",
+    "reference": "When assessing whether an incident would have a significant disruptive effect, Member States must consider: the number of users relying on the essential service; the degree of dependency of other sectors on the service; the impact in terms of scale and duration on economic and societal activities, the environment and public safety; the market share of the entity; the geographical area affected and its potential cross-border dimension; and the extent to which the entity is the sole provider in a given area.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the role of the 'single point of contact' under Directive (EU) 2022/2557, and how does it differ from the competent authority?",
+    "reference": "The single point of contact is designated by each Member State to act as a liaison for cross-border cooperation: it coordinates communications with the single points of contact of other Member States and with the Critical Entities Resilience Group, and notifies the Commission and other Member States in the event of cross-border incidents. The competent authority, by contrast, is the body responsible for national supervision and enforcement of the Directive's obligations — including entity identification, inspections, and remediation orders — and may be the same body as the single point of contact or a separate one.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What review obligations does the European Commission have under Directive (EU) 2022/2557, and on what timelines?",
+    "reference": "The Commission must submit a compliance assessment report to the European Parliament and the Council by 17 July 2027, assessing the extent to which Member States have taken the necessary measures to comply with the Directive. The Commission must also conduct a broader review of the Directive's functioning and submit a report by 17 June 2029. In addition, the Commission publishes guidelines for critical entities to support compliance, and may at any time assess whether additional sectors should be included in the Annex.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what is the legal effect of a Member State deciding not to apply obligations to critical entities in the national security, defence or law enforcement sectors?",
+    "reference": "Where a Member State decides not to apply part of the obligations of the Directive to critical entities whose activities are predominantly related to national security, public security, defence or law enforcement, it exercises a permitted derogation but must still identify such entities if they meet the general identification criteria. The derogation is partial: the entity remains identified as critical and the Member State risk assessment and national strategy still apply, but the specific entity-level obligations — such as individual risk assessments, resilience plans and incident notifications — may be waived in whole or in part.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What mechanisms does Directive (EU) 2022/2557 provide to avoid duplication of obligations for entities that are already subject to sector-specific EU legislation?",
+    "reference": "The Directive provides several mechanisms to avoid duplication. First, entities in the banking, financial market infrastructure and digital infrastructure sectors are exempt from Chapters III, IV and VI. Second, entities that have already carried out risk assessments or adopted measures under other legal obligations may use those to satisfy CER requirements, and competent authorities may formally declare such compliance. Third, the Directive explicitly encourages Member States to align supervisory activities with those carried out under other applicable Union law to minimise administrative burden.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the distinction between 'critical infrastructure' and 'critical entity' under Directive (EU) 2022/2557?",
+    "reference": "'Critical infrastructure' is defined as an asset, facility, equipment, network or system — or part thereof — that is necessary for the provision of an essential service. A 'critical entity', by contrast, is the public or private operator that has been formally identified by a Member State as responsible for providing one or more essential services and whose disruption would have a significant disruptive effect. In other words, critical infrastructure is the physical or logical asset, while a critical entity is the organisation that operates it and bears the regulatory obligations under the Directive.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, can a single advisory mission assess multiple critical entities simultaneously, and what happens after the mission completes its work?",
+    "reference": "Advisory missions are organised by the Commission specifically to assess individual critical entities of particular European significance; the Directive does not provide for simultaneous assessment of multiple entities in a single mission. After completion, the mission must report its findings within three months. The Commission then uses those findings to issue an opinion on the entity's compliance with the Directive's resilience requirements. The opinion is transmitted to the Member State concerned and to the entity, but advisory missions have no enforcement powers of their own.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What background check requirements does Directive (EU) 2022/2557 impose on critical entities, and what safeguards must accompany them?",
+    "reference": "Critical entities must ensure adequate employee security management, including the possibility of conducting background checks on persons in sensitive roles, subject to applicable Union and national law — including data protection rules and relevant labour law. Background checks must be proportionate to the sensitivity of the role. The Directive does not mandate checks for all employees but requires the entity to identify which roles involve access to sensitive information or systems that justify such screening.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 define 'essential service', and how does this definition interact with the concept of 'vital societal functions'?",
+    "reference": "An 'essential service' is defined as a service which is crucial for the maintenance of vital societal functions, economic activities, public health and safety, or the environment. 'Vital societal functions' are not further defined in the Directive but encompass functions whose disruption would affect large segments of the population or core state operations. The essential service concept therefore serves as the anchor for determining what constitutes critical infrastructure and which entities qualify as critical, linking the legal obligations back to the real-world significance of the service being provided.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the difference between the 'early warning' and the 'incident notification' required under Directive (EU) 2022/2555 (NIS2), and what information must each contain?",
+    "reference": "The early warning must be submitted without undue delay and within 24 hours of becoming aware of a significant incident. It must indicate, where applicable, whether the incident is suspected to be caused by unlawful or malicious acts and whether it could have a cross-border impact. The incident notification must be submitted within 72 hours of becoming aware of the significant incident; it must include an initial assessment of severity and impact and indicators of compromise where available. The early warning is therefore a rapid alert with limited information, while the incident notification is a more substantive report with a preliminary technical assessment.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what distinguishes an 'essential entity' from an 'important entity', and how does this distinction affect supervisory obligations?",
+    "reference": "Essential entities include large entities in Annex I sectors, as well as specific categories regardless of size: qualified trust service providers, TLD name registries, DNS service providers, providers of public electronic communications networks, central government public administration entities, and any entities identified as critical under the CER Directive. Important entities are all other in-scope entities that do not qualify as essential. The supervisory distinction is significant: essential entities are subject to comprehensive ex ante and ex post supervision (proactive inspections, regular audits, security scans); important entities are subject only to ex post supervision, which is triggered by evidence of potential non-compliance rather than conducted proactively.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What supply chain security obligations does Directive (EU) 2022/2555 (NIS2) impose on essential and important entities?",
+    "reference": "Entities must assess the vulnerabilities specific to each direct supplier and service provider, and consider the overall quality of products and services and the cybersecurity practices of their supply chain partners, including their secure development procedures. Entities must also take into account the results of coordinated security risk assessments of critical supply chains carried out at Union level by the Cooperation Group. This means supply chain security is not limited to direct contractual relationships but extends to the broader network of dependencies.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) address the liability of management body members for cybersecurity failures?",
+    "reference": "Under Article 20 of NIS2, the management bodies of essential and important entities must approve the cybersecurity risk-management measures, oversee their implementation, and can be held personally liable for infringements of Article 21 by the entity. Management body members are also required to follow cybersecurity training to acquire sufficient knowledge and skills to identify risks and assess their impact. Entities are encouraged to offer equivalent training to all employees. This represents a direct accountability mechanism at the board level that goes beyond corporate liability for the entity itself.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the maximum administrative fines that may be imposed under Directive (EU) 2022/2555 (NIS2) for essential entities, and how do they compare to those for important entities?",
+    "reference": "For essential entities, the Directive requires Member States to provide for a maximum administrative fine of at least EUR 10,000,000 or at least 2% of the total worldwide annual turnover of the undertaking concerned, whichever is higher. For important entities, the minimum maximum fine is at least EUR 7,000,000 or at least 1.4% of the total worldwide annual turnover, whichever is higher. The use of worldwide turnover as the base — rather than domestic revenue — aligns the penalty framework with GDPR and ensures that the fine is meaningful for large multinational operators.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what is the role of EU-CyCLONe and how does it relate to the CSIRTs network?",
+    "reference": "EU-CyCLONe (European Cyber Crisis Liaison Organisation Network) is composed of Member States' cyber crisis management authorities and the Commission. It supports the coordinated management of large-scale cybersecurity incidents and crises at operational level, acts as an intermediary between the technical level (CSIRTs network) and the political level, and reports every 18 months to the European Parliament and the Council. The CSIRTs network, by contrast, handles day-to-day technical coordination, information sharing and mutual assistance between national CSIRTs and CERT-EU; it is operationally focused and does not have a crisis-management political interface role. EU-CyCLONe escalates to the political level when an incident exceeds the response capacity of individual Member States.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What obligations does Directive (EU) 2022/2555 (NIS2) place on entities regarding voluntary cybersecurity information sharing?",
+    "reference": "Member States must ensure that entities — including those outside the formal scope of the Directive — can voluntarily notify relevant cybersecurity information (threats, vulnerabilities, indicators of compromise, response techniques) and exchange such information within cybersecurity information-sharing arrangements. Voluntary reporting shall not result in additional regulatory obligations on the notifying entity. The Directive therefore creates a protected channel for sharing threat intelligence without triggering compliance consequences, encouraging broader participation in collective defence.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the European vulnerability database under Directive (EU) 2022/2555 (NIS2), and who is responsible for maintaining it?",
+    "reference": "The European vulnerability database is developed and maintained by ENISA. It allows entities and their suppliers to voluntarily disclose and register publicly known vulnerabilities in ICT products or services. The database includes information describing the vulnerability, the affected ICT products and their severity, and guidance on available patches or mitigating measures. All stakeholders — including entities, their suppliers, competent authorities and the public — have access to the database, making it a transparency tool for the entire EU ICT ecosystem.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) define 'coordinated vulnerability disclosure', and what role does each national CSIRT play in this process?",
+    "reference": "Coordinated vulnerability disclosure (CVD) is a structured process through which vulnerabilities in ICT products or services are reported to the manufacturer or provider in a manner that allows diagnosis and remediation before the vulnerability is publicly disclosed. Each Member State must designate one of its CSIRTs as national CVD coordinator, which acts as a trusted intermediary between the reporting party and the affected manufacturer or provider. The coordinator facilitates the CVD process, including setting timelines for disclosure and resolving disputes between the reporting entity and the manufacturer.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the obligations of entities under Directive (EU) 2022/2555 (NIS2) regarding communication of significant cyber threats to their service recipients?",
+    "reference": "Where an entity is aware of a significant cyber threat that could affect its service recipients, it must communicate that threat without undue delay to the potentially affected recipients, informing them of the measures or remedies they can take to protect themselves. Where the threat is likely to materialise, the entity must also inform recipients of the threat itself. All such communications to recipients must be provided free of charge and in clear, accessible language. This obligation applies even before an actual incident occurs, once the threat meets the significance threshold.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) handle entities that are not established in the European Union but offer services within the Union?",
+    "reference": "Entities not established in the Union but offering services within the Union that are covered by the Directive must designate a representative in the Union. The representative must be established in one of the Member States where the entity's services are offered. The entity is considered to fall under the jurisdiction of the Member State where its representative is established. In the absence of a designated representative, any Member State in which the entity provides services may take legal action for infringement of the Directive.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what tasks does ENISA perform with respect to the CSIRTs network and the broader cybersecurity ecosystem?",
+    "reference": "ENISA provides the secretariat of the CSIRTs network and of EU-CyCLONe; maintains the European vulnerability database; creates and maintains a registry of certain cross-border entities (DNS service providers, TLD registries, cloud service providers, etc.); develops guidelines and technical guidance for Member States and entities; assists Member States in developing and strengthening their national CSIRTs; publishes a biennial report on the state of cybersecurity in the Union; and supports the coordinated vulnerability disclosure framework by acting as a trusted third party where needed.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the significance of the size threshold in Directive (EU) 2022/2555 (NIS2), and which categories of entities are included regardless of their size?",
+    "reference": "The general size threshold applies the Directive to entities that qualify as medium-sized enterprises or larger — i.e., those with at least 50 employees and annual turnover or balance sheet exceeding EUR 10 million. However, certain categories are included regardless of size because of the criticality of the services they provide: qualified trust service providers, TLD name registries, DNS service providers, providers of public electronic communications networks, central government entities designated by Member States, entities identified as critical under the CER Directive, and sole providers of an essential service in a Member State.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) coordinate with Regulation (EU) 2022/2554 (DORA) on financial entities?",
+    "reference": "Financial entities covered by DORA are not subject to the cybersecurity risk-management measures and reporting obligations of NIS2, because DORA provides equivalent sector-specific requirements tailored to the financial sector. However, the information exchange between the financial sector's competent authorities and NIS2 authorities is maintained to ensure systemic risk visibility. Entities subject to DORA are therefore exempt from the core NIS2 obligations but remain within the broader information-sharing and cooperation framework.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What specific actions must a CSIRT or competent authority take within 24 hours of receiving an early warning under Directive (EU) 2022/2555 (NIS2)?",
+    "reference": "Upon receiving an early warning, the CSIRT or competent authority must provide initial feedback to the notifying entity within 24 hours, including guidance on possible mitigation measures that the entity can apply immediately. On request, the CSIRT must also provide technical support. If the incident is suspected to involve criminal activity, the CSIRT must provide guidance on reporting the incident to law enforcement authorities.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what enforcement measures beyond administrative fines may competent authorities impose on essential entities in cases of serious or persistent non-compliance?",
+    "reference": "Beyond administrative fines, competent authorities may, as a last resort for essential entities only: request the temporary suspension of certifications or authorisations relevant to the services provided by the entity; or impose a temporary prohibition on any natural person exercising managerial functions at the level of chief executive officer or legal representative of the entity from performing those functions. These measures are exceptional tools available only when other enforcement measures have proved insufficient to ensure compliance.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What are the key differences in the transposition deadlines and the review timelines between Directive (EU) 2022/2557 (CER) and Directive (EU) 2022/2555 (NIS2)?",
+    "reference": "Both Directives had the same transposition deadline of 17 October 2024 and both apply from 18 October 2024. However, the subsequent timelines diverge: under CER, Member States must adopt their national strategy and complete their risk assessment by 17 January 2026 and identify critical entities by 17 July 2026; the Commission's compliance assessment is due by 17 July 2027 and the broader review by 17 June 2029. Under NIS2, Member States must establish the list of essential and important entities by 17 April 2025; the Commission's first review is due by 17 October 2027 and subsequent reviews every 36 months. NIS2 therefore has an earlier entity-listing deadline but a later first review date relative to CER.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), how are Member States required to establish and maintain the list of essential and important entities, and how frequently must it be updated?",
+    "reference": "Member States must establish a list of essential and important entities by 17 April 2025. They must review and, where necessary, update the list at least every two years thereafter. By the same date, Member States must notify the Commission of the number of essential and important entities per sector and subsector and update this aggregate information every two years. The list itself is maintained at national level by the competent authority, but the aggregate data is shared with the Commission to allow Union-wide monitoring of the scope of the Directive's application.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What national governance bodies must each Member State designate or establish under Directive (EU) 2022/2555 (NIS2), and what are their distinct roles?",
+    "reference": "Member States must designate or establish: (i) one or more competent authorities for cybersecurity supervision and enforcement; (ii) a single point of contact for cross-border cooperation with other Member States and Union institutions; (iii) one or more cyber crisis management authorities responsible for managing large-scale incidents and crises; and (iv) one or more CSIRTs responsible for incident handling, vulnerability coordination and technical cooperation. These four functions may be combined in a single body or distributed across multiple institutions depending on the Member State's national governance model.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) define a 'large-scale cybersecurity incident', and what response mechanism is triggered by such an incident?",
+    "reference": "A large-scale cybersecurity incident is defined as an incident that causes a level of disruption exceeding a Member State's capacity to respond to it, or that has a significant impact on at least two Member States. When such an incident occurs, EU-CyCLONe is activated to support coordinated management at the operational level, bridging technical response (via the CSIRTs network) and political decision-making. ENISA, as secretariat of EU-CyCLONe, facilitates the exchange of information and the development of a shared situational awareness across Member States.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What obligations does Directive (EU) 2022/2555 (NIS2) place on the Cooperation Group, and how often must it produce work programmes?",
+    "reference": "The Cooperation Group — composed of Member State representatives, the Commission and ENISA — has multiple tasks: providing guidance on transposition; exchanging best practices on identifying essential and important entities; developing methodologies for cybersecurity risk management; conducting coordinated security risk assessments of critical supply chains; and facilitating peer learning. It must adopt biennial work programmes setting out its planned activities. It must also meet at least once a year with the Critical Entities Resilience Group established under Directive (EU) 2022/2557.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what obligations apply to entities when a cybersecurity incident is still ongoing at the time the one-month final report would normally be due?",
+    "reference": "If the incident is still ongoing at the time the final report is due (one month after the incident notification), the entity must provide a progress report at that point rather than a final report. The final report must then be submitted within one month of the entity having handled the incident and restored normal operations. This staged approach ensures continuous communication with the competent authority during prolonged incidents without requiring the entity to close out a report before the incident is resolved.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) treat trust service providers differently from other entities with respect to the incident notification timeline?",
+    "reference": "For trust service providers, the initial incident notification deadline is 24 hours from the moment they become aware of the significant incident — the same as the early warning deadline for all other entities. Other entities have a 72-hour window for the full incident notification. This stricter timeline reflects the critical trust function that qualified trust service providers play in authenticating digital transactions and communications across the Union, where delays in notification could have immediate cascading consequences.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the 'all-hazards approach' required by Directive (EU) 2022/2555 (NIS2) for cybersecurity risk-management measures, and what categories of measures must it encompass?",
+    "reference": "The all-hazards approach under NIS2 requires entities to address risks to network and information systems from all relevant threat sources — not just cyber intrusions — taking proportionate technical, operational and organisational measures. These measures must encompass at least: risk analysis and information system security policies; incident handling; business continuity and crisis management; supply chain security; security in network and information systems acquisition, development and maintenance; policies to assess cybersecurity measure effectiveness; basic cyber hygiene and training; policies on cryptography and encryption; human resources security and access control; and multi-factor or continuous authentication solutions where appropriate.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) limit the obligation to notify significant incidents to the single point of contact in cross-border situations?",
+    "reference": "When a significant incident has a cross-border impact, the notifying entity informs the CSIRT or competent authority of its own Member State. It is then the responsibility of the CSIRT, competent authority, or single point of contact — not the entity itself — to inform the equivalent bodies in the other affected Member States without undue delay and to transmit relevant incident data to ENISA. The entity therefore has a single notification obligation directed at its national authority; the cross-border coordination is handled by public authorities rather than requiring the entity to make parallel notifications to multiple Member States.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the relationship between 'resilience' as defined in Directive (EU) 2022/2557 and 'cyber resilience' as understood in the context of Directive (EU) 2022/2555 (NIS2)?",
+    "reference": "Under Directive (EU) 2022/2557, 'resilience' encompasses physical, organisational and operational capabilities to prevent, protect against, respond to, resist, mitigate, absorb, accommodate and recover from incidents affecting essential services — irrespective of whether those incidents have a cyber or a physical cause. Under NIS2, 'cyber resilience' is a narrower concept focused specifically on the ability to resist and recover from events compromising the availability, authenticity, integrity or confidentiality of network and information systems. The two Directives are explicitly designed as complementary instruments: an entity must achieve both physical resilience (CER) and cyber resilience (NIS2) to maintain uninterrupted provision of essential services.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does the 'cascading effect' concept in critical infrastructure protection relate to the interdependency provisions in Directive (EU) 2022/2557?",
+    "reference": "A cascading effect occurs when the disruption of one infrastructure triggers the failure of interconnected systems, potentially across sectors or borders. Directive (EU) 2022/2557 explicitly accounts for this through its Member State risk assessment obligations, which must identify cross-sectoral and cross-border dependencies. The criteria for assessing the significance of a disruptive effect when identifying critical entities also include the degree to which other sectors depend on the entity's service. Furthermore, critical entities' own risk assessments must address interdependencies, and incident notification obligations are triggered not only by actual disruptions but also by events that have 'the potential' to significantly disrupt services — precisely to capture the early stages of cascading scenarios.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), how is the Cooperation Group's coordinated security risk assessment of critical supply chains used by individual entities?",
+    "reference": "The Cooperation Group carries out coordinated security risk assessments of specific critical supply chains at Union level, taking into account both technical and non-technical risk factors. The results of these assessments must be taken into account by individual essential and important entities when evaluating their own supply chain security measures under Article 21(2)(d). This creates a feedback loop between Union-level strategic risk analysis and entity-level operational risk management: entities are not free to disregard the collective intelligence gathered through the Cooperation Group process when designing their supply chain security practices.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What is the significance of the 'interdependency' concept in the glossary of critical infrastructure terminology, and how is it operationalised in Directive (EU) 2022/2557?",
+    "reference": "Interdependency is defined as a mutual dependency between two or more systems or entities where the state of each depends on the state of the other; it can be physical, cyber, geographical, functional or logical. In Directive (EU) 2022/2557, interdependency is operationalised through the Member State risk assessment obligation, which must cover cross-sectoral and cross-border dependencies; through the significance assessment criteria for entity identification, which include the degree to which other sectors depend on an entity's service; and through the requirement that critical entities' own risk assessments account for interdependencies. The Directive thus translates the conceptual notion of interdependency into concrete assessment and planning obligations.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what is the role of background checks in employee security management, and under which legal constraints must they be carried out?",
+    "reference": "Critical entities must ensure adequate security management for personnel in sensitive roles, which may include conducting background checks to verify their trustworthiness. However, such checks must be carried out in accordance with applicable Union law — including the GDPR — and relevant national law, including data protection rules and labour law. The Directive therefore does not authorise a departure from existing privacy or employment protections: background checks must be proportionate, necessary for the specific role, and conducted in accordance with established legal safeguards.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) address the situation where a significant incident is suspected to involve criminal conduct?",
+    "reference": "When an entity submits an early warning that indicates the incident is suspected to be caused by unlawful or malicious acts, the receiving CSIRT or competent authority must provide guidance on whether the entity should also report the incident to national law enforcement authorities. The entity retains the choice whether to report to law enforcement, but the CSIRT must facilitate this step by providing the necessary guidance. The NIS2 notification to the CSIRT and a separate report to law enforcement are therefore treated as parallel rather than alternative obligations.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "What information must Member States include when notifying the Commission of the number of essential and important entities under Directive (EU) 2022/2555 (NIS2), and why is this aggregate reporting significant?",
+    "reference": "Member States must notify the Commission of the number of essential and important entities per sector and subsector, and must update this information every two years. This aggregate reporting — without disclosing the identity of individual entities — allows the Commission to monitor the consistent application of the size and sector thresholds across the Union, identify anomalies in scope interpretation between Member States, and assess whether the current list of sectors in Annexes I and II remains appropriate. It also feeds into the Commission's periodic review of the Directive's functioning.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what is a 'near miss', and why is it significant that near-miss information is included in the ENISA summary reports?",
+    "reference": "A near miss is an event that could have compromised the availability, authenticity, integrity or confidentiality of data or services offered via network and information systems, but that was successfully prevented from materialising or that did not materialise. Including near-miss information in the ENISA quarterly summary reports is significant because near misses provide early warning signals of emerging threat vectors and systemic vulnerabilities before they cause actual damage. Aggregate near-miss data at Union level allows ENISA and the Cooperation Group to identify patterns and issue pre-emptive guidance, enhancing collective cyber situational awareness beyond what incident data alone would reveal.",
+    "_model": "claude-sonnet-4-6"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, which eleven sectors are listed in the Annex as falling within the scope of the Directive?",
+    "reference": "The eleven sectors listed in the Annex to Directive (EU) 2022/2557 are: (1) energy; (2) transport; (3) banking; (4) financial market infrastructures; (5) health; (6) drinking water; (7) waste water; (8) digital infrastructure; (9) public administration; (10) space; and (11) production, processing and distribution of food.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the definition of 'incident' under Directive (EU) 2022/2557, and how does it differ from the definition in Directive (EU) 2022/2555 (NIS2)?",
+    "reference": "Under Directive (EU) 2022/2557 (CER), an 'incident' is an event which has the potential to significantly disrupt, or that disrupts, the provision of an essential service — including when it affects the national systems that safeguard the rule of law. Under Directive (EU) 2022/2555 (NIS2), an 'incident' is an event compromising the availability, authenticity, integrity or confidentiality of stored, transmitted or processed data, or of the services offered by or accessible via network and information systems. The CER definition is broader and sector-neutral, focused on service disruption of any kind, while the NIS2 definition is specifically tied to the security properties of network and information systems.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what are the seven sectors listed in Annex II as 'other critical sectors'?",
+    "reference": "Annex II of Directive (EU) 2022/2555 lists seven other critical sectors: (1) postal and courier services; (2) waste management; (3) manufacture, production and distribution of chemicals; (4) production, processing and distribution of food; (5) manufacturing (including medical devices, electronic and electrical equipment, machinery, motor vehicles and transport equipment); (6) digital providers (online marketplaces, online search engines, social networking service platforms); and (7) research.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the maximum deadline for submitting a final incident report under Directive (EU) 2022/2555 (NIS2)?",
+    "reference": "Under NIS2, a final incident report must be submitted no later than one month after the incident notification was submitted. If the incident is still ongoing at the time the final report is due, the entity must provide a progress report at that point; the final report must then be submitted within one month of the incident having been handled and normal operations restored.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What does 'vulnerability' mean according to the critical infrastructure glossary, and how does this definition apply in the context of NIS2?",
+    "reference": "According to the critical infrastructure glossary, vulnerability is defined as a weakness, susceptibility or flaw of an asset, system, process or control that can be exploited by a threat. In the context of NIS2, the Directive uses a more specific definition: a weakness, susceptibility or flaw of ICT products or ICT services that can be exploited by a cyber threat. The glossary definition is broader and applies to any type of asset, while the NIS2 definition is restricted to ICT products and services — reflecting the Directive's focus on network and information system security.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what is the minimum frequency at which Member States must review their list of identified critical entities?",
+    "reference": "Member States must review their list of critical entities at least every four years, and additionally whenever circumstances or risks change significantly enough to warrant an earlier update.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the definition of 'critical infrastructure' according to the critical infrastructure glossary and how does it relate to the definition in Directive (EU) 2022/2557?",
+    "reference": "The critical infrastructure glossary defines critical infrastructure as an asset, facility, equipment, network or system, or part thereof, necessary for the provision of an essential service. Directive (EU) 2022/2557 uses an identical definition: an asset, facility, equipment, network or system — or part thereof — necessary for the provision of an essential service. The two definitions are therefore fully aligned; the glossary reflects the legal definition as codified in the Directive.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what must Member States do to ensure entities can be held accountable for supply chain risks from their service providers?",
+    "reference": "NIS2 requires essential and important entities to include supply chain security as one of the mandatory categories of cybersecurity risk-management measures, specifically addressing the security of relationships with direct suppliers and service providers. Entities must assess the vulnerabilities of each direct supplier and service provider and consider the overall quality of products, services and cybersecurity practices of their supply chain. Competent authorities may verify compliance with this obligation through their supervisory powers, including requesting documentary evidence of supply chain risk assessments.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the difference between 'risk' and 'hazard' according to the critical infrastructure glossary?",
+    "reference": "According to the glossary, a 'hazard' is a dangerous event or circumstance that may or may not lead to an emergency or disaster — it represents a potential source of harm. 'Risk' is the potential for loss or disruption caused by an incident, expressed as a combination of the magnitude of the loss or disruption and the likelihood of occurrence. The key distinction is that a hazard is the source of potential harm, while risk is the quantified potential outcome: risk incorporates both the probability that a hazard materialises into an incident and the severity of the resulting consequences.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What sectors does Directive (EU) 2022/2557 explicitly exempt from the full range of entity-level obligations, and on what basis?",
+    "reference": "Directive (EU) 2022/2557 exempts critical entities in the banking sector (Annex point 3), financial market infrastructure sector (point 4) and digital infrastructure sector (point 8) from the obligations of Chapters III, IV and VI — which cover resilience measures, risk assessments and incident notification — on the basis that these entities are already subject to equivalent sector-specific obligations under DORA and NIS2. These entities must still be identified as critical by Member States and the Chapter II obligations on national strategies and risk assessments apply, but entity-level compliance obligations are handled through their respective sectoral frameworks.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what must the national cybersecurity strategy include regarding coordination between NIS2 and CER competent authorities?",
+    "reference": "The national cybersecurity strategy must include a policy framework for the coordination between NIS2 competent authorities and the authorities responsible for implementing Directive (EU) 2022/2557 (CER). This framework must describe how the two sets of authorities cooperate and exchange information, how they avoid duplication in their supervisory activities, and how they align their notification and reporting requirements to minimise administrative burden on entities that are subject to both Directives.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is 'business continuity' as defined in the critical infrastructure glossary, and how does this concept appear in the resilience obligations under Directive (EU) 2022/2557?",
+    "reference": "The glossary defines business continuity as the ability to maintain service delivery during disruptions, ensuring critical functions remain operational. Under Directive (EU) 2022/2557, business continuity is embedded in the resilience measures that critical entities must implement: entities must adopt measures to recover from incidents, including maintaining business continuity plans and establishing alternative supply chains where necessary. Business continuity planning is therefore one of the practical tools through which a critical entity operationalises the broader resilience requirement of the Directive.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), when may a Member State exempt a specific entity operating in the national security sector from the Directive's obligations?",
+    "reference": "Member States may exempt specific public administration entities or other entities operating predominantly in the areas of national security, public security, defence or law enforcement from some or all of the Directive's obligations, where applying those obligations would compromise national security interests. The Directive also does not apply to Member States' diplomatic and consular missions in third countries. Any such exemption must be exercised in accordance with the principle of proportionality and Union law.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "How is 'risk assessment' defined in the critical infrastructure glossary, and what elements must a Member State's risk assessment under Directive (EU) 2022/2557 cover?",
+    "reference": "The glossary defines risk assessment as the overall process for determining the nature and extent of a risk by identifying and analysing potential relevant threats, vulnerabilities and hazards which could lead to an incident, and by evaluating the potential loss or disruption of the provision of an essential service caused by that incident. Under Directive (EU) 2022/2557, the Member State risk assessment must cover all relevant natural and man-made, accidental and intentional risks, including acts of terrorism, public health emergencies, climate change impacts, and cross-sectoral and cross-border dependencies. The risk assessment serves as the primary evidence base for identifying critical entities.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What happens if a competent authority under Directive (EU) 2022/2555 (NIS2) concludes that an entity has applied cybersecurity measures that are already required by sector-specific Union law?",
+    "reference": "Where sector-specific Union legal acts require essential or important entities to adopt cybersecurity risk-management measures or incident reporting obligations that are at least equivalent to those required by NIS2, the sector-specific provisions apply instead of the corresponding NIS2 obligations. The competent authority must then exercise its supervisory powers in coordination with the sectoral supervisory authority to ensure consistent application and avoid duplication. The NIS2 obligations serve as a baseline; sector-specific rules that meet or exceed that baseline take precedence.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what are the obligations of the single point of contact when notifying other Member States of cross-border incidents?",
+    "reference": "When an incident has a cross-border impact, the single point of contact of the Member State where the incident occurred must inform the single points of contact of the other Member States concerned without undue delay. If the incident affects six or more Member States, the competent authority — or the single point of contact on its behalf — must also notify the Commission. These notifications are separate from and in addition to the entity's own notification obligation to its national competent authority.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What does 'interdependency' mean in the critical infrastructure context, and how are its four principal types distinguished?",
+    "reference": "Interdependency is the mutual dependency between two or more infrastructures where the state of each depends on the state of the other. The glossary identifies four principal types: (i) physical dependency, where the state of each infrastructure depends on the material output of the other; (ii) cyber dependency, where the state depends on information transmitted through the information infrastructure; (iii) geographical dependency, where a local environmental event creates state changes in geographically co-located infrastructures; and (iv) logical dependency, where the linkage operates through a mechanism that is not physical, cyber or geographical — for example, shared governance or regulatory constraints.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what is the difference between ex ante and ex post supervision, and which category of entities is subject to each?",
+    "reference": "Ex ante supervision is proactive: competent authorities conduct it without necessarily having evidence of non-compliance, through regular on-site inspections, targeted security audits and security scans. Essential entities are subject to this comprehensive ex ante and ex post regime. Ex post supervision is reactive: it is triggered only when the competent authority has evidence of potential non-compliance — for example, following an incident notification or a complaint. Important entities are subject only to ex post supervision. This distinction reflects a risk-based approach in which the highest-criticality entities receive the most intensive oversight.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the 'N-1 criterion' in critical infrastructure, and in which sector is it most commonly applied?",
+    "reference": "The N-1 criterion is the rule according to which the elements remaining in operation after a contingency — the loss of any single component — must be capable of accommodating the new operational situation without violating operational security limits. It is most commonly applied in the electricity transmission sector, where it means that the transmission system must be able to continue operating safely after the outage of any single transmission element. The N-1 criterion is a key design and operational standard for transmission system operators.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what does the 'food' sector cover, and what distinguishes it from the sectors in the digital infrastructure category?",
+    "reference": "The 'food' sector in the Annex to Directive (EU) 2022/2557 covers entities engaged in the production, processing and distribution of food. This sector is concerned with the physical supply chain of food commodities. The 'digital infrastructure' sector, by contrast, covers entities providing internet exchange points, DNS service providers, TLD name registries, cloud computing service providers, data centre service providers, content delivery networks, and electronic communications networks. The food sector involves tangible goods and physical logistics, whereas digital infrastructure involves the provision of connectivity and data processing services, with resilience obligations focused on different types of vulnerabilities and incident scenarios.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2555 (NIS2) distinguish between a 'cyber threat' and a 'vulnerability'?",
+    "reference": "A 'cyber threat' is defined under NIS2 (by reference to the Cybersecurity Act, Regulation (EU) 2019/881) as any potential circumstance, event or action that could damage, disrupt or adversely affect network and information systems, their users, or other persons. A 'vulnerability' is a weakness, susceptibility or flaw of ICT products or ICT services that can be exploited by a cyber threat. The distinction is between the external force or potential attack (threat) and the internal weakness that makes exploitation possible (vulnerability). Effective cybersecurity risk management requires addressing both dimensions.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what obligations does the Directive impose on the Commission itself — rather than on Member States or entities — for reviewing and reporting on the Directive's implementation?",
+    "reference": "The Commission must: submit a compliance assessment report to the European Parliament and the Council by 17 July 2027; submit a broader review of the Directive's functioning by 17 June 2029; issue guidelines to support critical entities and Member States; publish guidance on the implementation of Directive 2022/2557 and its relationship with sector-specific acts; and organise advisory missions for critical entities of particular European significance. The Commission also chairs the Critical Entities Resilience Group and participates in cross-border coordination activities.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the definition of 'essential service' according to the critical infrastructure glossary, and what does it imply for the scope of protective obligations?",
+    "reference": "The glossary defines an essential service as a service crucial for maintaining vital societal functions, economic activities, public health and safety, or the environment. This definition implies that protective obligations under CER and NIS2 extend to any disruption that would impair these foundational societal outcomes, not merely disruptions affecting formal government services. It therefore covers private sector operators — such as energy companies, water utilities and food distributors — whose services are functionally indispensable to society even when those operators are not public bodies.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), how must competent authorities handle information obtained during supervisory proceedings to protect trade secrets and business confidentiality?",
+    "reference": "Competent authorities must ensure that information obtained through supervisory activities — including inspections, audits and information requests — is protected as confidential where it constitutes trade or business secrets of the entity concerned. Authorities may share such information with other competent authorities or with ENISA for strictly defined regulatory purposes but must not make it publicly available in a form that would disclose commercially sensitive details. Entities retain the right to protection of their trade and business secrets throughout supervisory proceedings, and this right is explicitly listed among the procedural rights available to entities.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is a 'hybrid threat' according to the critical infrastructure glossary, and why is it relevant to the resilience obligations in Directive (EU) 2022/2557?",
+    "reference": "The glossary defines a hybrid threat as a mixture of coercive and subversive activity combining conventional and unconventional methods used by state or non-state actors to achieve their objectives while remaining below the threshold of open hostilities. Hybrid threats are relevant to CER because they can combine physical attacks on infrastructure with cyber operations, disinformation and economic coercion simultaneously. Directive (EU) 2022/2557 addresses hybrid threats through its all-hazards approach: Member State risk assessments must consider all relevant natural and man-made, accidental and intentional risks, and critical entities' resilience measures must address the full spectrum of threat scenarios rather than focusing solely on natural disasters or single-mode attacks.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what obligations apply specifically to DNS service providers, and why are they treated as a special category?",
+    "reference": "DNS service providers are included as essential entities under NIS2 regardless of their size, and if not established in the Union but offering services within it, they must designate a Union representative. ENISA maintains a registry of DNS service providers operating in the Union. They are treated as a special category because the Domain Name System is a foundational internet infrastructure: its disruption can cascade across all online services simultaneously. The NIS2 obligations — risk-management measures, incident reporting, and supervisory oversight — apply to DNS service providers with the same stringency as to other essential entities.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "How does Directive (EU) 2022/2557 define 'risk' and how does this definition compare to the broader concept of risk in the critical infrastructure glossary?",
+    "reference": "Directive (EU) 2022/2557 defines risk as the potential for loss or disruption caused by an incident, expressed as a combination of the magnitude of such loss or disruption and the likelihood of occurrence of the incident. The critical infrastructure glossary offers a compatible but slightly broader formulation: risk is the combination of the probability of an event and its consequences. The Directive's definition is functionally equivalent and specifically anchored to 'incidents' affecting essential service provision, while the glossary definition is more general and applicable across all domains of critical infrastructure analysis.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the definition of 'systemic risk' in the critical infrastructure glossary and how does it relate to cross-border incident provisions in Directive (EU) 2022/2557?",
+    "reference": "Systemic risk is defined in the glossary as the risk of widespread instability due to interconnected failures across systems or sectors. This concept directly informs the cross-border incident provisions of Directive (EU) 2022/2557: when an incident affects six or more Member States, it signals a potential systemic disruption spanning multiple national systems. The Directive's requirement that competent authorities notify the Commission in such cases reflects the systemic risk dimension, triggering Union-level coordination to contain cascading failures before they destabilise the broader EU internal market.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what specific obligations does the Directive place on Member States regarding the protection of public electronic communications networks?",
+    "reference": "Under NIS2, providers of public electronic communications networks are included as essential entities regardless of their size. Member States must ensure that such providers take appropriate cybersecurity risk-management measures under Article 21, report significant incidents to the competent authority, and cooperate with ENISA and the CSIRTs network. The Directive's obligations on public communications providers complement the security requirements of the European Electronic Communications Code (Directive (EU) 2018/1972), with NIS2 explicitly deleting certain provisions of that Code (Articles 40 and 41) from the date of NIS2's application to avoid duplication.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "How does the 'all-hazards approach' defined in the critical infrastructure glossary differ from a purely threat-based approach, and which of the two does Directive (EU) 2022/2557 adopt?",
+    "reference": "According to the glossary, an all-hazards approach considers all types of hazards — natural, technological, and human-induced — using the same set of management arrangements, rather than designing separate plans for each identified threat. A purely threat-based approach, by contrast, prioritises specific named threats and designs mitigations tailored to each. Directive (EU) 2022/2557 explicitly adopts the all-hazards approach: both Member State risk assessments and the resilience measures that critical entities must implement are required to address the full spectrum of natural and man-made, accidental and intentional risks, with climate adaptation specifically mentioned as one area that resilience measures must address.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what is the role of the CSIRT in the incident notification process after receiving an early warning?",
+    "reference": "After receiving an early warning from a notifying entity, the CSIRT (or competent authority) must within 24 hours provide the entity with initial feedback, including guidance on possible mitigation measures. The CSIRT must also provide technical support on request; if the incident is suspected to be of criminal origin, it must provide guidance on reporting to law enforcement. The CSIRT then continues to receive and process the subsequent incident notification (within 72 hours) and intermediate reports, coordinating with CSIRTs in other Member States if the incident has a cross-border dimension. The CSIRT thus serves as the primary operational interface between the entity and the broader national and Union response infrastructure.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, what specific content must a resilience plan contain, and can multiple regulatory documents be combined to form a compliant resilience plan?",
+    "reference": "A resilience plan must describe the measures a critical entity has put in place to ensure the resilience requirements of the Directive are met, covering risk assessment outcomes and the technical, security and organisational measures adopted. The Directive explicitly allows multiple documents already produced for other regulatory obligations to be combined and reused to constitute a compliant resilience plan, provided their collective content covers all the requirements. This flexibility is intended to reduce administrative burden for entities already subject to sector-specific resilience planning requirements.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is the difference between 'consequence management' and 'contingency planning' as defined in the critical infrastructure glossary?",
+    "reference": "The glossary defines consequence management as the coordination of measures taken to react to and reduce the impact of a security-related incident — particularly one resulting from terrorist attacks — after it has occurred. Contingency planning, by contrast, is the preparation of response plans for potential disruptions of critical infrastructure before they occur, addressing the participation of owners and operators, cooperation with national authorities and information sharing. The distinction is between prospective preparation (contingency planning) and reactive response to an actual event (consequence management). Both concepts feed into the resilience framework of Directive (EU) 2022/2557, which requires critical entities to have plans in place before an incident and the capacity to manage consequences once one occurs.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), how is the threshold for 'significant incident' determined for entities, and why does the Directive leave some discretion to competent authorities in assessing this threshold?",
+    "reference": "NIS2 defines a significant incident as one that has caused or is capable of causing severe operational disruption or significant financial loss for the entity, or that has affected or is capable of affecting other persons by causing considerable material or non-material damage. The Directive leaves discretion to competent authorities and implementing regulations because the significance of an incident is context-dependent: what constitutes severe disruption for a small DNS provider may differ from the threshold applicable to a large energy transmission operator. ENISA, in coordination with the Cooperation Group, develops technical guidance to assist competent authorities and entities in applying the threshold consistently across sectors.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2557, how does the Directive address the situation where a critical entity provides services to both the domestic market and to other Member States?",
+    "reference": "A critical entity that provides services to six or more Member States must inform its own competent authority of this fact. The Commission may then designate that entity as a critical entity of particular European significance and organise an advisory mission to assess its resilience measures. The entity's primary regulatory relationship remains with its national competent authority; however, the cross-border service provision triggers additional Commission-level oversight and the potential for the Commission to issue an opinion on the entity's compliance. Member States hosting the services of a foreign critical entity may engage bilaterally with the entity's home Member State through the single point of contact mechanism.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "What is 'acceptable risk' as defined in the critical infrastructure glossary, and how does this concept relate to the proportionality requirement in resilience measures under Directive (EU) 2022/2557?",
+    "reference": "The glossary defines acceptable risk as the level of residual risk that has been determined to be a reasonable level of potential loss or disruption for a specific system — i.e., the risk that remains after mitigation measures have been applied and that the organisation is prepared to tolerate. This concept is operationalised in Directive (EU) 2022/2557 through the proportionality requirement: resilience measures must be 'appropriate and proportionate' to the risks identified in the entity's risk assessment. The critical entity is not required to eliminate all risk but to reduce it to an acceptable level by implementing measures commensurate with the severity of the risks identified and the nature of the services provided.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what conditions must be met for a competent authority to order the temporary suspension of an important entity's certifications?",
+    "reference": "The power to order temporary suspension of certifications or authorisations is available only for essential entities — not important entities — and only as a last resort when other enforcement measures have proved insufficient to remedy non-compliance. The measure is conditional on: the entity having been given a reasonable opportunity to be heard and to remedy the identified deficiency; the deficiency posing a serious and ongoing risk to cybersecurity; and less restrictive measures having been tried and failed. These conditions reflect the exceptional and proportionate nature of this sanction.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "question": "How does the glossary definition of 'resilience' align with and extend the definition used in Directive (EU) 2022/2557?",
+    "reference": "The glossary defines resilience as the ability to prevent, protect against, respond to, resist, mitigate, absorb, accommodate and recover from incidents and disruptions. Directive (EU) 2022/2557 defines resilience for critical entities using the same eight-element formulation: the ability to prevent, protect against, respond to, resist, mitigate, absorb, accommodate and recover from an incident. The definitions are identical in substance, confirming that the Directive codified the established critical infrastructure protection concept. The glossary definition is slightly broader in that it refers to 'disruptions' generally, while the Directive's definition specifically refers to 'incidents' as defined in Article 2.",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines cyber resilience as the ability to prevent, prepare for, withstand and recover from cyberattacks and incidents, ensuring continuous service delivery despite cyber events. This aligns directly with the NIS2 obligation on essential and important entities to adopt an all-hazards approach to cybersecurity risk management, which must encompass incident handling, business continuity, backup management and disaster recovery. Both the glossary and NIS2 thus treat cyber resilience not as the prevention of all incidents but as the maintenance of operational continuity across the full incident lifecycle.",
+    "question": "How does the critical infrastructure glossary define 'cyber resilience', and how does this align with the cybersecurity obligations under Directive (EU) 2022/2555 (NIS2)?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines information sharing as the exchange of network and information security-related information such as risks, vulnerabilities, threats, internal security issues and good practices. NIS2 operationalises this through two mechanisms: mandatory exchange between CSIRTs and competent authorities during and after incidents, and a voluntary information-sharing framework through which any entity — including those outside the formal scope of the Directive — may exchange threat intelligence, indicators of compromise and response recommendations without incurring additional regulatory obligations.",
+    "question": "How does the critical infrastructure glossary define 'information sharing', and how is this concept operationalised in Directive (EU) 2022/2555 (NIS2)?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The CSIRTs network is composed of national CSIRTs and CERT-EU, with ENISA as secretariat. Its tasks are operational: exchanging information on threats, vulnerabilities and incidents; providing mutual assistance; coordinating responses to cross-border incidents; and supporting coordinated vulnerability disclosure. The Cooperation Group, by contrast, is a strategic and policy-level body composed of Member State representatives, the Commission and ENISA; its tasks include providing guidance on transposition, developing methodologies, conducting coordinated supply chain risk assessments and producing biennial work programmes. The CSIRTs network acts at the technical-operational level while the Cooperation Group acts at the strategic-policy level.",
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what tasks are assigned to the CSIRTs network, and how does it differ in mandate from the Cooperation Group?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "NIS2 defines a significant cyber threat as a cyber threat which, based on its technical characteristics, can be assumed to have the potential to have a severe impact on the network and information systems of an entity or the users of the entity's services by causing considerable material or non-material damage. When an entity becomes aware of a significant cyber threat, it must notify potentially affected service recipients without undue delay, informing them of the threat and any measures or remedies they can take. If the threat is likely to materialise, the entity must also directly inform affected recipients of the threat itself. Such communications must be provided free of charge and in clear language.",
+    "question": "How does Directive (EU) 2022/2555 (NIS2) define 'significant cyber threat', and what obligations does this definition trigger for entities?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines cybersecurity as activities to protect systems, networks and users from cyber threats, ensuring network and information systems can resist events compromising the availability, authenticity, integrity or confidentiality of data or services. Cyber defence is defined as a subset of cybersecurity aiming to defend cyberspace with military and other appropriate means in order to achieve military-strategic goals. NIS2 focuses on cybersecurity in the civil domain; it explicitly excludes entities operating predominantly in national security, defence and law enforcement. Cyber defence — as a military instrument — therefore falls outside the scope of NIS2 and is governed by separate national and NATO frameworks.",
+    "question": "What is the difference between 'cybersecurity' and 'cyber defence' as defined in the critical infrastructure glossary, and how do these concepts relate to the scope of Directive (EU) 2022/2555 (NIS2)?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "SCADA stands for Supervisory Control and Data Acquisition. It is a system of remote control and telemetry used to monitor and control critical infrastructure components, particularly in energy systems such as electricity grids. SCADA systems are particularly relevant to critical infrastructure protection because they interface directly with physical processes — controlling valves, switches, turbines and distribution systems — and their compromise can cause both digital and physical damage. Attacks on SCADA systems therefore represent a convergence point between cyber and physical threats, making them a focal point for both NIS2 (cybersecurity of network and information systems) and CER (physical resilience of critical entities).",
+    "question": "What does 'SCADA' stand for and why is it specifically relevant to the critical infrastructure protection context?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "NIS2 defines a network and information system as: an electronic communications network within the meaning of Article 2(1) of Directive (EU) 2018/1972; any device or group of interconnected or related devices that performs automatic processing of digital data; and the digital data stored, processed, retrieved or transmitted by those elements for the purposes of their operation, use, protection and maintenance. This definition is fundamental to scope because the Directive's risk-management obligations and incident-reporting requirements apply specifically to the security of network and information systems; entities are obliged to protect the confidentiality, integrity and availability of these systems rather than of physical assets generally.",
+    "question": "How does Directive (EU) 2022/2555 (NIS2) define 'network and information system', and why is this definition fundamental to establishing the scope of the Directive?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines critical infrastructure information as facts about a critical infrastructure which, if disclosed, could be used to plan and act with a view to causing disruption or destruction of critical infrastructure installations. This implies obligations of confidentiality: competent authorities under both CER and NIS2 are required to protect sensitive information obtained during supervisory proceedings, and entities have the right to protection of trade and business secrets. The concept also underlies the restricted access to vulnerability databases and the protection of incident notification data, since detailed knowledge of a system's weaknesses constitutes critical infrastructure information that must not be publicly disclosed in ways that could assist attackers.",
+    "question": "What is 'critical infrastructure information' as defined in the critical infrastructure glossary, and what protective obligations does this concept imply?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "NIS2 requires essential and important entities to use multi-factor authentication (MFA) or continuous authentication solutions, secured voice, video and text communications, and secured emergency communication systems within the entity, where appropriate. The phrase 'where appropriate' indicates that MFA is not mandatory in all circumstances but must be applied based on a risk assessment, in particular for access to sensitive systems, privileged accounts and remote access channels. The Directive does not prescribe specific MFA technologies; the choice of solution must be proportionate to the risk posed by the system or data being protected.",
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what specific obligations govern the use of multi-factor authentication and what guidance does the Directive provide on when it is appropriate?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines functional dependency as a dependency where objects in one infrastructure can only function when objects in another infrastructure operate properly; it can be uni- or bi-directional and direct or indirect. An example between sectors in the CER Annex: the water sector (sector 6 — drinking water) may have a functional dependency on the energy sector (sector 1) if pumping stations and treatment plants require continuous electricity supply. Conversely, the energy sector may have a functional dependency on the water sector if thermal power plants require cooling water. This bi-directional functional dependency means that the failure of one critical entity can cascade to another, which is why CER's Member State risk assessment must explicitly map cross-sectoral dependencies.",
+    "question": "What is 'functional dependency' as defined in the critical infrastructure glossary, and can you give an example of how it might arise between sectors covered by Directive (EU) 2022/2557?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The EPCIP was the pre-existing EU policy framework for critical infrastructure protection, established following the 2004 Communication and underpinning Directive 2008/114/EC — the predecessor legislation that Directive (EU) 2022/2557 repeals. The EPCIP introduced the CIWIN (Critical Infrastructure Warning Information Network) as a secure information-sharing tool for critical infrastructure protection across EU Member States and relevant sectors. Directive (EU) 2022/2557 supersedes the EPCIP framework by expanding its scope from two sectors (energy and transport) to eleven, introducing entity-level obligations for resilience planning and incident notification, and establishing the Critical Entities Resilience Group as the new coordination mechanism.",
+    "question": "What is the 'European Programme for Critical Infrastructure Protection' (EPCIP) referenced in the critical infrastructure glossary, and how does it relate to Directive (EU) 2022/2557?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines an important entity as an entity within the scope of cybersecurity regulation (NIS2) that does not qualify as essential but plays a significant role in the functioning of the internal market. NIS2 formalises this as: any entity of a type referred to in Annex I or Annex II that falls within the scope of the Directive but does not meet the criteria for essential entity classification — primarily because it is not a large enterprise, does not fall into a size-exempt category, and is not identified as critical under the CER Directive. The glossary definition is descriptive; the NIS2 definition is residual and technical, capturing all in-scope entities that are not affirmatively classified as essential.",
+    "question": "How does the critical infrastructure glossary define 'important entity', and how does this definition compare to the formal classification in Directive (EU) 2022/2555 (NIS2)?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "Cross-cutting criteria are the set of criteria for assessing the seriousness of an impact, applied regardless of sector, including: loss of lives and health impact; severe economic impact; restriction of essential services; psychological effects; and environmental consequences. Under Directive (EU) 2022/2557, Member States apply these criteria when assessing whether an incident affecting a given entity would have a significant disruptive effect on the provision of essential services — the third condition that must be met for entity identification. The cross-cutting nature of the criteria ensures a consistent baseline for significance assessment across all eleven sectors listed in the Annex.",
+    "question": "Under Directive (EU) 2022/2557, how are the 'cross-cutting criteria' for assessing the significance of critical infrastructure disruption used during the entity identification process?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines disaster risk reduction as the concept and practice of reducing disaster risks through systematic efforts to analyse and manage the causal factors of disasters, including reduced exposure to hazards, lessened vulnerability and improved preparedness. This directly maps to the prevention component of CER's resilience requirements: critical entities must take technical, security and organisational measures to prevent incidents, which includes identifying and mitigating hazards before they cause disruption. Disaster risk reduction is thus one of the conceptual foundations of the Directive's all-hazards approach — it prioritises upstream risk reduction over reactive response, consistent with the Sendai Framework for Disaster Risk Reduction 2015-2030.",
+    "question": "What is 'disaster risk reduction' as defined in the critical infrastructure glossary, and how does this concept relate to the prevention obligations in Directive (EU) 2022/2557?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "When a cybersecurity incident causes a level of disruption that exceeds a Member State's capacity to respond to it, or has a significant impact on at least two Member States, it qualifies as a large-scale cybersecurity incident. In such cases, EU-CyCLONe is activated to support coordinated management at the operational level. EU-CyCLONe develops shared situational awareness, coordinates national response activities and acts as intermediary between the technical level (managed by the CSIRTs network) and the political decision-making level. ENISA facilitates information exchange and provides technical analysis to support the coordinated response.",
+    "question": "What happens under Directive (EU) 2022/2555 (NIS2) when a Member State's response capacity is exceeded by a cybersecurity incident?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "Critical entities must designate a liaison officer — or an equivalent point of contact — to serve as the official interface with the national competent authority and single point of contact. The liaison officer receives notifications of supervisory actions, coordinates the entity's responses to inspection requests, and ensures that incident notifications are submitted within the required 24-hour window. The designation is mandatory and must occur as part of the entity's initial compliance obligations following the nine-month period after notification of identification. The liaison officer does not bear personal legal liability under the Directive, unlike NIS2's management body accountability provisions.",
+    "question": "Under Directive (EU) 2022/2557, what is the significance of the 'liaison officer' that critical entities must designate, and what are this person's functions?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "NIS2 Article 20 requires members of management bodies to undergo cybersecurity training to acquire sufficient knowledge and skills to identify risks and assess cybersecurity risk-management practices and their impact on services. Entities are encouraged — but not mandated — to offer similar training to all employees. The management body training is a mandatory compliance obligation for both essential and important entities; failure to ensure training may be considered an infringement of Article 20. The Directive does not prescribe the content, duration or delivery format of training; these parameters are left to the entity's discretion, subject to the competence standard required by Article 20.",
+    "question": "Under Directive (EU) 2022/2555 (NIS2), how does the Directive address cybersecurity training obligations for management bodies and employees?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines cybercrime as criminal acts committed online using electronic communications networks and information systems, including crimes specific to the internet, online fraud and forgery, and illegal online content. Under NIS2, the early warning obligation is triggered when an entity suspects the incident may be caused by 'unlawful or malicious acts' — a broader concept than cybercrime because it includes non-criminal malicious activity such as state-sponsored espionage or hacktivism, which may not constitute criminal offences in all jurisdictions. An entity's early warning must flag this suspicion, after which the CSIRT must guide the entity on whether to report separately to law enforcement.",
+    "question": "What is 'cybercrime' according to the critical infrastructure glossary, and how does this differ from the concept of 'malicious act' that triggers early warning obligations under Directive (EU) 2022/2555 (NIS2)?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines a critical entity as a public or private entity identified by a Member State in accordance with Article 6 of Directive (EU) 2022/2557 as belonging to one of the categories in the Annex. The Directive's own definition is functionally identical: an entity identified by a Member State as providing an essential service whose disruption would have a significant disruptive effect. Formal identification is legally constitutive: it triggers the entity-level obligations of Chapters III, IV and VI (resilience measures, risk assessments, resilience plans and incident notification) and makes the entity subject to national supervisory powers. Identification is also the prerequisite for an entity to be potentially designated as a critical entity of particular European significance.",
+    "question": "How does Directive (EU) 2022/2557 define 'critical entity' compared to the glossary definition, and what legal effects does formal identification have?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "No. The early warning and the incident notification are two legally distinct and cumulative obligations. The early warning must be submitted within 24 hours of becoming aware of the significant incident; it is a preliminary alert with limited information. The incident notification must then be submitted separately within 72 hours, containing a more substantive initial assessment, severity classification and indicators of compromise. Submitting an early warning does not satisfy or substitute for the incident notification. Both are required in sequence, followed by intermediate reports on request and a final report within one month of the incident notification.",
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what is the legal status of the early warning relative to the subsequent incident notification — does submitting an early warning satisfy the notification obligation?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines a cascading failure (or cascading effect) as a situation where a disruption in one infrastructure causes the failure of a component in a second infrastructure, which subsequently causes further disruptions across interconnected systems. This concept directly informs the significance criteria in Directive (EU) 2022/2557: when assessing whether an entity's disruption would be significant, Member States must consider the degree to which other sectors depend on the entity's essential service. If failure of one entity would trigger cascading failures in interconnected sectors, the significance threshold is more easily met, making identification as a critical entity more likely.",
+    "question": "How does the critical infrastructure glossary define 'cascading failure', and how does this concept inform the significance criteria used for identifying critical entities under Directive (EU) 2022/2557?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "NIS2 requires Member States to establish the list of essential and important entities by 17 April 2025 and to notify the Commission of the aggregate number of entities per sector. Failure to meet this deadline constitutes non-compliance with a specific transposition obligation. The Commission may initiate infringement proceedings against the Member State under Article 258 TFEU, which can ultimately lead to a ruling by the Court of Justice and financial penalties. The absence of an established list also has practical consequences: without formal identification, entities cannot be subject to NIS2 supervisory oversight, and the national cyber crisis management framework lacks a defined scope.",
+    "question": "Under Directive (EU) 2022/2555 (NIS2), what is the legal consequence if a Member State fails to establish the list of essential and important entities by the 17 April 2025 deadline?",
+    "_model": "claude-haiku-4-5-20251001"
+  },
+  {
+    "reference": "The glossary defines availability as the extent to which a system or service is operational when needed. NIS2 defines an incident as an event compromising the availability, authenticity, integrity or confidentiality of stored, transmitted or processed data or of services. Availability is listed first among these properties because for critical infrastructure sectors — energy, transport, health, water — continuous service delivery is the paramount concern: even a brief loss of availability can have immediate life-safety consequences. While integrity and confidentiality are also critical, availability failures in essential service contexts are typically the most immediately consequential, which is why the incident notification obligations are calibrated around the concept of 'severe operational disruption' of services.",
+    "question": "What is 'availability' as defined in the critical infrastructure glossary, and why is it listed first among the security properties protected by Directive (EU) 2022/2555 (NIS2)?",
+    "_model": "claude-haiku-4-5-20251001"
+  }
+]

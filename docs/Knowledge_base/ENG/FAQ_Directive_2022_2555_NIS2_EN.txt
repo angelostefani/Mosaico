@@ -1,0 +1,322 @@
+FAQ - DIRECTIVE (EU) 2022/2555 - CYBERSECURITY (NIS 2 DIRECTIVE)
+========================================================================
+
+
+--- SECTION 1: WHAT IS THE DIRECTIVE AND WHY DOES IT EXIST ---
+
+Q: What is the main objective of Directive (EU) 2022/2555?
+A: The Directive aims to achieve a high common level of cybersecurity across the Union, with a
+   view to improving the functioning of the internal market. It lays down obligations for Member
+   States to adopt national cybersecurity strategies, cybersecurity risk-management measures
+   and reporting obligations for essential and important entities, rules on information sharing,
+   and supervisory and enforcement obligations.
+
+Q: What prompted the EU to adopt this new Directive?
+A: The previous Directive (EU) 2016/1148 (NIS1) had inherent shortcomings that prevented
+   effective response to current and emerging cybersecurity challenges. Its review revealed wide
+   divergences in implementation across Member States — particularly regarding scope, security
+   obligations, incident reporting, supervision and enforcement — which fragmented the
+   internal market and created uneven levels of cyber resilience across the Union.
+
+Q: Does this Directive repeal any previous legislation?
+A: Yes. Directive (EU) 2022/2555 repeals Directive (EU) 2016/1148 with effect from
+   18 October 2024. It also deletes Article 19 of Regulation (EU) No 910/2014 and Articles 40
+   and 41 of Directive (EU) 2018/1972 with effect from the same date.
+
+
+--- SECTION 2: KEY DEFINITIONS ---
+
+Q: What is an 'incident' under this Directive?
+A: An event compromising the availability, authenticity, integrity or confidentiality of stored,
+   transmitted or processed data, or of the services offered by, or accessible via, network and
+   information systems.
+
+Q: What is a 'significant incident'?
+A: An incident that has caused or is capable of causing severe operational disruption of services
+   or financial loss for the entity concerned, or that has affected or is capable of affecting other
+   natural or legal persons by causing considerable material or non-material damage.
+
+Q: What is a 'large-scale cybersecurity incident'?
+A: An incident which causes a level of disruption that exceeds a Member State's capacity to
+   respond to it, or which has a significant impact on at least two Member States.
+
+Q: What is a 'cyber threat'?
+A: Any potential circumstance, event or action that could damage, disrupt or adversely affect
+   network and information systems, their users, or other persons (as defined by reference to
+   Regulation (EU) 2019/881, the Cybersecurity Act).
+
+Q: What is a 'vulnerability'?
+A: A weakness, susceptibility or flaw of ICT products or ICT services that can be exploited by
+   a cyber threat.
+
+Q: How is 'risk' defined?
+A: The potential for loss or disruption caused by an incident, expressed as a combination of
+   the magnitude of such loss or disruption and the likelihood of occurrence of the incident.
+
+Q: What is a 'near miss'?
+A: An event that could have compromised the availability, authenticity, integrity or
+   confidentiality of data or of services offered via network and information systems, but that
+   was successfully prevented from materialising or that did not materialise.
+
+
+--- SECTION 3: SECTORS AND ENTITIES IN SCOPE ---
+
+Q: Which sectors fall within the scope of the Directive?
+A: The Directive covers two tiers of sectors:
+   Annex I — Sectors of high criticality (11 sectors):
+    1.  Energy
+    2.  Transport
+    3.  Banking
+    4.  Financial market infrastructures
+    5.  Health
+    6.  Drinking water
+    7.  Waste water
+    8.  Digital infrastructure
+    9.  ICT service management (business-to-business)
+    10. Public administration
+    11. Space
+   Annex II — Other critical sectors (7 sectors):
+    1.  Postal and courier services
+    2.  Waste management
+    3.  Manufacture, production and distribution of chemicals
+    4.  Production, processing and distribution of food
+    5.  Manufacturing (medical devices, electronics, machinery, vehicles, etc.)
+    6.  Digital providers (online marketplaces, search engines, social networks)
+    7.  Research
+
+Q: What is the size threshold for entities to fall within scope?
+A: As a general rule, the Directive applies to entities that qualify as medium-sized enterprises
+   (50 or more employees and annual turnover or balance sheet exceeding EUR 10 million) or
+   exceed those ceilings. Certain categories of entities are included regardless of size, such as
+   trust service providers, TLD name registries, DNS service providers, providers of public
+   electronic communications networks, and sole providers of essential services in a Member
+   State.
+
+Q: What is the difference between 'essential entities' and 'important entities'?
+A: Essential entities are large entities in Annex I sectors, as well as specific categories
+   regardless of size (qualified trust service providers, TLD registries, DNS service providers,
+   providers of public electronic communications networks, central government public
+   administration entities, and entities identified as critical under Directive (EU) 2022/2557).
+   Important entities are all other entities falling within scope that do not qualify as essential.
+   The distinction affects the supervisory regime: essential entities are subject to comprehensive
+   ex ante and ex post supervision; important entities are subject to a lighter, ex post only regime.
+
+Q: Who is excluded from the scope of the Directive?
+A: Public administration entities carrying out activities predominantly in the areas of national
+   security, public security, defence or law enforcement are excluded. Member States may also
+   exempt specific entities operating in those areas. The Directive does not apply to Member
+   States' diplomatic and consular missions in third countries.
+
+Q: Does the Directive cover physical resilience?
+A: No. Physical resilience of critical entities is addressed by the CER Directive
+   (EU) 2022/2557. NIS2 focuses on cybersecurity. The two Directives are complementary:
+   entities identified as critical under the CER Directive are automatically treated as essential
+   entities under NIS2, and competent authorities under both Directives must cooperate and
+   exchange information.
+
+Q: Are financial entities subject to full NIS2 obligations?
+A: No. Financial entities covered by Regulation (EU) 2022/2554 (DORA) are not subject to
+   the cybersecurity risk-management and reporting obligations under NIS2, as DORA provides
+   equivalent sector-specific requirements. However, information exchange between the
+   financial sector and NIS2 authorities is maintained.
+
+
+--- SECTION 4: OBLIGATIONS OF MEMBER STATES ---
+
+Q: What must Member States do to transpose the Directive?
+A: Member States must adopt and publish the necessary national measures by 17 October 2024,
+   with application from 18 October 2024. By 17 April 2025, they must also establish a list of
+   essential and important entities, reviewed at least every two years thereafter.
+
+Q: What must the national cybersecurity strategy contain?
+A: At least: strategic objectives and priorities covering Annex I and II sectors; a governance
+   framework; a framework clarifying roles and responsibilities of stakeholders; a mechanism
+   to identify assets and assess risks; measures for preparedness, responsiveness and recovery;
+   a list of authorities involved; a policy framework for coordination with CER authorities; and
+   a plan to raise cybersecurity awareness among citizens.
+
+Q: What governance bodies must Member States designate or establish?
+A: Each Member State must designate or establish: one or more competent authorities for
+   cybersecurity supervision; a single point of contact for cross-border cooperation; one or more
+   cyber crisis management authorities for large-scale incidents; and one or more CSIRTs
+   (Computer Security Incident Response Teams).
+
+Q: How often must the list of essential and important entities be reviewed?
+A: At least every two years. By 17 April 2025, Member States must notify the Commission of
+   the number of essential and important entities per sector, updating this information every
+   two years thereafter.
+
+Q: Can Member States apply stricter national rules?
+A: Yes. The Directive establishes minimum harmonisation. Member States may adopt or
+   maintain provisions ensuring a higher level of cybersecurity, provided they are consistent
+   with Union law.
+
+
+--- SECTION 5: OBLIGATIONS OF ESSENTIAL AND IMPORTANT ENTITIES ---
+
+Q: What cybersecurity risk-management measures must entities take?
+A: Appropriate and proportionate technical, operational and organisational measures based on
+   an all-hazards approach, including at least:
+   - Risk analysis and information system security policies;
+   - Incident handling procedures;
+   - Business continuity, backup management, disaster recovery and crisis management;
+   - Supply chain security, including direct supplier and service provider relationships;
+   - Security in network and information systems acquisition, development and maintenance,
+     including vulnerability handling and disclosure;
+   - Policies to assess the effectiveness of cybersecurity measures;
+   - Basic cyber hygiene practices and cybersecurity training;
+   - Policies on the use of cryptography and, where appropriate, encryption;
+   - Human resources security, access control policies and asset management;
+   - Multi-factor authentication or continuous authentication solutions, where appropriate.
+
+Q: Who is responsible for approving and overseeing cybersecurity measures within an entity?
+A: The management body of the entity must approve the cybersecurity risk-management
+   measures, oversee their implementation and can be held liable for infringements. Management
+   body members are required to follow cybersecurity training; entities are encouraged to offer
+   similar training to all employees.
+
+Q: Can existing measures satisfy NIS2 requirements?
+A: Yes. Where sector-specific Union legal acts require equivalent cybersecurity risk-management
+   measures or reporting obligations, those provisions apply instead of the corresponding NIS2
+   obligations. Entities subject to DORA or equivalent sectoral regulation may already meet
+   their obligations under those instruments.
+
+Q: Are entities required to address supply chain risks?
+A: Yes. Entities must assess the vulnerabilities specific to each direct supplier and service
+   provider, and consider the overall quality of products and cybersecurity practices throughout
+   their supply chains. They must also take into account the results of coordinated security risk
+   assessments of critical supply chains carried out at Union level by the Cooperation Group.
+
+
+--- SECTION 6: INCIDENT REPORTING OBLIGATIONS ---
+
+Q: When must an entity report a significant incident?
+A: Without undue delay, following a multi-stage approach:
+   - Within 24 hours of becoming aware: an early warning, indicating if the incident is
+     suspected to be caused by malicious acts or likely to have cross-border impact;
+   - Within 72 hours of becoming aware: an incident notification with an initial assessment,
+     severity and impact, and indicators of compromise where available;
+   - Upon request: intermediate status reports;
+   - Within one month of the incident notification: a final report with detailed description,
+     root cause, mitigation measures applied and cross-border impact.
+   For trust service providers, the initial notification deadline is 24 hours (not 72 hours).
+
+Q: Must entities also inform service recipients?
+A: Yes, where appropriate. Entities must communicate without undue delay to potentially
+   affected service recipients any significant cyber threats and the measures or remedies they
+   can take. Where the threat is likely to materialise, entities should also inform recipients of
+   the threat itself. Such communications must be free of charge and in clear language.
+
+Q: What happens after the early warning is received?
+A: The CSIRT or competent authority must provide initial feedback to the notifying entity,
+   including guidance on possible mitigation measures, within 24 hours of receiving the early
+   warning. Additional technical support is available upon request. If the incident is suspected
+   to be of criminal nature, guidance on reporting to law enforcement will also be provided.
+
+Q: What if an incident affects multiple Member States?
+A: The CSIRT, competent authority or single point of contact must inform the other affected
+   Member States and ENISA without undue delay. The single point of contact submits to ENISA
+   every three months a summary report of aggregated and anonymised data on significant
+   incidents, threats and near misses notified.
+
+
+--- SECTION 7: GOVERNANCE AND COORDINATION ---
+
+Q: What is the 'Cooperation Group'?
+A: A Commission expert group composed of representatives of Member States, the Commission
+   and ENISA, established to support strategic cooperation and exchange of information among
+   Member States. It carries out tasks including: providing guidance on transposition; exchanging
+   best practices; conducting coordinated security risk assessments of critical supply chains;
+   and producing biennial work programmes. It meets at least once a year with the Critical
+   Entities Resilience Group established under the CER Directive.
+
+Q: What is the 'CSIRTs network'?
+A: A network of national CSIRTs and CERT-EU, with ENISA as secretariat, established to
+   develop confidence and trust and promote swift operational cooperation. Its tasks include
+   exchanging information on threats, vulnerabilities and incidents; providing mutual assistance;
+   coordinating responses to cross-border incidents; and supporting coordinated vulnerability
+   disclosure.
+
+Q: What is EU-CyCLONe?
+A: The European Cyber Crisis Liaison Organisation Network, composed of Member States'
+   cyber crisis management authorities and the Commission. It supports the coordinated
+   management of large-scale cybersecurity incidents and crises at operational level, acts as
+   intermediary between technical and political levels, and reports every 18 months to the
+   European Parliament and the Council.
+
+Q: How does this Directive coordinate with the CER Directive?
+A: The two Directives are complementary. Entities identified as critical under the CER Directive
+   are treated as essential entities under NIS2. Competent authorities under both Directives
+   must cooperate regularly on identification of critical entities, cyber and non-cyber risks,
+   incidents and supervisory activities. They must endeavour to harmonise notification templates
+   and supervisory processes to minimise administrative burden.
+
+Q: What is the role of ENISA under this Directive?
+A: ENISA provides the secretariat of the CSIRTs network and EU-CyCLONe, maintains the
+   European vulnerability database, creates and maintains a registry of certain cross-border
+   entities, develops guidelines and technical guidance, assists Member States in developing
+   CSIRTs, publishes a biennial report on the state of cybersecurity in the Union, and supports
+   the coordinated vulnerability disclosure framework.
+
+
+--- SECTION 8: VULNERABILITY MANAGEMENT AND INFORMATION SHARING ---
+
+Q: What is 'coordinated vulnerability disclosure'?
+A: A structured process through which vulnerabilities in ICT products or services are reported
+   to the manufacturer or provider in a manner allowing diagnosis and remediation before
+   public disclosure. Each Member State must designate one of its CSIRTs as coordinator,
+   acting as a trusted intermediary between the reporting party and the affected manufacturer
+   or provider.
+
+Q: What is the European vulnerability database?
+A: A database developed and maintained by ENISA, allowing entities and their suppliers to
+   voluntarily disclose and register publicly known vulnerabilities in ICT products or ICT
+   services. It includes information describing the vulnerability, affected products and severity,
+   and guidance on available patches or mitigating measures. All stakeholders have access.
+
+Q: Can entities share cybersecurity information voluntarily?
+A: Yes. Member States must ensure that entities — including those outside the scope of the
+   Directive — can voluntarily exchange relevant cybersecurity information, such as threat
+   intelligence, vulnerabilities, indicators of compromise and response recommendations,
+   within cybersecurity information-sharing arrangements. Such voluntary reporting shall not
+   result in additional obligations on the notifying entity.
+
+
+--- SECTION 9: SUPERVISION, ENFORCEMENT AND PENALTIES ---
+
+Q: How does supervision differ between essential and important entities?
+A: Essential entities are subject to comprehensive ex ante and ex post supervision, including
+   on-site inspections, regular and targeted security audits, security scans and information
+   requests. Important entities are subject to a lighter ex post supervisory regime: supervision
+   is triggered by evidence of potential non-compliance, not conducted proactively.
+
+Q: What enforcement powers do competent authorities have?
+A: Authorities may issue warnings, adopt binding instructions to remedy deficiencies, order
+   cessation of infringing conduct, designate a monitoring officer, and impose administrative
+   fines. As a last resort, for essential entities, they may also request temporary suspension of
+   certifications or authorisations, or a temporary prohibition on a senior manager exercising
+   managerial functions.
+
+Q: What are the maximum administrative fines?
+A: For essential entities: at least EUR 10 000 000 or at least 2 % of the total worldwide annual
+   turnover of the undertaking concerned, whichever is higher.
+   For important entities: at least EUR 7 000 000 or at least 1.4 % of the total worldwide annual
+   turnover of the undertaking concerned, whichever is higher.
+
+Q: What rights do entities have during supervisory proceedings?
+A: The right to be heard, the right of defence, the right to protection of trade and business
+   secrets, and the right to an effective remedy before an independent court. Competent
+   authorities must state detailed reasoning for their enforcement measures and notify entities
+   of preliminary findings, allowing a reasonable time for observations.
+
+Q: When will the Commission carry out its first review of the Directive?
+A: By 17 October 2027, and every 36 months thereafter, the Commission must review the
+   functioning of the Directive and report to the European Parliament and to the Council,
+   assessing the relevance of entity sizes, sectors and types covered in light of cybersecurity
+   developments.
+
+
+========================================================================
+Source: Directive (EU) 2022/2555 of the European Parliament and of the Council
+of 14 December 2022 - OJ L 333/80 of 27.12.2022
+========================================================================

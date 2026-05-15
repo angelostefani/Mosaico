@@ -1,0 +1,258 @@
+FAQ - DIRETTIVA (UE) 2022/2557 - RESILIENZA DEI SOGGETTI CRITICI (CER)
+========================================================================
+
+
+--- SEZIONE 1: COS'È LA DIRETTIVA E PERCHÉ ESISTE ---
+
+D: Qual è l'obiettivo principale della Direttiva (UE) 2022/2557?
+R: La Direttiva mira a rafforzare la resilienza dei soggetti critici nel mercato interno
+   dell'Unione europea. Stabilisce norme minime armonizzate per garantire la fornitura
+   ininterrotta di servizi essenziali, sostiene i soggetti critici attraverso misure dedicate
+   di supervisione e assistenza, e migliora la cooperazione transfrontaliera tra gli Stati membri.
+
+D: Cosa ha spinto l'UE ad adottare questa nuova Direttiva?
+R: La precedente Direttiva 2008/114/CE si concentrava unicamente sulla protezione di singoli
+   asset in due settori (energia e trasporti). La valutazione del 2019 ha rilevato che le minacce
+   ibride, il terrorismo, i cambiamenti climatici e le crescenti interdipendenze intersettoriali
+   e transfrontaliere richiedevano un approccio molto più ampio e basato sul rischio.
+
+D: Questa Direttiva abroga normative precedenti?
+R: Sì. La Direttiva 2022/2557 abroga la Direttiva del Consiglio 2008/114/CE con effetto dal
+   18 ottobre 2024.
+
+
+--- SEZIONE 2: DEFINIZIONI CHIAVE ---
+
+D: Chi è un «soggetto critico»?
+R: Un soggetto pubblico o privato identificato da uno Stato membro come appartenente a una
+   delle categorie elencate nell'allegato della Direttiva (ad esempio fornitori di energia,
+   operatori dei trasporti, strutture sanitarie, ecc.).
+
+D: Cosa si intende per «resilienza» ai sensi di questa Direttiva?
+R: La resilienza è la capacità di un soggetto critico di prevenire, proteggersi da, rispondere a,
+   resistere a, mitigare, assorbire, adattarsi e riprendersi da un incidente.
+
+D: Cosa si intende per «incidente» ai sensi di questa Direttiva?
+R: Un evento che ha la potenzialità di perturbarne significativamente, o che perturba,
+   la fornitura di un servizio essenziale — anche quando interessa i sistemi nazionali che
+   tutelano lo Stato di diritto.
+
+D: Cosa si intende per «servizio essenziale»?
+R: Un servizio fondamentale per il mantenimento di funzioni societali vitali, attività
+   economiche, salute e sicurezza pubblica o per l'ambiente.
+
+D: Cosa si intende per «infrastruttura critica»?
+R: Un asset, un impianto, un'attrezzatura, una rete o un sistema — ovvero parte di essi —
+   necessario per la fornitura di un servizio essenziale.
+
+D: Come si definisce il «rischio»?
+R: Il potenziale di perdita o perturbazione causato da un incidente, espresso come
+   combinazione della portata di tale perdita o perturbazione e della probabilità che
+   l'incidente si verifichi.
+
+
+--- SEZIONE 3: SETTORI E SOGGETTI NELL'AMBITO DI APPLICAZIONE ---
+
+D: Quali settori rientrano nell'ambito di applicazione della Direttiva?
+R: L'allegato elenca 11 settori:
+    1.  Energia
+    2.  Trasporti
+    3.  Settore bancario
+    4.  Infrastrutture dei mercati finanziari
+    5.  Sanità
+    6.  Acqua potabile
+    7.  Acque reflue
+    8.  Infrastrutture digitali
+    9.  Pubblica amministrazione
+    10. Spazio
+    11. Produzione, trasformazione e distribuzione di alimenti
+
+D: Chi è escluso dall'ambito di applicazione della Direttiva?
+R: Sono esclusi i soggetti della pubblica amministrazione che operano prevalentemente
+   nei settori della sicurezza nazionale, della pubblica sicurezza, della difesa o dell'attività
+   di contrasto. Gli Stati membri possono anche decidere di non applicare parte degli obblighi
+   ai soggetti critici le cui attività riguardano prevalentemente tali settori.
+
+D: Le banche e le infrastrutture finanziarie hanno obblighi ridotti?
+R: Sì. I soggetti critici nei settori bancario (punto 3), delle infrastrutture dei mercati
+   finanziari (punto 4) e delle infrastrutture digitali (punto 8) non sono soggetti agli
+   obblighi dei Capi III, IV e VI della Direttiva, in quanto già coperti da normativa
+   settoriale equivalente (DORA, NIS2). Devono tuttavia essere identificati dagli Stati membri
+   e il Capo II della Direttiva si applica loro.
+
+D: La Direttiva riguarda la sicurezza informatica?
+R: No. La sicurezza informatica è disciplinata dalla Direttiva NIS2 (UE) 2022/2555.
+   La Direttiva CER si concentra sulla resilienza fisica. Gli Stati membri devono garantire
+   che entrambe siano attuate in modo coordinato.
+
+
+--- SEZIONE 4: OBBLIGHI DEGLI STATI MEMBRI ---
+
+D: Cosa devono fare gli Stati membri entro il 17 gennaio 2026?
+R: Ciascuno Stato membro deve adottare una strategia nazionale per il rafforzamento della
+   resilienza dei soggetti critici e completare la propria valutazione dei rischi. Entro
+   il 17 luglio 2026, devono altresì identificare i soggetti critici nei settori elencati
+   nell'allegato.
+
+D: Cosa deve contenere la strategia nazionale?
+R: Come minimo: obiettivi strategici e priorità; un quadro di governance; una descrizione
+   delle misure e del processo di valutazione dei rischi; il processo per identificare i
+   soggetti critici; meccanismi di sostegno (anche per le PMI); e un quadro di coordinamento
+   con le autorità competenti per la NIS2.
+
+D: Come vengono identificati i soggetti critici?
+R: Uno Stato membro identifica un soggetto come critico se: fornisce uno o più servizi
+   essenziali; opera sul suo territorio; e un incidente avrebbe un effetto perturbatore
+   significativo sulla fornitura di tali servizi. I criteri per valutare la significatività
+   comprendono il numero di utenti interessati, l'impatto economico e sociale, la quota di
+   mercato e l'area geografica interessata.
+
+D: Con quale frequenza deve essere riesaminato l'elenco dei soggetti critici?
+R: Almeno ogni quattro anni e ogniqualvolta necessario.
+
+D: Quali informazioni devono condividere gli Stati membri con la Commissione?
+R: Dopo aver identificato i soggetti critici, ciascuno Stato membro deve trasmettere senza
+   indebito ritardo: l'elenco dei servizi essenziali (se diverso da quello della Commissione),
+   il numero di soggetti critici per settore e sottosettore, e le eventuali soglie applicate.
+   Tali informazioni devono essere aggiornate almeno ogni quattro anni.
+
+
+--- SEZIONE 5: OBBLIGHI DEI SOGGETTI CRITICI ---
+
+D: Cosa deve fare un soggetto critico dopo aver ricevuto la notifica della propria identificazione?
+R: Entro 9 mesi dalla notifica, deve effettuare la propria valutazione dei rischi. Gli obblighi
+   del Capo III (misure di resilienza) si applicano a partire da 10 mesi dalla notifica.
+   Il soggetto deve inoltre designare un responsabile di collegamento quale punto di contatto
+   con le autorità competenti.
+
+D: Quali misure di resilienza devono adottare i soggetti critici?
+R: Misure tecniche, di sicurezza e organizzative adeguate e proporzionate volte a:
+   - prevenire gli incidenti (compreso l'adattamento ai cambiamenti climatici);
+   - garantire un'adeguata protezione fisica dei locali e delle infrastrutture;
+   - rispondere, resistere e attenuare le conseguenze degli incidenti;
+   - riprendersi dagli incidenti (continuità operativa, catene di fornitura alternative);
+   - garantire un'adeguata gestione della sicurezza del personale (compresi i controlli
+     sui precedenti);
+   - sensibilizzare il personale pertinente mediante formazione ed esercitazioni.
+
+D: Cos'è un piano di resilienza e chi deve elaborarlo?
+R: Ogni soggetto critico deve disporre e applicare un piano di resilienza (o documenti
+   equivalenti) che descriva le misure adottate. I documenti già prodotti per adempiere ad
+   altri obblighi normativi possono essere riutilizzati se coprono i requisiti della Direttiva.
+
+D: Con quale frequenza i soggetti critici devono effettuare la propria valutazione dei rischi?
+R: Almeno ogni quattro anni e ogniqualvolta le circostanze o i rischi cambino in misura
+   significativa.
+
+D: Le valutazioni dei rischi o le misure già esistenti possono soddisfare i requisiti CER?
+R: Sì. Laddove un soggetto critico abbia già effettuato valutazioni dei rischi o adottato
+   misure in virtù di altri obblighi normativi, può utilizzarle per soddisfare i requisiti CER.
+   L'autorità competente può anche dichiarare formalmente che le valutazioni o le misure
+   esistenti sono conformi, in tutto o in parte.
+
+
+--- SEZIONE 6: NOTIFICA DEGLI INCIDENTI ---
+
+D: Quando un soggetto critico deve notificare un incidente?
+R: Senza indebito ritardo, per gli incidenti che perturbano significativamente o che hanno
+   il potenziale di perturbare significativamente la fornitura di servizi essenziali. Una
+   notifica iniziale deve essere presentata entro 24 ore dal momento in cui il soggetto viene
+   a conoscenza dell'incidente, salvo che non sia in grado di farlo per ragioni operative.
+
+D: Cosa deve contenere la notifica?
+R: Tutte le informazioni disponibili necessarie per consentire all'autorità competente di
+   comprendere la natura, la causa e le possibili conseguenze dell'incidente, compreso
+   l'eventuale impatto transfrontaliero. La notifica non espone i soggetti critici a una
+   maggiore responsabilità.
+
+D: È richiesta una relazione di follow-up dopo la notifica iniziale?
+R: Sì. Ove pertinente, una relazione dettagliata deve essere presentata entro un mese
+   dall'incidente, a integrazione della notifica iniziale con una panoramica più completa.
+
+D: Quali parametri si utilizzano per valutare la significatività di una perturbazione?
+R: Il numero e la percentuale di utenti interessati; la durata della perturbazione; e l'area
+   geografica interessata, anche se si tratta di una zona geograficamente isolata.
+
+D: Cosa accade se un incidente interessa sei o più Stati membri?
+R: Le autorità competenti degli Stati membri interessati devono notificarlo alla Commissione.
+   Il punto di contatto unico informa altresì i punti di contatto unici degli altri Stati
+   membri interessati.
+
+
+--- SEZIONE 7: GOVERNANCE E COORDINAMENTO ---
+
+D: Cos'è il «punto di contatto unico»?
+R: Un'autorità designata da ciascuno Stato membro per fungere da collegamento nella
+   cooperazione transfrontaliera. Coordina le comunicazioni con i punti di contatto unici
+   degli altri Stati membri e con il Gruppo per la resilienza dei soggetti critici.
+
+D: Cos'è il «Gruppo per la resilienza dei soggetti critici»?
+R: Un gruppo di esperti della Commissione composto da rappresentanti degli Stati membri
+   che assiste la Commissione, facilita la cooperazione tra gli Stati membri e promuove
+   lo scambio di buone pratiche. Si riunisce almeno una volta l'anno con il Gruppo di
+   cooperazione NIS2.
+
+D: Come si coordina questa Direttiva con la NIS2?
+R: Le due Direttive sono complementari: la NIS2 riguarda la sicurezza informatica, la CER
+   la resilienza fisica. Le autorità competenti nell'ambito di entrambe le Direttive devono
+   cooperare e scambiarsi informazioni. Gli Stati membri devono garantire un'attuazione
+   coordinata per evitare duplicazioni e oneri eccessivi a carico dei soggetti.
+
+D: Gli Stati membri possono applicare norme nazionali più rigorose?
+R: Sì. La Direttiva stabilisce un'armonizzazione minima. Gli Stati membri possono adottare
+   o mantenere disposizioni nazionali per conseguire un livello più elevato di resilienza,
+   purché siano compatibili con il diritto dell'Unione.
+
+
+--- SEZIONE 8: SOGGETTI CRITICI DI PARTICOLARE RILEVANZA EUROPEA ---
+
+D: Cos'è un soggetto critico «di particolare rilevanza europea»?
+R: Un soggetto già identificato come critico che fornisce servizi essenziali identici o
+   analoghi a o in sei o più Stati membri e che è stato formalmente notificato come tale
+   dalla Commissione.
+
+D: Quali obblighi aggiuntivi si applicano a questi soggetti?
+R: Devono informare la propria autorità competente del fatto che forniscono servizi a sei
+   o più Stati membri. La Commissione può quindi organizzare una missione consultiva per
+   valutare le misure di resilienza. Devono consentire alla missione consultiva l'accesso
+   a tutte le informazioni, ai sistemi e agli impianti pertinenti.
+
+D: Cosa sono le missioni consultive?
+R: Missioni organizzate dalla Commissione per valutare le misure di resilienza dei soggetti
+   critici di particolare rilevanza europea. Sono composte da esperti degli Stati membri
+   pertinenti e della Commissione. La missione riferisce le proprie conclusioni entro tre
+   mesi dal completamento. La Commissione emette quindi un parere sulla conformità del
+   soggetto.
+
+
+--- SEZIONE 9: SUPERVISIONE, APPLICAZIONE E SANZIONI ---
+
+D: Come viene supervisionato il rispetto degli obblighi?
+R: Le autorità competenti nazionali hanno il potere di condurre ispezioni in loco,
+   supervisioni fuori sede, richiedere informazioni e prove (compresi audit indipendenti
+   a spese del soggetto) e adottare ordini di rimedio. Tali poteri devono essere esercitati
+   in modo obiettivo, trasparente e proporzionato.
+
+D: Sono previste sanzioni per i soggetti critici inadempienti?
+R: Sì. Gli Stati membri devono stabilire norme in materia di sanzioni che siano efficaci,
+   proporzionate e dissuasive. Tali norme dovevano essere notificate alla Commissione
+   entro il 17 ottobre 2024.
+
+D: Entro quando gli Stati membri dovevano recepire la Direttiva?
+R: Entro il 17 ottobre 2024. Le misure nazionali si applicano dal 18 ottobre 2024.
+
+D: Quando la Commissione effettuerà il primo riesame della Direttiva?
+R: La Commissione deve presentare una relazione di valutazione della conformità al
+   Parlamento europeo e al Consiglio entro il 17 luglio 2027, e un riesame più ampio
+   del funzionamento della Direttiva entro il 17 giugno 2029.
+
+D: Quali diritti hanno i soggetti critici nel corso dei procedimenti di vigilanza?
+R: Il diritto di essere sentiti, il diritto alla difesa, il diritto alla protezione dei
+   segreti commerciali e aziendali, e il diritto a un ricorso effettivo dinanzi a un
+   giudice indipendente.
+
+
+========================================================================
+Fonte: Direttiva (UE) 2022/2557 del Parlamento europeo e del Consiglio
+del 14 dicembre 2022 - GU L 333/164 del 27.12.2022
+========================================================================

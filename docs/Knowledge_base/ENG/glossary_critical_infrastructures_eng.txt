@@ -1,0 +1,128 @@
+Acceptable Risk: The level of residual risk that has been determined to be a reasonable level of potential loss or disruption for a specific system.
+Adaptation: Adjustment in natural or human systems in response to actual or expected climatic stimuli or their effects, which moderates harm or exploits beneficial opportunities. Includes anticipatory, autonomous and planned adaptation.
+Adaptation Assessment: The practice of identifying options to adapt to climate change and evaluating them in terms of criteria such as availability, benefits, costs, effectiveness, efficiency and feasibility.
+Adaptation Options: The array of strategies and measures available and appropriate for addressing adaptation needs, including structural, institutional, or social actions.
+Adaptation Strategies: A general plan of action for a country, region or municipality for addressing the impacts of climate change through a mix of policies and measures aimed at reducing vulnerability.
+Adaptive Capacity: The ability of a system to adjust to climate change to moderate potential damages, take advantage of opportunities, or cope with the consequences.
+All-Hazards Approach: An approach that considers all types of hazards — natural, technological, and human-induced — using the same set of management arrangements.
+Asset (Critical Asset): Anything of value to an organisation, its operations and continuity — including physical or digital resources supporting essential services — whose compromise may affect a critical entity.
+Attack Tool: A software or hardware tool used to conduct cyberattacks against a system, network or application by exploiting vulnerabilities or applying techniques such as exploitation, scanning, password cracking or denial of service.
+Attack Tree: A formal, methodical way of describing the security of systems based on varying attacks, representing attacks in a tree structure with the goal as the root node and different ways of achieving that goal as leaf nodes.
+Availability: The extent to which a system or service is operational when needed.
+Biological Hazard: Infectious agents or hazardous biological materials that present a risk to the health of humans, animals, plants, or the environment.
+Blackout: A state in which the operation of part or all of a transmission system is terminated.
+Business Continuity: The ability to maintain service delivery during disruptions, ensuring critical functions remain operational.
+Capacity: The ability of people, organisations and society as a whole to manage their affairs successfully and perform required functions.
+Capacity Building: The process whereby people, organisations and society as a whole unleash, strengthen, create, adapt and maintain capacity over time.
+Cascading Effect / Cascading Failure: A situation where a disruption in one infrastructure causes the failure of a component in a second infrastructure, which subsequently causes further disruptions across interconnected systems.
+CBRN: Acronym for chemical, biological, radiological, and nuclear issues that could harm society through their accidental or deliberate release, dissemination, or impacts.
+Climate Change: Long-term changes in temperature and weather patterns, whether due to natural variability or as a result of human activity.
+Climate Hazard: The potential occurrence of a natural or human-induced physical event or trend that may cause loss of life, injury, or damage to property, infrastructure, livelihoods or the environment.
+Climate Model: A numerical representation of the climate system based on the physical, chemical and biological properties of its components, their interactions and feedback processes.
+Climate Projection: The simulated response of the climate system to a scenario of future emission or concentration of greenhouse gases and aerosols, generally derived using climate models.
+Climate System: Defined by the dynamics and interactions of five major components: atmosphere, hydrosphere, cryosphere, land surface, and biosphere.
+Common Cause Failure: A failure resulting from one or more events causing concurrent failures of two or more separate channels in a multiple-channel system.
+Consequence Management: Coordination of measures taken to react to and reduce the impact of a security-related incident, particularly resulting from terrorist attacks.
+Contingency Planning: Preparation of response plans for potential disruptions of critical infrastructure, addressing participation of owners/operators, cooperation with national authorities and information sharing.
+Control: Rights, contracts or other means that confer the possibility of exercising decisive influence on an undertaking, including through ownership or use of assets.
+Crisis: An abnormal and unstable situation that threatens the strategic objectives, reputation or survival of an organisation and requires extraordinary measures to restore normal conditions.
+Critical Entity: A public or private entity which has been identified by a Member State in accordance with Article 6 of Directive (EU) 2022/2557 as belonging to one of the categories set out in the Annex to that Directive (i.e. as an entity operating in sectors such as energy, transport, banking, health, water, digital infrastructure, public administration, space or food).
+Critical Information Infrastructure Protection (CIIP): Protection of critical digital systems and networks encompassing organisations or entities that operate physical or virtual systems providing essential services.
+Critical Infrastructure: An asset, facility, equipment, network or system, or part thereof, necessary for the provision of an essential service.
+Critical Infrastructure Dependency: The relationship between two critical infrastructure products or services in which one is required for the generation of the other.
+Critical Infrastructure Element: A discrete part of a critical infrastructure, which can have further sub-elements.
+Critical Infrastructure Information: Facts about a critical infrastructure which, if disclosed, could be used to plan and act with a view to causing disruption or destruction of critical infrastructure installations.
+Critical Infrastructure Operator: Entities responsible for investments in and/or day-to-day operation of a particular asset, system or part thereof designated as a critical infrastructure.
+Critical Infrastructure Protection (CIP): All activities aimed at ensuring the functionality, continuity and integrity of critical infrastructures in order to deter, mitigate and neutralise threats, risks or vulnerabilities.
+Critical Infrastructure Sector: Includes transport systems, air and sea ports, electricity, water and communications systems, hospitals and health clinics, and centres for fire, police and public administration services.
+Critical Infrastructure Warning Information Network (CIWIN): A pillar of the European Programme for Critical Infrastructure Protection (EPCIP) that seeks to improve the protection of critical infrastructure across all EU Member States and relevant sectors.
+Cross-cutting Criteria: The set of criteria for assessing the seriousness of impact of disruption of a critical infrastructure element, including loss of lives, health impact, severe economic impact or restriction of essential services.
+Cyber Defence: A subset of cybersecurity aiming to defend cyberspace with military and other appropriate means in order to achieve military-strategic goals.
+Cyber Dependency: A dependency that exists when the state of an infrastructure depends on information transmitted through the information infrastructure.
+Cyber Resilience: The ability to prevent, prepare for, withstand and recover from cyberattacks and incidents, ensuring continuous service delivery despite cyber events.
+Cyber Terrorism: Terrorist attacks on cyber infrastructure, particularly on control systems for critical energy infrastructure.
+Cybercrime: Criminal acts committed online using electronic communications networks and information systems, including crimes specific to the internet, online fraud and forgery, and illegal online content.
+Cybersecurity: Activities to protect systems, networks and users from cyber threats, ensuring the ability of network and information systems to resist events that may compromise the availability, authenticity, integrity or confidentiality of data or services.
+Cyberspace: The intangible global environment of interconnected digital systems and networks in which online communication occurs between people, software and services.
+Decision Support: A structured process of activities that support decision-makers and stakeholders in coping with and resolving problems they face.
+Denial of Service (DoS / DDoS): An attack aimed at making an online service unavailable by overwhelming it with traffic. When multiple sources are used simultaneously it becomes a Distributed Denial of Service (DDoS) attack.
+Dependability: The property of a system such that reliance can justifiably be placed on the service it delivers.
+Dependency: A relationship where one system relies on another for its functioning.
+Detection: The identification of threats or incidents. In CBRN environments, the act of locating hazardous substances or perceiving the presence of biological agents.
+Digital Service: A service within the meaning of Article 1(1)(b) of Directive (EU) 2015/1535 of the European Parliament and of the Council.
+Disaster Risk: The potential disaster losses — in lives, health, livelihoods, assets and services — that could occur to a community or society over a specified future time period.
+Disaster Risk Management: The systematic process of using administrative directives, organisations and operational capacities to implement strategies and policies to lessen the adverse impacts of hazards and the possibility of disaster.
+Disaster Risk Reduction: The concept and practice of reducing disaster risks through systematic efforts to analyse and manage the causal factors of disasters, including reduced exposure to hazards, lessened vulnerability, and improved preparedness.
+Disruption: A significant interruption of normal operations of a system or entity.
+Distribution System Operator (DSO): A natural or legal person responsible for operating, maintaining and developing the distribution system in a given area and ensuring the long-term ability of the system to meet reasonable electricity distribution demands.
+Disturbance: An unplanned event that may cause a transmission system to deviate from its normal state.
+Effect / Impact: The outcome or consequence of an event. Assessed with reference to public effect, economic effect, environmental effect, political effects, psychological effects and public health consequences.
+Effectiveness: The ability to be successful and produce the intended results.
+Emergency: A sudden or unexpected event placing life or property in danger and requiring immediate response through the use of community resources and procedures.
+Emergency Management: The body of policy and administrative decisions and operational activities pertaining to the various stages of a disaster at all levels.
+Essential Service: A service crucial for maintaining vital societal functions, economic activities, public health and safety, or the environment.
+Failure: A short- or long-term loss of power to an area, or more generally the cessation of a system's ability to perform its required function.
+Fault Tree: A representation of fault sequences of components in which each component is logically decomposed into sub-components, with leaves representing failures connected by logical gates.
+Functional Dependency: A dependency where objects in one infrastructure can only function when the objects in another infrastructure operate properly. Can be uni- or bi-directional, direct or indirect.
+Gateway: A technical interface component that makes a proprietary simulator compatible with standard schemes for dependency modelling, time synchronisation and simulation control.
+Geographical Dependency: A dependency that exists when a local environmental event can create state changes in two or more geographically co-located infrastructures.
+Geological Hazard: A disaster or hazardous event originating from solid earth processes.
+Hazard: A dangerous event or circumstance that may or may not lead to an emergency or disaster.
+Hybrid Threat: A mixture of coercive and subversive activity combining conventional and unconventional methods used by state or non-state actors to achieve objectives while remaining below the threshold of open hostilities.
+Impact Chains: Analytical tools that structure cause-effect relationships between drivers affecting system vulnerability (sensitivity, exposure, adaptive capacity), helping identify key impacts and clarify the scope of vulnerability assessments.
+Important Entity: An entity within the scope of cybersecurity regulation (NIS2) that does not qualify as essential but plays a significant role in the functioning of the internal market.
+Incident: An event which has the potential to significantly disrupt, or that disrupts, the provision of an essential service, including when it affects the national systems that safeguard the rule of law (CER Directive, Art. 2 §3). Note: in the cybersecurity context (NIS2), the term refers more specifically to an event compromising the availability, authenticity, integrity or confidentiality of data or network and information systems.
+Incident Management: An ongoing process to prevent, mitigate, prepare for, respond to, and recover from an incident that threatens life, property, operations, or the environment.
+Information Security: The protection of information against unauthorised disclosure, transfer, modification or destruction, whether accidental or intentional.
+Information Sharing: The exchange of network and information security related information such as risks, vulnerabilities, threats, internal security issues and good practices.
+Infrastructure: Physical assets across policy areas including communications, emergency services, energy, finance, food, government, health, education, civil protection, transport and water.
+Inoperability: The degree of function loss of a system or infrastructure component.
+Interdependency: A mutual dependency between two or more systems or entities, where the state of each depends on the state of the other. Can be physical, cyber, geographical, functional or logical.
+Internet Exchange Point (IXP): A network facility enabling the interconnection of more than two independent networks (autonomous systems), primarily to facilitate the exchange of internet traffic.
+Likelihood: The chance or probability of something happening.
+Load Shedding: The disconnection of load from a synchronous electric system, usually performed automatically, to control the system frequency in emergency situations.
+Logical Dependency: A dependency where the state of each of two infrastructures depends on the state of the other via a mechanism that is not a physical, cyber or geographic connection.
+Mitigation: Measures to reduce the likelihood or impact of a risk, or more generally the limitation of any negative consequences of a particular event.
+Modelling: The action of designing and creating a conceptual, computational or simulation model to represent and analyse complex systems.
+N-1 Criterion: The rule according to which elements remaining in operation after a contingency must be capable of accommodating the new operational situation without violating operational security limits.
+National Security: The condition achieved by a nation whereby its sovereignty, territorial integrity and vital interests are protected against external and internal threats.
+Near Miss: An event that could have compromised the availability, authenticity, integrity or confidentiality of data or services but that was successfully prevented from materialising.
+Network and Information System: An electronic communications network, any device or group of devices that perform automatic processing of digital data, and the digital data stored, processed or transmitted by those elements.
+Operator of Essential Services: A public or private entity meeting the criteria of applicable EU directives for the provision of essential services. Under NIS2, entities are classified as essential entities or important entities.
+Physical Dependency: A dependency where the state of each of two infrastructures depends on the material output(s) of the other.
+Point of Contact (ECIP): A national contact point appointed by each Member State to coordinate European critical infrastructure protection issues within the Member State, with other Member States and with the European Commission.
+Recovery: The process of restoring a system to full operation after an interruption in service, including equipment repair or replacement and file recovery or restoration.
+Reliability: A measure of the capability of a system to transmit or deliver its service above some minimum defined level at any point in time under normal operating conditions.
+Residual Risk: The risk remaining after risk treatment measures have been applied.
+Resilience: The ability to prevent, protect against, respond to, resist, mitigate, absorb, accommodate and recover from incidents and disruptions.
+Risk: The potential for loss or disruption caused by an incident, expressed as a combination of the magnitude of such loss or disruption and the likelihood of occurrence of the incident (CER Directive, Art. 2 §6). More broadly, also used to denote the combination of the probability of an event and its consequences.
+Risk Acceptance: The willingness to live with a risk in order to secure certain benefits.
+Risk Analysis: The determination of the likelihood of an event and the consequences of its occurrence for the purpose of comparing possible risks and making risk management decisions.
+Risk Assessment: The overall process for determining the nature and extent of a risk by identifying and analysing potential relevant threats, vulnerabilities and hazards which could lead to an incident, and by evaluating the potential loss or disruption of the provision of an essential service caused by that incident (CER Directive, Art. 2 §7).
+Risk Criteria: Terms of reference by which the significance of risk is assessed.
+Risk Estimation: A process used to assign values to the probability and consequences of a risk (ISO/IEC Guide 73).
+Risk Evaluation: The process of comparing the estimated risk against given risk criteria to determine its significance (ISO/IEC Guide 73).
+Risk Identification: The process to find, list and characterise elements of risk (ISO/IEC Guide 73).
+Risk Management: Coordinated activities to manage risk; the process whereby decisions are made and actions implemented to eliminate or reduce the effects of identified hazards.
+Risk Mitigation: Measures to reduce the likelihood or impact of a risk.
+Risk Perception: The way in which a stakeholder views a risk, based on a set of values or concerns (ISO/IEC Guide 73).
+Risk Reduction: Long-term measures to reduce the scale and/or duration of societal risk by reducing the vulnerability of people, structures, services and economic activities.
+Risk Source: An element which, alone or in combination, has the intrinsic potential to give rise to risk.
+Risk Transfer: The sharing with another party of the burden of loss or benefit of gain for a risk (ISO/IEC Guide 73).
+Risk Treatment: The process of selection and implementation of measures to modify risk (ISO/IEC Guide 73).
+Safety: A situation without unacceptable risks.
+Scenario: A representation of a single-risk or multi-risk situation leading to significant impacts, selected for the purpose of assessing a particular type of risk.
+Security: Protection against threats to the integrity and continuity of a system. In the energy sector: both security of supply and technical safety.
+Security of Network and Information Systems: The ability of network and information systems to resist, at a given level of confidence, any event that may compromise the availability, authenticity, integrity or confidentiality of data or services.
+Security of Supply: The ability of a power system to provide electricity to end-users with a specified level of continuity and quality in a sustainable manner.
+Sensitivity: The degree to which a system or species is affected, adversely or beneficially, by climate variability or change, whether directly or indirectly.
+Severity: The impact of the disruption or destruction of a particular infrastructure, assessed with reference to public effect, economic effect, environmental effect, political effects, psychological effects and public health consequences.
+Stakeholder: Any individual, group or organisation that can affect, be affected by, or perceive itself to be affected by a risk (ISO/IEC Guide 73).
+Supervisory Control and Data Acquisition (SCADA): A system of remote control and telemetry used to monitor and control critical infrastructure components such as electric systems.
+Systemic Risk: Risk of widespread instability due to interconnected failures across systems or sectors.
+Threat: Any indication, circumstance or event with the potential to cause harm or to disrupt or destroy critical infrastructure.
+Transmission System Operator (TSO): A natural or legal person responsible for operating, maintaining and developing the transmission system in a given area and ensuring the long-term ability of the system to meet reasonable electricity transmission demands.
+Uncertainty: An expression of the degree to which a value (e.g. the future state of a system) is unknown.
+Urban Critical Infrastructure: An asset, system or part thereof located in an urban area that is essential for vital societal functions, health, safety, security or economic well-being, whose disruption would have a significant impact on the urban area.
+Vulnerability: A weakness, susceptibility or flaw of an asset, system, process or control that can be exploited by a threat.
+Wicked Problem: A problem characterised by a great number of uncertainties, including unclear stakeholder boundaries, problem scope, long-term organisational developments and responsibilities.

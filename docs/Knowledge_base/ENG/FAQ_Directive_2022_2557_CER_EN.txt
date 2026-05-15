@@ -1,0 +1,247 @@
+FAQ - DIRECTIVE (EU) 2022/2557 - RESILIENCE OF CRITICAL ENTITIES (CER)
+========================================================================
+
+
+--- SECTION 1: WHAT IS THE DIRECTIVE AND WHY DOES IT EXIST ---
+
+Q: What is the main objective of Directive (EU) 2022/2557?
+A: The Directive aims to enhance the resilience of critical entities in the EU internal market.
+   It lays down harmonised minimum rules to ensure the uninterrupted provision of essential
+   services, supports critical entities through dedicated supervision and assistance measures,
+   and improves cross-border cooperation between Member States.
+
+Q: What prompted the EU to adopt this new Directive?
+A: The previous Directive 2008/114/EC focused only on the protection of individual assets in
+   two sectors (energy and transport). The 2019 evaluation found that hybrid threats, terrorism,
+   climate change and growing cross-sectoral and cross-border interdependencies required a
+   much broader, risk-based approach.
+
+Q: Does this Directive repeal any previous legislation?
+A: Yes. Directive 2022/2557 repeals Council Directive 2008/114/EC with effect from
+   18 October 2024.
+
+
+--- SECTION 2: KEY DEFINITIONS ---
+
+Q: Who is a 'critical entity'?
+A: A public or private entity identified by a Member State as belonging to one of the categories
+   listed in the Annex to the Directive (e.g. energy suppliers, transport operators, healthcare
+   providers, etc.).
+
+Q: What does 'resilience' mean under this Directive?
+A: Resilience is a critical entity's ability to prevent, protect against, respond to, resist,
+   mitigate, absorb, accommodate and recover from an incident.
+
+Q: What is an 'incident' under this Directive?
+A: An event which has the potential to significantly disrupt, or that disrupts, the provision of
+   an essential service — including when it affects the national systems that safeguard the rule
+   of law.
+
+Q: What is an 'essential service'?
+A: A service which is crucial for the maintenance of vital societal functions, economic
+   activities, public health and safety, or the environment.
+
+Q: What is 'critical infrastructure'?
+A: An asset, facility, equipment, network or system — or part thereof — which is necessary
+   for the provision of an essential service.
+
+Q: How is 'risk' defined?
+A: The potential for loss or disruption caused by an incident, expressed as a combination of
+   the magnitude of such loss or disruption and the likelihood of occurrence of the incident.
+
+
+--- SECTION 3: SECTORS AND ENTITIES IN SCOPE ---
+
+Q: Which sectors fall within the scope of the Directive?
+A: The Annex lists 11 sectors:
+    1.  Energy
+    2.  Transport
+    3.  Banking
+    4.  Financial market infrastructure
+    5.  Health
+    6.  Drinking water
+    7.  Waste water
+    8.  Digital infrastructure
+    9.  Public administration
+    10. Space
+    11. Production, processing and distribution of food
+
+Q: Who is excluded from the scope of the Directive?
+A: Public administration entities operating predominantly in the areas of national security,
+   public security, defence or law enforcement are excluded. Member States may also decide
+   not to apply part of the obligations to critical entities whose activities are predominantly
+   related to those areas.
+
+Q: Do banks and financial infrastructure entities have reduced obligations?
+A: Yes. Critical entities in the banking (point 3), financial market infrastructure (point 4)
+   and digital infrastructure (point 8) sectors are not subject to the obligations of Chapters
+   III, IV and VI of the Directive, as they are already covered by equivalent sector-specific
+   legislation (DORA, NIS2). However, they must still be identified by Member States, and
+   Chapter II of the Directive applies to them.
+
+Q: Does the Directive cover cybersecurity?
+A: No. Cybersecurity is addressed by the NIS2 Directive (EU) 2022/2555. The CER Directive
+   focuses on physical resilience. Member States must ensure both are implemented in a
+   coordinated manner.
+
+
+--- SECTION 4: OBLIGATIONS OF MEMBER STATES ---
+
+Q: What must Member States do by 17 January 2026?
+A: Each Member State must adopt a national strategy for enhancing the resilience of critical
+   entities and complete its Member State risk assessment. By 17 July 2026, they must also
+   identify the critical entities in the sectors listed in the Annex.
+
+Q: What must the national strategy contain?
+A: At least: strategic objectives and priorities; a governance framework; a description of
+   measures and the risk assessment process; the process for identifying critical entities;
+   support mechanisms (including for SMEs); and a coordination framework with NIS2
+   competent authorities.
+
+Q: How are critical entities identified?
+A: A Member State identifies an entity as critical if it: provides one or more essential
+   services; operates on its territory; and an incident would have a significant disruptive
+   effect on the provision of those services. Criteria for assessing significance include the
+   number of users affected, economic and social impact, market share, and the geographic
+   area affected.
+
+Q: How often must the list of critical entities be reviewed?
+A: At least every four years, and whenever necessary.
+
+Q: What information must Member States share with the Commission?
+A: After identifying critical entities, each Member State must submit without undue delay:
+   a list of essential services (if different from the Commission's list), the number of critical
+   entities per sector and subsector, and any thresholds applied. This information must be
+   updated at least every four years.
+
+
+--- SECTION 5: OBLIGATIONS OF CRITICAL ENTITIES ---
+
+Q: What must a critical entity do after being notified of its identification?
+A: Within 9 months of notification, it must carry out its own risk assessment. Chapter III
+   obligations (resilience measures) apply from 10 months after the notification. It must also
+   designate a liaison officer as its point of contact with the competent authorities.
+
+Q: What resilience measures must critical entities take?
+A: Appropriate and proportionate technical, security and organisational measures to:
+   - prevent incidents (including climate adaptation);
+   - ensure adequate physical protection of premises and infrastructure;
+   - respond to, resist and mitigate the consequences of incidents;
+   - recover from incidents (business continuity, alternative supply chains);
+   - ensure adequate employee security management (including background checks);
+   - raise awareness among relevant personnel through training and exercises.
+
+Q: What is a resilience plan and who must draw one up?
+A: Every critical entity must have in place and apply a resilience plan (or equivalent
+   documents) describing the measures it has taken. Documents already produced for other
+   regulatory obligations may be reused if they cover the requirements of the Directive.
+
+Q: How often must critical entities carry out their own risk assessment?
+A: At least every four years, and whenever circumstances or risks change significantly.
+
+Q: Can existing risk assessments or measures satisfy CER requirements?
+A: Yes. Where a critical entity has already carried out risk assessments or taken measures
+   pursuant to other legal obligations, it may use those to meet CER requirements. The
+   competent authority may also formally declare existing assessments or measures as
+   compliant, in whole or in part.
+
+
+--- SECTION 6: INCIDENT NOTIFICATION ---
+
+Q: When must a critical entity notify an incident?
+A: Without undue delay, for incidents that significantly disrupt or have the potential to
+   significantly disrupt the provision of essential services. An initial notification must be
+   submitted no later than 24 hours after becoming aware of the incident, unless operationally
+   unable to do so.
+
+Q: What must the notification contain?
+A: All available information necessary to enable the competent authority to understand the
+   nature, cause and possible consequences of the incident, including any cross-border impact.
+   Notification does not expose critical entities to increased liability.
+
+Q: Is a follow-up report required after the initial notification?
+A: Yes. Where relevant, a detailed report must be submitted no later than one month after
+   the incident, complementing the initial notification with a more complete overview.
+
+Q: What parameters are used to assess the significance of a disruption?
+A: The number and proportion of users affected; the duration of the disruption; and the
+   geographical area affected, including whether that area is geographically isolated.
+
+Q: What happens if an incident impacts six or more Member States?
+A: The competent authorities of the affected Member States must notify the Commission.
+   The single point of contact also informs the single points of contact of the other
+   Member States concerned.
+
+
+--- SECTION 7: GOVERNANCE AND COORDINATION ---
+
+Q: What is the 'single point of contact'?
+A: An authority designated by each Member State to act as a liaison for cross-border
+   cooperation. It coordinates communications with the single points of contact of other
+   Member States and with the Critical Entities Resilience Group.
+
+Q: What is the 'Critical Entities Resilience Group'?
+A: A Commission expert group composed of Member State representatives that supports the
+   Commission, facilitates cooperation between Member States and promotes the exchange of
+   best practices. It meets at least once a year with the NIS2 Cooperation Group.
+
+Q: How does this Directive coordinate with NIS2?
+A: The two Directives are complementary: NIS2 covers cybersecurity, CER covers physical
+   resilience. Competent authorities under both Directives must cooperate and exchange
+   information. Member States must ensure coordinated implementation to avoid duplication
+   and excessive burden on entities.
+
+Q: Can Member States apply stricter national rules?
+A: Yes. The Directive establishes minimum harmonisation. Member States may adopt or
+   maintain national provisions to achieve a higher level of resilience, provided they are
+   consistent with Union law.
+
+
+--- SECTION 8: CRITICAL ENTITIES OF PARTICULAR EUROPEAN SIGNIFICANCE ---
+
+Q: What is a critical entity of 'particular European significance'?
+A: An entity already identified as critical that provides the same or similar essential services
+   to or in six or more Member States and has been formally notified as such by the Commission.
+
+Q: What additional obligations apply to these entities?
+A: They must inform their competent authority that they provide services to six or more Member
+   States. The Commission may then organise an advisory mission to assess their resilience
+   measures. They must provide the advisory mission with access to all relevant information,
+   systems and facilities.
+
+Q: What are advisory missions?
+A: Missions organised by the Commission to assess the resilience measures of critical entities
+   of particular European significance. They are composed of experts from the relevant Member
+   States and the Commission. The mission reports its findings within three months of
+   completion. The Commission then issues an opinion on the entity's compliance.
+
+
+--- SECTION 9: SUPERVISION, ENFORCEMENT AND PENALTIES ---
+
+Q: How is compliance with obligations supervised?
+A: National competent authorities have powers to conduct on-site inspections, off-site
+   supervision, request information and evidence (including independent audits at the entity's
+   expense), and issue remediation orders. These powers must be exercised in an objective,
+   transparent and proportionate manner.
+
+Q: Are penalties foreseen for non-compliant critical entities?
+A: Yes. Member States must lay down rules on penalties that are effective, proportionate and
+   dissuasive. These rules had to be notified to the Commission by 17 October 2024.
+
+Q: When did Member States have to transpose the Directive?
+A: By 17 October 2024. The national measures apply from 18 October 2024.
+
+Q: When will the Commission carry out its first review of the Directive?
+A: The Commission must submit a compliance assessment report to the European Parliament
+   and the Council by 17 July 2027, and a broader review of the Directive's functioning
+   by 17 June 2029.
+
+Q: What rights do critical entities have during supervisory proceedings?
+A: The right to be heard, the right of defence, the right to protection of trade and business
+   secrets, and the right to an effective remedy before an independent court.
+
+
+========================================================================
+Source: Directive (EU) 2022/2557 of the European Parliament and of the Council
+of 14 December 2022 - OJ L 333/164 of 27.12.2022
+========================================================================
