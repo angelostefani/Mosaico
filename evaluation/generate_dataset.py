@@ -7,13 +7,13 @@ and saves them as a JSON file compatible with eval_batch.py.
 Methodology (as described in the paper):
   - 60 pairs with claude-sonnet-4-6
   - 60 pairs with claude-haiku-4-5-20251001
-  Total: 120 generated pairs → manual review → 20 validation + 100 test
+  Total: 120 generated pairs → manual review → 20 validation + 50 test
 
 Usage:
-    # English corpus (CER collection)
-    python generate_dataset.py --lang en --output datasets/eval_dataset_CER_raw.json
+    # English corpus (CER-EN collection)
+    python generate_dataset.py --lang en --output datasets/eval_dataset_EN_CER_raw.json
 
-    # Italian corpus (IT_CER collection)
+    # Italian corpus (CER-IT collection)
     python generate_dataset.py --lang it --output datasets/eval_dataset_IT_CER_raw.json
 
     # Dry run (3 pairs per model, no API calls — for testing)

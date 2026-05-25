@@ -63,7 +63,7 @@ def main():
         print(f"[ERROR] Dataset file not found: {dataset_path}", file=sys.stderr)
         sys.exit(1)
 
-    with open(dataset_path, encoding="utf-8") as f:
+    with open(dataset_path, encoding="utf-8-sig") as f:
         cases = json.load(f)
 
     if not cases:

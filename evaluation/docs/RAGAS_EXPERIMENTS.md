@@ -1,164 +1,224 @@
-# Esperimenti RAGAS consigliati per il paper
+# Esperimenti RAGAS — piano completo per il paper
+
+**Generator:** `gemma4:26b` &nbsp;|&nbsp; **Judge:** `qwen3:8b` (con `--no-think`)  
+**Dataset EN:** `datasets/eval_dataset_EN_CER_test.json` (50 items, collection `CER-EN`)  
+**Dataset IT:** `datasets/eval_dataset_IT_CER_test.json` (50 items, collection `CER-IT`)  
+**Server API:** `http://localhost:9000`
 
 ---
 
-## Esperimento 1 — Ablation study (indispensabile)
+## Panoramica tabelle
 
-È il cuore del paper. Testa ogni flag in isolamento partendo dal full pipeline.
+| Tabella paper | Descrizione | Re-index? | Metriche |
+|---|---|---|---|
+| `tab:ablation` | Feature flag ablation (6 config) | sì | Faith, CtxPrec, CtxRec (+AnsRel, AnsCorr per baseline e Naive) |
+| `tab:chunking` | Chunk size/overlap (4 config) | sì | Faith, CtxPrec, CtxRec |
+| `tab:retrieval_k` | Pool size K/L (3 config) | no | Faith, CtxPrec, CtxRec, latency |
+| `tab:mmr` | MMR lambda sweep (4 valori) | no | Faith, CtxPrec, CtxRec, diversity |
+| `tab:cross_k` | Cross-encoder pool K' (4 valori) | no | Faith, CtxPrec, CtxRec, CE latency |
+| `tab:reranking` | Reranking strategy (3 config) | no | tutte e 5 |
+| `tab:italian` | Cross-lingual IT (2 config) | no | Faith, CtxPrec, CtxRec |
 
-| Config | RERANK | MMR | STITCH | MULTI_VEC |
-|--------|--------|-----|--------|-----------|
-| Full pipeline | ✓ | ✓ | ✓ | ✓ |
-| −rerank | ✗ | ✓ | ✓ | ✓ |
-| −MMR | ✓ | ✗ | ✓ | ✓ |
-| −stitch | ✓ | ✓ | ✗ | ✓ |
-| −multi-vector | ✓ | ✓ | ✓ | ✗ |
-| Baseline (tutto off) | ✗ | ✗ | ✗ | ✗ |
-
-**6 config × 100 Q&A × ~20 chiamate RAGAS = ~120K chiamate LLM**
-Stima: ~2-3 ore su H100 con `gemma4:e4b` generator + `qwen3:8b` judge.
-
-Metriche da riportare: tutte e 5 + latency retrieval.
+**Stima totale:** ~14 run × 50 Q&A × 3–5 metriche RAGAS ≈ 4–6 ore su H100.
 
 ---
 
-## Esperimento 2 — Model comparison (raccomandato)
-
-Dimostra che il sistema non è tied a un singolo LLM.
-
-| Generator | Pipeline |
-|-----------|----------|
-| `gemma4:26b` | full |
-| `gpt-oss:20b` | full |
-| `qwen3:8b` | full |
-
-**3 config × 100 Q&A.** Stima: ~1 ora aggiuntiva.
-
----
-
-## Esperimento 3 — Hyperparameter sensitivity (opzionale, post-review)
-
-Varia chunk size (400/600/800), MMR λ (0.5/0.65/0.8), score threshold (0.3/0.45/0.6).
-Utile ma richiede molte run — da fare dopo l'acceptance.
-
----
-
-## Strategia pratica consigliata
+## Ordine di esecuzione consigliato
 
 ```
-Fase 1 (mini sweep, ~30 min):
-  6 config × 30 Q&A  →  verifica che i punteggi siano sensati, niente tutto-NaN
+Fase 0 — smoke test (10 min):
+  1 config × 5 item  →  verifica che i punteggi siano sensati e non tutti NaN
 
-Fase 2 (ablation completo, ~3h):
-  6 config × 100 Q&A con gemma4:e4b + qwen3:8b judge
+Fase 1 — baseline (30 min):
+  Full pipeline × 50 item  →  popola la riga baseline in tab:ablation e tab:reranking
 
-Fase 3 (model comparison, ~1h):
-  3 modelli × full pipeline × 100 Q&A
+Fase 2 — ablation + chunking (2–3h):
+  5 ablation config + 3 chunk variant (richiedono re-index)
+
+Fase 3 — sweep senza re-index (1–2h):
+  tab:retrieval_k, tab:mmr, tab:cross_k, tab:reranking (partial), tab:italian
 ```
-
-**Minimo assoluto per submission:** solo Fase 2. Senza ablation il paper non ha risultati
-quantitativi sui 4 contributi dichiarati, e i reviewer lo noteranno.
 
 ---
 
-## Comandi (PowerShell, server remoto)
+## Tab:ablation — Feature flag ablation
 
-### Fase 1 — raccolta risposte per una singola config
+### Impostazioni `.env` per config
 
-Imposta i flag nel `.env` prima di ogni run, poi:
+| Config (nome file output) | MVS | RERANK | CE | MMR | STITCH |
+|---|---|---|---|---|---|
+| `batch_EN_naive` | false | false | false | false | false |
+| `batch_EN_baseline` | true | true | true | true | true |
+| `batch_EN_no_mvs` | **false** | true | true | true | true |
+| `batch_EN_hybrid_only` | true | true | **false** | true | true |
+| `batch_EN_no_mmr` | true | true | true | **false** | true |
+| `batch_EN_no_stitch` | true | true | true | true | **false** |
+
+MVS = `ENABLE_MULTI_VECTOR_SEARCH`, RERANK = `ENABLE_RERANK`, CE = `ENABLE_CROSS_ENCODER_RERANK`
+
+### Flusso per ogni config
 
 ```powershell
-# Esempio: config full pipeline, dataset mini
+# 1. Modifica .env con i flag della riga, poi riavvia lo stack
+docker compose down; docker compose up -d --build
+
+# 2. Verifica che i flag siano recepiti
+curl http://localhost:9000/healthz | python -m json.tool | findstr "enable_"
+
+# 3. Raccoglie risposte (eval_batch)
 python .\eval_batch.py `
-  --url http://192.168.118.218:9000 `
-  --dataset .\datasets\eval_dataset_mini.json `
-  --username enea --collection RECON `
-  --model gemma4:e4b `
-  --output ".\results\batch_full_mini_$(Get-Date -Format yyyyMMdd).csv"
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_EN_CER_test.json `
+  --username enea --collection CER-EN `
+  --output ".\results\batch_EN_<config>.csv"
+
+# 4. Calcola metriche RAGAS (3 metriche per le righe ablation)
+python .\eval_ragas.py `
+  --input ".\results\batch_EN_<config>.csv" `
+  --output ".\results\ragas_EN_<config>.csv" `
+  --ollama-url "http://192.168.118.218:11434/api/generate" `
+  --judge-model qwen3:8b --no-think `
+  --metrics faithfulness,context_precision,context_recall `
+  --batch-size 5 --timeout 900 --verbose
 ```
 
-### Fase 2 — metriche RAGAS con giudice separato
+Per **baseline** e **Naive RAG** aggiungere tutte e 5 le metriche:
+```powershell
+  --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness
+```
+
+---
+
+## Tab:chunking — Chunk size/overlap
+
+Ogni config richiede re-indicizzazione: aggiorna `CHUNK_SIZE` e `CHUNK_OVERLAP` in `.env`, riavvia, ri-carica i documenti, poi lancia.
+
+| Config | `CHUNK_SIZE` | `CHUNK_OVERLAP` | Output |
+|---|---|---|---|
+| `batch_EN_chunk_600` | 600 | 120 | `batch_EN_chunk_600.csv` |
+| `batch_EN_baseline` | 1000 | 200 | (già fatto in tab:ablation) |
+| `batch_EN_chunk_1500` | 1500 | 300 | `batch_EN_chunk_1500.csv` |
+| `batch_EN_chunk_no_overlap` | 1000 | 0 | `batch_EN_chunk_no_overlap.csv` |
+
+```powershell
+# Metriche: solo le 3 standard
+python .\eval_ragas.py `
+  --metrics faithfulness,context_precision,context_recall ...
+```
+
+---
+
+## Tab:retrieval_k — Pool size K/L
+
+Nessun re-index. Cambia `CHAT_CANDIDATES` e `CHAT_RESULT_LIMIT` in `.env`.
+
+| Config | `CHAT_CANDIDATES` (K) | `CHAT_RESULT_LIMIT` (L) | Output |
+|---|---|---|---|
+| `batch_EN_k20_l3` | 20 | 3 | `batch_EN_k20_l3.csv` |
+| `batch_EN_baseline` | 100 | 10 | (già fatto) |
+| `batch_EN_k150_l15` | 150 | 15 | `batch_EN_k150_l15.csv` |
+
+La latency di retrieval viene già registrata da `eval_batch.py` nella colonna `retrieval_latency_ms`.
+
+---
+
+## Tab:mmr — MMR lambda sweep
+
+Nessun re-index. Cambia `MMR_LAMBDA` in `.env` (no riavvio necessario se l'app legge live, altrimenti `make up`).
+
+| Lambda | Output |
+|---|---|
+| 0.0 | `batch_EN_mmr_0.0.csv` |
+| 0.5 | `batch_EN_mmr_0.5.csv` |
+| 0.65 (baseline) | (già fatto) |
+| 1.0 | `batch_EN_mmr_1.0.csv` |
+
+```powershell
+  --metrics faithfulness,context_precision,context_recall
+```
+
+---
+
+## Tab:cross_k — Cross-encoder pool K'
+
+Nessun re-index. Cambia `CROSS_ENCODER_TOP_K` in `.env`.
+
+| K' | Output |
+|---|---|
+| 10 | `batch_EN_ce_k10.csv` |
+| 20 | `batch_EN_ce_k20.csv` |
+| 30 (baseline) | (già fatto) |
+| 50 | `batch_EN_ce_k50.csv` |
+
+La latency del cross-encoder viene già registrata in `ce_latency_ms` da `eval_batch.py`.
+
+---
+
+## Tab:reranking — Reranking strategy
+
+Nessun re-index. Tre config:
+
+| Strategia | `ENABLE_RERANK` | `ENABLE_CROSS_ENCODER_RERANK` | Output |
+|---|---|---|---|
+| No reranking | false | false | `batch_EN_no_rerank.csv` |
+| Hybrid only | true | false | `batch_EN_hybrid_only.csv` (già fatto in tab:ablation) |
+| Cascade (baseline) | true | true | `batch_EN_baseline.csv` (già fatto) |
+
+Tutte e 5 le metriche:
+```powershell
+  --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness
+```
+
+---
+
+## Tab:italian — Cross-lingual
+
+Usa la collection `CER-IT`. Nessuna modifica al `.env` rispetto al baseline.
+
+```powershell
+# Naive RAG (disabilita tutti i flag)
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_IT_CER_test.json `
+  --username enea --collection CER-IT `
+  --output ".\results\batch_IT_naive.csv"
+
+# Full pipeline (ripristina tutti i flag a true)
+python .\eval_batch.py `
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_IT_CER_test.json `
+  --username enea --collection CER-IT `
+  --output ".\results\batch_IT_baseline.csv"
+```
 
 ```powershell
 python .\eval_ragas.py `
-  --input ".\results\batch_full_mini_$(Get-Date -Format yyyyMMdd).csv" `
+  --input ".\results\batch_IT_<config>.csv" `
+  --output ".\results\ragas_IT_<config>.csv" `
   --ollama-url "http://192.168.118.218:11434/api/generate" `
-  --model gemma4:e4b `
-  --judge-model qwen3:8b `
-  --timeout 900 `
-  --batch-size 5 `
-  --verbose
+  --judge-model qwen3:8b --no-think `
+  --metrics faithfulness,context_precision,context_recall `
+  --batch-size 5 --timeout 900 --verbose
 ```
 
 ---
 
-## Variabili `.env` da cambiare per ogni config ablation
-
-I quattro flag si trovano in `.env` nella root del progetto:
+## Variabili `.env` di riferimento (baseline)
 
 ```dotenv
+OLLAMA_MODEL=gemma4:26b
+CHUNK_SIZE=1000
+CHUNK_OVERLAP=200
+QDRANT_SCORE_THRESHOLD=0.20
+CHAT_CANDIDATES=100
+CHAT_RESULT_LIMIT=10
+CHAT_CONTEXT_CHAR_BUDGET=10000
+CHAT_HISTORY_CHAR_BUDGET=0
+MMR_LAMBDA=0.65
+CROSS_ENCODER_TOP_K=30
 ENABLE_RERANK=true
 ENABLE_MMR=true
 ENABLE_STITCH=true
 ENABLE_MULTI_VECTOR_SEARCH=true
+ENABLE_CROSS_ENCODER_RERANK=true
 ```
-
-Dopo ogni modifica riavviare lo stack perché `ai_api` legge il `.env` all'avvio:
-
-```bash
-make down && make up
-# oppure
-docker compose down && docker compose up -d --build
-```
-
-Verificare che i flag siano stati recepiti:
-
-```bash
-curl http://192.168.118.218:9000/healthz | python -m json.tool
-```
-
-### Valori per ogni config
-
-| Config | `ENABLE_RERANK` | `ENABLE_MMR` | `ENABLE_STITCH` | `ENABLE_MULTI_VECTOR_SEARCH` |
-|--------|-----------------|--------------|-----------------|------------------------------|
-| Full pipeline | true | true | true | true |
-| −rerank | **false** | true | true | true |
-| −MMR | true | **false** | true | true |
-| −stitch | true | true | **false** | true |
-| −multi-vector | true | true | true | **false** |
-| Baseline | **false** | **false** | **false** | **false** |
-
-### Flusso completo per una singola config (esempio: −MMR)
-
-```dotenv
-# .env
-ENABLE_RERANK=true
-ENABLE_MMR=false        ← unica modifica
-ENABLE_STITCH=true
-ENABLE_MULTI_VECTOR_SEARCH=true
-OLLAMA_MODEL=gemma4:e4b
-```
-
-```powershell
-# 1. Riavvia lo stack
-docker compose down; docker compose up -d --build
-
-# 2. Raccoglie risposte
-python .\eval_batch.py `
-  --url http://192.168.118.218:9000 `
-  --dataset .\datasets\eval_dataset.json `
-  --username enea --collection RECON `
-  --model gemma4:e4b `
-  --output ".\results\batch_no_mmr.csv"
-
-# 3. Calcola metriche RAGAS
-python .\eval_ragas.py `
-  --input ".\results\batch_no_mmr.csv" `
-  --output ".\results\ragas_no_mmr.csv" `
-  --ollama-url "http://192.168.118.218:11434/api/generate" `
-  --model gemma4:e4b `
-  --judge-model qwen3:8b `
-  --timeout 900 --batch-size 5 --verbose
-```
-
-Ripetere cambiando il flag e il nome del file di output per ogni riga della tabella.

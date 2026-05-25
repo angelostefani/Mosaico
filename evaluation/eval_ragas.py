@@ -9,8 +9,10 @@ Usage:
     python eval_ragas.py --input risultati01.csv --metrics context_recall,answer_correctness --batch-size 5 --verbose
     python eval_ragas.py --input risultati01.csv --output ragas_full.csv
 
-Expected runtime with gemma4:e4b generator + qwen3:8b judge: ~1 hour for 100 samples x 5 metrics on H100.
+Expected runtime with gemma4:26b generator + qwen3:8b judge: ~30-60 min for 50 samples x 5 metrics on H100.
 Start with --metrics context_recall,answer_correctness for a faster first run.
+
+Requires ragas>=0.4.
 
 Caveats for small local LLMs (1B params):
 - Expect 15-30% NaN values where the LLM-judge fails to return valid JSON.
@@ -24,10 +26,25 @@ import csv
 import math
 import os
 import sys
+import types
 from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+# langchain-community 0.4+ removed chat_models.vertexai; ragas 0.4 still tries to
+# import it during initialisation. Register a dummy module to suppress the error.
+# langchain-community 0.4+ removed chat_models.vertexai; ragas 0.4 still tries to
+# import ChatVertexAI from it. Register a dummy module with a stub class.
+_lc_vertexai = "langchain_community.chat_models.vertexai"
+if _lc_vertexai not in sys.modules:
+    try:
+        import importlib
+        importlib.import_module(_lc_vertexai)
+    except ModuleNotFoundError:
+        _mod = types.ModuleType(_lc_vertexai)
+        _mod.ChatVertexAI = type("ChatVertexAI", (), {})  # dummy class
+        sys.modules[_lc_vertexai] = _mod
 
 CONTEXT_SEPARATOR = " ||| "
 
@@ -47,57 +64,63 @@ def build_llm(base_url: str, model: str, timeout: int, max_tokens: int = 8192, n
         print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas langchain-openai", file=sys.stderr)
         sys.exit(1)
 
-    # extra_body must live in model_kwargs so langchain-openai merges it into every
-    # request body — including instructor-patched calls ragas uses for JSON extraction.
-    model_kwargs = {}
-    if no_think:
-        model_kwargs["extra_body"] = {"think": False}
-
-    chat_model = ChatOpenAI(
+    kwargs = dict(
         model=model,
         base_url=f"{base_url}/v1",
         api_key="ollama",
         max_tokens=max_tokens,
         timeout=timeout,
-        model_kwargs=model_kwargs,
     )
+    if no_think:
+        kwargs["extra_body"] = {"think": False}
+
+    chat_model = ChatOpenAI(**kwargs)
     return LangchainLLMWrapper(chat_model)
 
 
 def build_embeddings(model_name: str):
     try:
-        from ragas.embeddings import HuggingFaceEmbeddings, BaseRagasEmbeddings
+        from sentence_transformers import SentenceTransformer
+        from ragas.embeddings import BaseRagasEmbeddings
     except ImportError as e:
         print(f"[ERROR] Missing dependency: {e}\nRun: pip install ragas sentence-transformers", file=sys.stderr)
         sys.exit(1)
 
-    _inner = HuggingFaceEmbeddings(model=model_name)
+    import asyncio
 
-    # ragas.embeddings.HuggingFaceEmbeddings uses the newer BaseRagasEmbedding interface
-    # (embed_text / embed_texts), but some metrics use the Langchain-compatible
-    # BaseRagasEmbeddings interface (embed_query / embed_documents / embed_text).
-    # BaseRagasEmbeddings.embed_text delegates to embed_texts which requires run_config;
-    # override all four paths to delegate directly to _inner and avoid that dependency.
-    class _Adapter(BaseRagasEmbeddings):
+    # ragas 0.4 HuggingfaceEmbeddings is a sealed pydantic dataclass that cannot be
+    # subclassed. Use SentenceTransformer directly via a concrete BaseRagasEmbeddings
+    # subclass that implements all abstract sync/async methods required by ragas metrics.
+    class _STEmbeddings(BaseRagasEmbeddings):
+        def __init__(self):
+            self._model = SentenceTransformer(model_name)
+
         def embed_query(self, text: str):
-            return _inner.embed_text(text)
+            return self._model.encode(text).tolist()
 
         def embed_documents(self, texts):
-            return _inner.embed_texts(texts)
+            return self._model.encode(list(texts)).tolist()
 
         async def aembed_query(self, text: str):
-            return await _inner.aembed_text(text)
+            return await asyncio.get_event_loop().run_in_executor(None, self.embed_query, text)
 
         async def aembed_documents(self, texts):
-            return await _inner.aembed_texts(texts)
+            return await asyncio.get_event_loop().run_in_executor(None, self.embed_documents, texts)
 
-        async def embed_text(self, text: str, is_async: bool = True):
-            return await _inner.aembed_text(text)
+        # ragas modern interface — must be async (ragas calls await embed_text/embed_texts)
+        async def embed_text(self, text: str, **kwargs):
+            return await asyncio.get_event_loop().run_in_executor(None, self.embed_query, text)
 
-        async def embed_texts(self, texts, is_async: bool = True):
-            return await _inner.aembed_texts(texts)
+        async def embed_texts(self, texts, **kwargs):
+            return await asyncio.get_event_loop().run_in_executor(None, self.embed_documents, list(texts))
 
-    return _Adapter()
+        async def aembed_text(self, text: str, **kwargs):
+            return await self.embed_text(text)
+
+        async def aembed_texts(self, texts, **kwargs):
+            return await self.embed_texts(texts)
+
+    return _STEmbeddings()
 
 
 def load_csv_as_samples(path: str):
@@ -175,6 +198,8 @@ def load_already_evaluated(output_path: str) -> tuple[set[str], list[dict]]:
 
 def pick_metrics(metric_names: list[str], llm, embeddings, strictness: int = 1):
     try:
+        # Use legacy ragas.metrics classes (compatible with LangchainLLMWrapper).
+        # ragas.metrics.collections requires the new InstructorLLM interface.
         from ragas.metrics._faithfulness import Faithfulness
         from ragas.metrics._answer_relevance import AnswerRelevancy
         from ragas.metrics._context_precision import ContextPrecision
