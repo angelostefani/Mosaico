@@ -124,3 +124,12 @@ python .\eval_ragas.py `
   --output ".\results\batch_RECON_full_baseline_multilingual_v2.csv"
 
   ######################################
+
+
+  python .\eval_ragas.py `
+  --input ".\results\batch_EN_baseline.csv" `
+  --output ".\results\ragas_EN_baseline.csv" `
+  --ollama-url "http://192.168.118.218:11434/api/generate" `
+  --judge-model qwen3:8b --no-think `
+  --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness `
+  --batch-size 5 --timeout 900 --verbose --exclude-suspicious

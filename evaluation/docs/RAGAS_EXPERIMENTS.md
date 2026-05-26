@@ -79,12 +79,13 @@ python .\eval_ragas.py `
   --ollama-url "http://192.168.118.218:11434/api/generate" `
   --judge-model qwen3:8b --no-think `
   --metrics faithfulness,context_precision,context_recall `
-  --batch-size 5 --timeout 900 --verbose
+  --batch-size 5 --timeout 900 --verbose --exclude-suspicious
 ```
 
 Per **baseline** e **Naive RAG** aggiungere tutte e 5 le metriche:
 ```powershell
-  --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness
+  --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness `
+  --batch-size 5 --timeout 900 --verbose --exclude-suspicious
 ```
 
 ---
@@ -103,7 +104,7 @@ Ogni config richiede re-indicizzazione: aggiorna `CHUNK_SIZE` e `CHUNK_OVERLAP` 
 ```powershell
 # Metriche: solo le 3 standard
 python .\eval_ragas.py `
-  --metrics faithfulness,context_precision,context_recall ...
+  --metrics faithfulness,context_precision,context_recall ... --exclude-suspicious
 ```
 
 ---
@@ -198,7 +199,7 @@ python .\eval_ragas.py `
   --ollama-url "http://192.168.118.218:11434/api/generate" `
   --judge-model qwen3:8b --no-think `
   --metrics faithfulness,context_precision,context_recall `
-  --batch-size 5 --timeout 900 --verbose
+  --batch-size 5 --timeout 900 --verbose --exclude-suspicious
 ```
 
 ---

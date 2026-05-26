@@ -291,11 +291,19 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
                 cp = row.get("context_precision", float("nan"))
                 cr = row.get("context_recall", float("nan"))
                 ff = row.get("faithfulness", 0.0) or 0.0
-                row["judge_warning"] = (
-                    "suspicious_zero"
-                    if (cp == 0.0 and cr == 0.0 and ff > 0.3)
-                    else ""
-                )
+                ar = row.get("answer_relevancy", float("nan"))
+                # suspicious_zero: LLM-judge returned all-zero context scores despite
+                # non-zero faithfulness (JSON parse failure).
+                # answer_relevancy_zero: cosine-similarity-based metric; exactly 0.0
+                # is structurally impossible for any coherent response and always
+                # indicates a judge failure (model did not generate synthetic questions).
+                if cp == 0.0 and cr == 0.0 and ff > 0.3:
+                    warning = "suspicious_zero"
+                elif ar == 0.0:
+                    warning = "answer_relevancy_zero"
+                else:
+                    warning = ""
+                row["judge_warning"] = warning
                 results.append(row)
 
                 if verbose:
@@ -308,7 +316,32 @@ def evaluate_in_batches(samples, metrics, batch_size: int, verbose: bool, timeou
     return results
 
 
-def write_output(results: list[dict], skipped: list[dict], metric_names: list[str], output_path: str, input_path: str, existing_rows: list[dict] | None = None):
+def _apply_judge_warning(row: dict) -> dict:
+    """Retroactively apply judge_warning flags based on metric values.
+    Safe to call on both newly-evaluated and resumed rows."""
+    def _f(key):
+        try:
+            v = float(row.get(key, "") or "nan")
+            return v if not math.isnan(v) else float("nan")
+        except (ValueError, TypeError):
+            return float("nan")
+
+    cp = _f("context_precision")
+    cr = _f("context_recall")
+    ff = _f("faithfulness") or 0.0
+    ar = _f("answer_relevancy")
+
+    existing = row.get("judge_warning", "")
+    if existing in ("suspicious_zero", "answer_relevancy_zero"):
+        return row  # already flagged, don't overwrite
+    if cp == 0.0 and cr == 0.0 and ff > 0.3:
+        row["judge_warning"] = "suspicious_zero"
+    elif ar == 0.0:
+        row["judge_warning"] = "answer_relevancy_zero"
+    return row
+
+
+def write_output(results: list[dict], skipped: list[dict], metric_names: list[str], output_path: str, input_path: str, existing_rows: list[dict] | None = None, exclude_suspicious: bool = False):
     metric_cols = [m for m in ALL_METRICS if m in metric_names]
     fieldnames = ["case_id", "question", "reference", "response", "n_chunks"] + metric_cols + ["error_ragas", "judge_warning"]
 
@@ -324,6 +357,10 @@ def write_output(results: list[dict], skipped: list[dict], metric_names: list[st
 
     if existing_rows:
         results = list(existing_rows) + results
+
+    # Retroactively apply flags to all rows (covers resumed rows saved before the
+    # answer_relevancy_zero flag existed).
+    results = [_apply_judge_warning(r) for r in results]
 
     results.sort(key=lambda r: int(r["case_id"]) if str(r["case_id"]).isdigit() else 0)
 
@@ -341,18 +378,34 @@ def write_output(results: list[dict], skipped: list[dict], metric_names: list[st
     # Summary statistics
     import statistics
 
+    flagged_ids = {r.get("case_id") for r in results if r.get("judge_warning") in ("suspicious_zero", "answer_relevancy_zero")}
+    flagged = len(flagged_ids)
+
     print("\nMetric summary:")
+    if exclude_suspicious and flagged:
+        print(f"  (excluding {flagged} suspicious_zero row(s) from mean/std)")
     for col in metric_cols:
-        vals = [r[col] for r in results if isinstance(r.get(col), float) and not math.isnan(r[col])]
+        valid = [
+            r for r in results
+            if isinstance(r.get(col), float) and not math.isnan(r[col])
+            and not (exclude_suspicious and r.get("judge_warning") in ("suspicious_zero", "answer_relevancy_zero"))
+        ]
+        vals = [r[col] for r in valid]
         nan_count = sum(1 for r in results if isinstance(r.get(col), float) and math.isnan(r[col]))
+        excluded = sum(1 for r in results if exclude_suspicious and r.get("judge_warning") in ("suspicious_zero", "answer_relevancy_zero") and isinstance(r.get(col), float) and not math.isnan(r[col]))
+        suffix = f"  excluded={excluded}" if exclude_suspicious and excluded else ""
         if vals:
-            print(f"  {col:<25} mean={statistics.mean(vals):.4f}  std={statistics.pstdev(vals):.4f}  NaN={nan_count}")
+            print(f"  {col:<25} mean={statistics.mean(vals):.4f}  std={statistics.pstdev(vals):.4f}  NaN={nan_count}{suffix}")
         else:
             print(f"  {col:<25} all NaN ({nan_count} samples)")
 
-    flagged = sum(1 for r in results if r.get("judge_warning") == "suspicious_zero")
     if flagged:
-        print(f"\n  [WARN] {flagged} row(s) flagged 'suspicious_zero' (context_precision=0 & context_recall=0 & faithfulness>0.3 — likely judge LLM failure)")
+        n_sz = sum(1 for r in results if r.get("judge_warning") == "suspicious_zero")
+        n_ar = sum(1 for r in results if r.get("judge_warning") == "answer_relevancy_zero")
+        if n_sz:
+            print(f"\n  [WARN] {n_sz} row(s) flagged 'suspicious_zero' (context_precision=0 & context_recall=0 & faithfulness>0.3)")
+        if n_ar:
+            print(f"  [WARN] {n_ar} row(s) flagged 'answer_relevancy_zero' (answer_relevancy=0.0 exactly — judge failed to generate synthetic questions)")
 
 
 def parse_args():
@@ -379,6 +432,8 @@ def parse_args():
     p.add_argument("--strictness", type=int, default=1,
         help="Generations requested per sample for AnswerRelevancy (default: 1; ragas default: 3 — causes warnings with Ollama)")
     p.add_argument("--verbose", action="store_true", help="Print per-sample scores")
+    p.add_argument("--exclude-suspicious", action="store_true",
+        help="Exclude rows flagged as suspicious_zero from mean/std summary (values still saved to CSV)")
     return p.parse_args()
 
 
@@ -434,7 +489,7 @@ def main():
 
     if not samples:
         print("  Tutti i campioni già valutati — nessun nuovo lavoro da fare.")
-        write_output([], skipped, metric_names, output_path, input_path, existing_rows=existing_rows)
+        write_output([], skipped, metric_names, output_path, input_path, existing_rows=existing_rows, exclude_suspicious=args.exclude_suspicious)
         return
 
     metrics = pick_metrics(metric_names, judge_llm, embeddings, strictness=args.strictness)
@@ -443,7 +498,7 @@ def main():
 
     results = evaluate_in_batches(samples, metrics, args.batch_size, args.verbose, args.timeout)
 
-    write_output(results, skipped, [m.name for m in metrics], output_path, input_path, existing_rows=existing_rows)
+    write_output(results, skipped, [m.name for m in metrics], output_path, input_path, existing_rows=existing_rows, exclude_suspicious=args.exclude_suspicious)
 
 
 if __name__ == "__main__":
