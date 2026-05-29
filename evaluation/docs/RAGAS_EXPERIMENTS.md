@@ -7,6 +7,35 @@
 
 ---
 
+## Stato avanzamento (aggiornato 2026-05-29)
+
+| File risultato | Batch | RAGAS | Note |
+|---|---|---|---|
+| `batch_EN_baseline` | ✅ 50/50 | ✅ 50/50 | completo |
+| `batch_EN_no_mmr` | ✅ 50/50 | ⏳ 10/50 | RAGAS da riprendere |
+| `batch_EN_naive` | ❌ | ❌ | da fare |
+| `batch_EN_no_mvs` | ❌ | ❌ | da fare |
+| `batch_EN_hybrid_only` | ❌ | ❌ | da fare |
+| `batch_EN_no_stitch` | ❌ | ❌ | da fare |
+| `batch_EN_no_rerank` | ❌ | ❌ | da fare |
+| `batch_EN_chunk_600` | ❌ | ❌ | richiede re-index |
+| `batch_EN_chunk_1500` | ❌ | ❌ | richiede re-index |
+| `batch_EN_chunk_no_overlap` | ❌ | ❌ | richiede re-index |
+| `batch_EN_k20_l3` | ❌ | ❌ | da fare |
+| `batch_EN_k150_l15` | ❌ | ❌ | da fare |
+| `batch_EN_mmr_0.0` | ❌ | ❌ | da fare |
+| `batch_EN_mmr_0.5` | ❌ | ❌ | da fare |
+| `batch_EN_mmr_1.0` | ❌ | ❌ | da fare |
+| `batch_EN_ce_k10` | ❌ | ❌ | da fare |
+| `batch_EN_ce_k20` | ❌ | ❌ | da fare |
+| `batch_EN_ce_k50` | ❌ | ❌ | da fare |
+| `batch_IT_naive` | ❌ | ❌ | da fare |
+| `batch_IT_baseline` | ❌ | ❌ | da fare |
+
+**Prossima run:** terminare `ragas_EN_no_mmr` (resume automatico da riga 10), poi `batch_EN_naive`.
+
+---
+
 ## Panoramica tabelle
 
 | Tabella paper | Descrizione | Re-index? | Metriche |

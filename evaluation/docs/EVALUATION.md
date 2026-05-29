@@ -59,40 +59,41 @@ evaluation/
   eval_ragas.py          ← Fase 2: calcola metriche RAGAS sul CSV
   requirements.txt       ← dipendenze eval (ragas, langchain-*, ecc.)
   datasets/
-    eval_dataset.json        ← 100 Q&A (dataset completo)
-    eval_dataset_mini.json   ← 10 Q&A (dataset mini per test rapidi)
+    eval_dataset_EN_CER_test.json   ← 50 Q&A in inglese (collection CER-EN)
+    eval_dataset_IT_CER_test.json   ← 50 Q&A in italiano (collection CER-IT)
+    eval_dataset_EN_CER_raw.json    ← dataset grezzo pre-pulizia
+    eval_dataset_EN_CER_clean.json  ← dataset pulito pre-split
+    eval_dataset_EN_CER_val.json    ← split di validazione
   results/               ← output CSV (gitignored)
   docs/
     EVALUATION.md
-    RAGAS_EXPERIMENTS.md
+    RAGAS_EXPERIMENTS.md ← piano completo esperimenti e stato avanzamento
 ```
 
 ---
 
 ## Fase 1 — Raccolta risposte RAG (`eval_batch.py`)
 
-### PowerShell — API locale (Docker sul laptop)
+### PowerShell — esempio dataset EN (API locale)
 
 ```powershell
 cd evaluation
 
 python .\eval_batch.py `
   --url http://localhost:9000 `
-  --dataset .\datasets\eval_dataset_mini.json `
-  --username enea --collection RECON `
-  --model gemma4:e4b `
-  --output ".\results\batch_mini_$(Get-Date -Format yyyyMMdd).csv"
+  --dataset .\datasets\eval_dataset_EN_CER_test.json `
+  --username enea --collection CER-EN `
+  --output ".\results\batch_EN_<config>.csv"
 ```
 
-### PowerShell — API remota (server Callia)
+### PowerShell — esempio dataset IT (API locale)
 
 ```powershell
 python .\eval_batch.py `
-  --url http://192.168.118.218:9000 `
-  --dataset .\datasets\eval_dataset.json `
-  --username enea --collection RECON `
-  --model gemma4:e4b `
-  --output ".\results\batch_full_$(Get-Date -Format yyyyMMdd).csv"
+  --url http://localhost:9000 `
+  --dataset .\datasets\eval_dataset_IT_CER_test.json `
+  --username enea --collection CER-IT `
+  --output ".\results\batch_IT_<config>.csv"
 ```
 
 **Parametri:**
@@ -111,33 +112,28 @@ python .\eval_batch.py `
 
 ## Fase 2 — Calcolo metriche RAGAS (`eval_ragas.py`)
 
-### Test di validazione setup (2 metriche, 10 campioni)
-
-Eseguire prima di ogni campagna di valutazione per verificare che `qwen3:8b` produca
-punteggi validi (NaN=0):
+### Valutazione standard (3 metriche, 50 Q&A)
 
 ```powershell
 python .\eval_ragas.py `
-  --input ".\results\batch_mini_$(Get-Date -Format yyyyMMdd).csv" `
+  --input ".\results\batch_EN_<config>.csv" `
+  --output ".\results\ragas_EN_<config>.csv" `
   --ollama-url "http://192.168.118.218:11434/api/generate" `
-  --model gemma4:e4b `
-  --judge-model qwen3:8b `
-  --no-think `
-  --metrics faithfulness,context_precision `
-  --timeout 900 --batch-size 5 --verbose
+  --judge-model qwen3:8b --no-think `
+  --metrics faithfulness,context_precision,context_recall `
+  --batch-size 5 --timeout 900 --verbose --exclude-suspicious
 ```
 
-### Valutazione completa (5 metriche, dataset 100 Q&A)
+### Valutazione completa (5 metriche — solo baseline e Naive RAG)
 
 ```powershell
 python .\eval_ragas.py `
-  --input ".\results\batch_full_$(Get-Date -Format yyyyMMdd).csv" `
-  --output ".\results\ragas_full_$(Get-Date -Format yyyyMMdd).csv" `
+  --input ".\results\batch_EN_<config>.csv" `
+  --output ".\results\ragas_EN_<config>.csv" `
   --ollama-url "http://192.168.118.218:11434/api/generate" `
-  --model gemma4:e4b `
-  --judge-model qwen3:8b `
-  --no-think `
-  --timeout 900 --batch-size 5 --verbose
+  --judge-model qwen3:8b --no-think `
+  --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness `
+  --batch-size 5 --timeout 900 --verbose --exclude-suspicious
 ```
 
 **Parametri:**
@@ -152,6 +148,7 @@ python .\eval_ragas.py `
 | `--no-think` | off | Disabilita thinking mode per il giudice (raccomandato per `qwen3:8b`) |
 | `--embedding-model` | `all-MiniLM-L6-v2` | Modello embeddings HuggingFace |
 | `--metrics` | tutte e 5 | Sottoinsieme metriche (virgola-separato) |
+| `--exclude-suspicious` | off | Esclude righe con context_precision=0 e context_recall=0 (probabile fallimento giudice) |
 | `--batch-size` | `10` | Campioni per chiamata `evaluate()` |
 | `--timeout` | `600` | Secondi per chiamata LLM |
 | `--max-tokens` | `8192` | Token massimi per risposta LLM |
@@ -161,20 +158,26 @@ Se interrotto con `Ctrl+C`, i risultati parziali vengono salvati automaticamente
 
 ---
 
-## Configurazione attuale (`.env` nella root del progetto)
+## Configurazione baseline (`.env` nella root del progetto)
 
 ```dotenv
 OLLAMA_URL=http://192.168.118.218:11434/api/generate   # server Callia
 OLLAMA_MODEL=gemma4:26b
 EMBEDDING_MODEL=all-MiniLM-L6-v2
-QDRANT_SCORE_THRESHOLD=0.45
-CHAT_CANDIDATES=80
-CHAT_RESULT_LIMIT=7
-MMR_LAMBDA=0.80
+CHUNK_SIZE=1000
+CHUNK_OVERLAP=200
+QDRANT_SCORE_THRESHOLD=0.20
+CHAT_CANDIDATES=100
+CHAT_RESULT_LIMIT=10
+CHAT_CONTEXT_CHAR_BUDGET=10000
+CHAT_HISTORY_CHAR_BUDGET=0
+MMR_LAMBDA=0.65
+CROSS_ENCODER_TOP_K=30
 ENABLE_RERANK=true
 ENABLE_MMR=true
 ENABLE_STITCH=true
 ENABLE_MULTI_VECTOR_SEARCH=true
+ENABLE_CROSS_ENCODER_RERANK=true
 ```
 
 Per l'ablation: modificare i flag `ENABLE_*` e riavviare lo stack con `docker compose down && docker compose up -d --build`.
@@ -186,11 +189,10 @@ Vedere [RAGAS_EXPERIMENTS.md](RAGAS_EXPERIMENTS.md) per la tabella completa dell
 
 | Fase | Campioni | Metriche | Tempo stimato |
 |------|----------|----------|---------------|
-| `eval_batch.py` dataset mini | 10 | — | ~2 min |
-| `eval_batch.py` dataset completo | 100 | — | ~10 min |
-| `eval_ragas.py` validazione setup | 10 | 2 | ~9 min |
-| `eval_ragas.py` completo | 100 | 5 | ~90 min (gemma4:e4b + qwen3:8b) |
-| Ablation completa (6 config) | 100 × 6 | 5 | ~9 ore |
+| `eval_batch.py` dataset EN/IT | 50 | — | ~5 min |
+| `eval_ragas.py` 3 metriche | 50 | 3 | ~45 min (qwen3:8b giudice) |
+| `eval_ragas.py` 5 metriche | 50 | 5 | ~75 min (qwen3:8b giudice) |
+| Ablation completa (6 config) | 50 × 6 | 3–5 | ~4–6 ore |
 
 ---
 

@@ -133,3 +133,5 @@ python .\eval_ragas.py `
   --judge-model qwen3:8b --no-think `
   --metrics faithfulness,context_precision,context_recall,answer_relevancy,answer_correctness `
   --batch-size 5 --timeout 900 --verbose --exclude-suspicious
+
+  

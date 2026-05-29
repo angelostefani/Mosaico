@@ -1,8 +1,8 @@
 # Mosaico: A Local RAG System for Technical Documentation QA — Evaluation Study
 
-> **Stato:** Bozza di lavoro — risultati preliminari su dataset mini (10 casi), ablation in corso
+> **Stato:** Bozza di lavoro — ablation in corso (2/6 config complete)
 > **Autori:** \[da completare\]
-> **Data ultimo aggiornamento:** 2026-04-20
+> **Data ultimo aggiornamento:** 2026-05-29
 
 ---
 
@@ -142,90 +142,60 @@ Le metriche calcolate tramite il framework [RAGAS](https://docs.ragas.io) sono:
 
 ### 4.3 Configurazione RAGAS
 
-- **LLM giudice:** `gpt-oss:20b` via Ollama su server Callia (`192.168.118.218`) — stesso modello usato per la generazione (v. discussione bias in §6.2)
+- **LLM giudice:** `qwen3:8b` con `--no-think` via Ollama su server Callia (`192.168.118.218`) — modello separato dal generatore per ridurre il bias di auto-valutazione
 - **Embeddings:** `sentence-transformers/all-MiniLM-L6-v2` locale tramite `langchain-huggingface`
 - **Parallelismo:** `max_workers=1` per evitare timeout su istanza Ollama singola
 - **Timeout per chiamata LLM:** 900 secondi
 - **Nessuna dipendenza da OpenAI o altri servizi cloud**
 
-### 4.4 Configurazione del sistema RAG — configurazioni a confronto
+### 4.4 Configurazione del sistema RAG — baseline
 
-Sono state testate due configurazioni sul dataset mini (10 casi):
-
-| Parametro | Baseline (v1) | Ottimizzata (v2) |
-|-----------|--------------|------------------|
-| `OLLAMA_MODEL` | gpt-oss:20b | gpt-oss:20b |
-| `QDRANT_SCORE_THRESHOLD` | 0.42 | 0.50 |
-| `CHAT_CANDIDATES` | 50 | 80 |
-| `CHAT_RESULT_LIMIT` | 10 | 5 |
-| `MMR_LAMBDA` | 0.65 | 0.80 |
-| `ENABLE_CROSS_ENCODER_RERANK` | false | false |
-| Prompt regola concisione | no | sì |
-
-Parametri comuni a entrambe le configurazioni:
 ```
+OLLAMA_MODEL              = gemma4:26b
+CHUNK_SIZE                = 1000
+CHUNK_OVERLAP             = 200
 EMBEDDING_MODEL           = all-MiniLM-L6-v2
-CHUNK_SIZE                = 600
-CHUNK_OVERLAP             = 120
-CHAT_CONTEXT_CHAR_BUDGET  = 9000
+QDRANT_SCORE_THRESHOLD    = 0.20
+CHAT_CANDIDATES           = 100
+CHAT_RESULT_LIMIT         = 10
+CHAT_CONTEXT_CHAR_BUDGET  = 10000
+CHAT_HISTORY_CHAR_BUDGET  = 0
+MMR_LAMBDA                = 0.65
+CROSS_ENCODER_TOP_K       = 30
 ENABLE_RERANK             = true
 ENABLE_MMR                = true
 ENABLE_STITCH             = true
 ENABLE_MULTI_VECTOR_SEARCH = true
+ENABLE_CROSS_ENCODER_RERANK = true
 ```
+
+Le varianti testate nell'ablation study (§5) modificano un solo flag/parametro alla volta rispetto a questa configurazione.
 
 ---
 
 ## 5. Risultati
 
-> *Risultati preliminari su dataset mini (10 casi). I risultati definitivi saranno calcolati sull'intero dataset (201 casi) con la configurazione ottimale.*
+> *Ablation in corso — 2 configurazioni complete su 6. I risultati delle restanti configurazioni verranno aggiunti al completamento degli esperimenti (v. `RAGAS_EXPERIMENTS.md`).*
 
-### 5.1 Statistiche di retrieval — configurazione baseline (da `eval_batch.py`)
+**Dataset:** `eval_dataset_EN_CER_test.json` — 50 domande in inglese, collection `CER-EN`  
+**Generatore:** `gemma4:26b` | **Giudice RAGAS:** `qwen3:8b` con `--no-think`
 
-| Statistica | Valore |
-|------------|--------|
-| Casi valutati con successo | 10 / 10 |
-| Casi senza contesti recuperati | 0 |
-| Media chunk recuperati per domanda | 9.8 |
-| Range chunk per domanda | 9–10 |
+### 5.1 Tab:ablation — Feature flag ablation (parziale)
 
-### 5.2 Metriche RAGAS — confronto baseline vs ottimizzata
+| Config | Faith. | Ctx Prec. | Ctx Rec. | Ans Rel. | Ans Corr. | N |
+|--------|:------:|:---------:|:--------:|:--------:|:---------:|:-:|
+| **Baseline** (full pipeline) | 0.722 | 0.507 | 0.705 | 0.784 | 0.476 | 50 |
+| No MMR (`ENABLE_MMR=false`) | 0.734 | 0.513 | 0.705 | — | — | 45 |
+| No MVS | *in corso* | | | | | |
+| Hybrid only (no CE) | *in corso* | | | | | |
+| No stitch | *in corso* | | | | | |
+| Naive RAG (tutti false) | *in corso* | | | | | |
 
-| Metrica | Baseline (v1) | Ottimizzata (v2) | Δ |
-|---------|:---:|:---:|:---:|
-| **Faithfulness** | 0.625 ± 0.320 (NaN=1) | 0.487 ± 0.369 (NaN=1) | -0.138 ↓ |
-| **Answer Relevancy** | 0.264 ± 0.156 | 0.347 ± 0.230 | **+0.083** ✓ |
-| **Context Precision** | 0.465 ± 0.319 | 0.552 ± 0.337 | **+0.087** ✓ |
-| **Context Recall** | 0.629 ± 0.378 | 0.463 ± 0.352 | -0.166 ↓ |
-| **Answer Correctness** | 0.473 ± 0.233 | 0.417 ± 0.204 | -0.056 ↓ |
+La disabilitazione di MMR produce variazioni minime su tutte e tre le metriche (Δ < 0.01), suggerendo che con il corpus e il dataset EN la diversificazione MMR non contribuisce significativamente alla qualità del retrieval.
 
-La configurazione v2 migliora `answer_relevancy` (+31%) e `context_precision` (+19%) a discapito di `context_recall` (-26%). Il calo del recall è attribuibile all'innalzamento del threshold (0.42→0.50) e alla riduzione del numero di chunk restituiti (10→5), che filtrano chunk marginalmente rilevanti ma necessari per coprire tutte le informazioni di riferimento.
+### 5.2 Altre tabelle
 
-### 5.3 Risultati per caso — baseline (v1)
-
-| # | Domanda (sintesi) | faith. | relevancy | prec. | recall | correct. |
-|---|-------------------|--------|-----------|-------|--------|----------|
-| 1 | Ruolo ENEA nelle CER | 1.000 | 0.371 | 0.844 | 1.000 | 0.579 |
-| 2 | Strumenti ENEA per CER | 0.286 | 0.323 | 0.730 | 0.333 | 0.490 |
-| 3 | Cos'è il TIAD | 0.000 | 0.000 | 0.125 | 1.000 | 0.127 |
-| 4 | Chi ha sviluppato RECON | 0.500 | 0.000 | 0.000 | 0.000 | 0.073 |
-| 5 | Obiettivo principale RECON | 1.000 | 0.262 | 0.589 | 1.000 | 0.726 |
-| 6 | Configurazioni autoconsumo | NaN | 0.338 | 0.569 | 1.000 | 0.590 |
-| 7 | Come funziona RECON | 0.929 | 0.489 | 0.870 | 0.625 | 0.553 |
-| 8 | Struttura RECON | 0.700 | 0.387 | 0.000 | 0.000 | 0.206 |
-| 9 | Agevolazioni di legge | 0.500 | 0.151 | 0.278 | 0.667 | 0.720 |
-| 10 | Ultima versione RECON | 0.714 | 0.320 | 0.643 | 0.667 | 0.665 |
-
-**Casi critici:**
-- **Caso [3]** (*TIAD*): `faithfulness=0.0` nonostante `context_recall=1.0` — il contesto pertinente è recuperato ma la risposta non lo utilizza correttamente.
-- **Caso [4]** (*Chi ha sviluppato RECON*): `context_precision=0.0`, `context_recall=0.0` — failure di retrieval; i chunk con le informazioni sul laboratorio SCC/ICER/TERIN non sono stati recuperati.
-- **Caso [8]** (*Struttura RECON*): `context_precision=0.0`, `context_recall=0.0` — analoga failure di retrieval, probabile problema di copertura del corpus indicizzato.
-
-### 5.4 Analisi del trade-off precision/recall
-
-Le due configurazioni evidenziano un classico trade-off: aumentare il threshold di similarità migliora la precisione dei chunk recuperati ma riduce la copertura delle informazioni di riferimento. Una configurazione intermedia (`QDRANT_SCORE_THRESHOLD=0.45`, `CHAT_RESULT_LIMIT=7`) è in corso di valutazione come v3.
-
-> *\[Da aggiornare con i risultati v3 e con i risultati sul dataset completo (201 casi)\]*
+> *\[Da completare al termine degli esperimenti: tab:chunking, tab:retrieval_k, tab:mmr, tab:cross_k, tab:reranking, tab:italian\]*
 
 ---
 
@@ -240,7 +210,7 @@ Le due configurazioni evidenziano un classico trade-off: aumentare il threshold 
 
 ### 6.2 Limiti e criticità
 
-**Bias di auto-valutazione.** Il modello `gpt-oss:20b` è usato sia per generare le risposte sia come LLM-judge in RAGAS. Questo introduce un bias sistematico in *faithfulness*: il modello tende a giudicare coerenti con il contesto le proprie stesse formulazioni. I risultati osservati (faithfulness baseline = 0.625) vanno letti tenendo conto di questa limitazione. Una separazione completa richiederebbe un modello di famiglia diversa esclusivamente per il giudizio.
+**Bias di auto-valutazione.** Nelle valutazioni correnti il generatore è `gemma4:26b` e il giudice RAGAS è `qwen3:8b` — modelli di famiglia diversa. Questo riduce il rischio di bias sistematico rispetto a configurazioni in cui lo stesso modello genera e giudica. Tuttavia una validazione human-in-the-loop su un sottoinsieme rimane necessaria per calibrare i punteggi in termini assoluti.
 
 **Lingua italiana.** I prompt interni di RAGAS sono in inglese; il corpus, le domande e le risposte di riferimento sono in italiano. Questo mismatch linguistico può impattare in particolare *context_recall*, che richiede l'estrazione e il confronto di affermazioni dalla risposta di riferimento in italiano.
 
@@ -248,19 +218,18 @@ Le due configurazioni evidenziano un classico trade-off: aumentare il threshold 
 
 **Costo computazionale.** L'uso di `gemma4:26b` come giudice aumenta significativamente i tempi di valutazione (~4–8 ore per 201 campioni × 5 metriche) rispetto a modelli più piccoli, rendendo poco pratico il ricalcolo a ogni modifica del pipeline.
 
-### 6.3 Ablation study — effetto dei parametri di retrieval
+### 6.3 Ablation study — risultati parziali
 
-I risultati dell'ablation su 10 casi mostrano che le leve di configurazione hanno effetti opposti su precision e recall:
+Con le due configurazioni disponibili (baseline e no MMR su 50 casi EN):
 
-| Modifica | Impatto su precision | Impatto su recall |
-|----------|---------------------|------------------|
-| Threshold 0.42 → 0.50 | ↑ (meno rumore) | ↓ (più filtraggio) |
-| CHAT_RESULT_LIMIT 10 → 5 | ↑ (contesto più pulito) | ↓ (meno copertura) |
-| CHAT_CANDIDATES 50 → 80 | neutro | ↑ (più candidati) |
-| MMR_LAMBDA 0.65 → 0.80 | ↑ (più rilevanza) | ↓ (meno diversità) |
-| Prompt concisione | — | — (solo relevancy) |
+| Config | Faith. | Ctx Prec. | Ctx Rec. |
+|--------|:------:|:---------:|:--------:|
+| Baseline | 0.722 | 0.507 | 0.705 |
+| No MMR | 0.734 | 0.513 | 0.705 |
 
-Il risultato netto della v2 è un guadagno netto su precision (+19%) e relevancy (+31%) ma una perdita significativa su recall (-26%). Questo suggerisce che la configurazione ottimale si trova in un punto intermedio tra v1 e v2.
+La disabilitazione di MMR non produce variazioni significative, indicando che il contributo di MMR sulla qualità del retrieval misurata da RAGAS è marginale sul dataset EN. L'analisi completa dell'effetto delle singole componenti è in corso.
+
+> *\[Da aggiornare al completamento dell'ablation: no MVS, hybrid only, no stitch, naive RAG\]*
 
 ### 6.4 Confronto con approcci alternativi
 
